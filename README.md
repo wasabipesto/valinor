@@ -2,16 +2,16 @@
 My attempt to dockerise... everything.
 
 # Top-level goals
-Upgradable: I should be able to upgrade each service independently without affecting user data or other services.
-Adaptable: I should be able to add or remove services without major hassle. The fewer steps to spin up a new service, the better. 
-Reproducible: I should be able to recreate the entire structure on a new machine. This includes restoring backups of user data. 
-Consistent: Each service should have similar configuration and troubleshooting steps.
-Monitored: I should know quickly if something is wrong, and user-facing issues should be announced automatically. 
-Connected: I should be able to run resource-intensive services on a separate nose from other general services. All services should still be able to communicate.
-Authenticated: All external requests should be authenticated before being passed into the network. 2FA would be preferred, but should not get in the way of usability.
+1. Upgradable: I should be able to upgrade each service independently without affecting user data or other services.
+2. Adaptable: I should be able to add or remove services without major hassle. The fewer steps to spin up a new service, the better.
+3. Reproducible: I should be able to recreate the entire structure on a new machine. This includes restoring backups of user data.
+4. Consistent: Each service should have similar configuration and troubleshooting steps.
+5. Monitored: I should know quickly if something is wrong, and user-facing issues should be announced automatically.
+6. Connected: I should be able to run resource-intensive services on a separate nose from other general services. All services should still be able to communicate.
+7. Authenticated: All external requests should be authenticated before being passed into the network. 2FA would be preferred, but should not get in the way of usability.
 
 ## Not goals:
-Redundant: I do not need concurrent redundancy/load balancing for any services. My time is cheap, my services are small, and my users are forgiving. 
+8. Redundant: I do not need concurrent redundancy/load balancing for any services. My time is cheap, my services are small, and my users are forgiving.
 
 # Hardware
 My general-purpose server lives in DigitalOcean:
@@ -37,9 +37,7 @@ Now we set up a new user so we don't keep using the root account. Obviously chan
 	chown -R justin:justin /home/justin/.ssh
 	usermod -aG sudo justin
 
-Now we update our ssh config:
-- Change sshd port from 22 to some other port, for security.
-- Disable root login and password authentication
+Now update our ssh config: Change sshd port from 22 to some other port, for security. Disable root login and password authentication.
 
 	nano /etc/ssh/sshd_config
 	service ssh restart
