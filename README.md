@@ -23,6 +23,8 @@ My compute/fileserver is on my home network:
 - 2x Xeon 2678 v3, 64GB Memory
 - 6x 12TB WD Elements shucked, in RAID5
 
+Note: this repo is only for the general-purpose server. I'll get to the compute server eventually.
+
 # First-time setup
 SSH in for the first time! DO images are always super old, so we're going to update everything first.
 
