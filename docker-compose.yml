@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+
+  traefik:
+    image: traefik:v2.6
+    container_name: traefik
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - $OPDIR/traefik:/etc/traefik:ro
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.dashboard.rule=Host(`traefik.$DOMAIN`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
+      - traefik.http.routers.dashboard.service=api@internal
+      - traefik.http.routers.dashboard.middlewares=auth-adminonly-basic@file
+
+  whoami:
+    image: traefik/whoami
+    container_name: simple-service
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.whoami.rule=Host(`whoami.$DOMAIN`)
+      - traefik.http.routers.whoami.entrypoints=web
+
+networks:
+  default:
+    external:
+      name: wasabi

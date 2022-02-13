@@ -1,0 +1,29 @@
+# Traefik Configuration File
+log:
+  #level: ERROR
+  level: INFO
+  #level: DEBUG
+
+api:
+  dashboard: true
+  #insecure: true
+
+entryPoints:
+  web:
+    address: :80
+  websecure:
+    address: :443
+
+providers:
+  file:
+    directory: /etc/traefik/
+  docker:
+    exposedByDefault: false
+    endpoint: "unix:///var/run/docker.sock"
+
+# Traefik Dynamic Configuration
+http:
+  middlewares:
+    auth-adminonly-basic:
+      basicAuth:
+        usersFile: /etc/traefik/users
