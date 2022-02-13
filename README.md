@@ -7,7 +7,7 @@ My attempt to dockerise... everything.
 3. Reproducible: I should be able to recreate the entire structure on a new machine. This includes restoring backups of user data.
 4. Consistent: Each service should have similar configuration and troubleshooting steps.
 5. Monitored: I should know quickly if something is wrong, and user-facing issues should be announced automatically.
-6. Connected: I should be able to run resource-intensive services on a separate nose from other general services. All services should still be able to communicate.
+6. Connected: I should be able to run resource-intensive services on a separate node from other general services. All services should still be able to communicate.
 7. Authenticated: All external requests should be authenticated before being passed into the network. 2FA would be preferred, but should not get in the way of usability.
 
 ## Not goals:
