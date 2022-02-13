@@ -75,4 +75,17 @@ Just for me: set up git so I can push changes to this repository.
 	git config --global user.name "wasabipesto"
 	git config --global user.email "21313833+wasabipesto@users.noreply.github.com"
 	ssh -T git@github.com # test the config
-	
+	sudo apt install git-secret
+	# grab gpg keys from backup
+	gpg --import gpg-privkey.gpg
+
+Pull this repository!
+
+	git pull git@github.com:wasabipesto/ereinion.git
+	cd erinion
+
+And finish setting things up (again, just for me).
+
+	git secret reveal
+	chmod +x links.sh
+	./links.sh
