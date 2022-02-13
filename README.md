@@ -51,7 +51,7 @@ Disable the annoying MOTD (my preference):
 
 The raison d'etre! Note: Check your distro before adding the listed repository.
 
-	sudo apt install apt-transport-https ca-certificates curl software-properties-common
+	sudo apt install apt-transport-https ca-certificates curl software-properties-common haveged
 	curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 	sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
 	sudo apt update
