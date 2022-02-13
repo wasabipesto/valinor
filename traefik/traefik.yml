@@ -4,15 +4,23 @@ log:
   level: INFO
   #level: DEBUG
 
+#accessLog: {}
+
 api:
   dashboard: true
-  #insecure: true
 
 entryPoints:
-  web:
-    address: :80
   websecure:
     address: :443
+    http:
+      tls:
+        certResolver: letsencrypt
+  web:
+    address: :80
+    http:
+      redirections: # Note: Make sure your DNS provider SSL is set to full to avoid "too many redirects"
+        entryPoint:
+          to: websecure
 
 providers:
   file:
@@ -20,6 +28,15 @@ providers:
   docker:
     exposedByDefault: false
     endpoint: "unix:///var/run/docker.sock"
+
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      #caServer: https://acme-staging-v02.api.letsencrypt.org/directory
+      email: justin+le@wasabipesto.com
+      storage: /etc/traefik/acme.json
+      dnsChallenge:
+        provider: cloudflare
 
 # Traefik Dynamic Configuration
 http:
