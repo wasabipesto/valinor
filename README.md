@@ -35,6 +35,7 @@ Now we set up a new user so we don't keep using the root account. Obviously chan
 	mkdir /home/justin/.ssh
 	mv .ssh/authorized_keys /home/justin/.ssh/authorized_keys
 	chown -R justin:justin /home/justin/.ssh
+	chown justin:justin /opt
 	usermod -aG sudo justin
 
 Now update our ssh config: Change sshd port from 22 to some other port, for security. Disable root login and password authentication.
@@ -72,3 +73,4 @@ Just for me: set up git so I can push changes to this repository.
 	git config --global user.name "wasabipesto"
 	git config --global user.email "21313833+wasabipesto@users.noreply.github.com"
 	ssh -T git@github.com # test the config
+	
