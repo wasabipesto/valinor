@@ -1,0 +1,7 @@
+alias up='sudo apt update; sudo apt upgrade -y'
+alias dc-up='docker-compose -f /home/justin/ereinion/docker-compose.yml up -d'
+alias dc-down='docker-compose -f /home/justin/ereinion/docker-compose.yml down'
+alias dc-logs='docker-compose -f /home/justin/ereinion/docker-compose.yml logs'
+alias dc-edit='nano /home/justin/ereinion/docker-compose.yml'
+alias dc-config='docker-compose -f /home/justin/ereinion/docker-compose.yml config'
+alias dc-restart='dc-down && dc-up; dc-logs'
