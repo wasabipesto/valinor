@@ -8,3 +8,6 @@ fi
 mkdir $OPDIR/traefik
 ln $(pwd)/traefik/traefik.yml $OPDIR/traefik/traefik.yml
 ln $(pwd)/traefik/users $OPDIR/traefik/users
+
+# Note: this will overwrite your .bash_aliases file!
+ln $(pwd)/.bash_aliases ~/.bash_aliases
