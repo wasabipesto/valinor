@@ -69,6 +69,11 @@ Log back in to apply the user account changes (the ability to control docker via
 	sudo chmod +x /usr/local/bin/docker-compose
 	docker-compose -v # pull the image and test
 
+Connect the machine to the tailnet
+
+	curl -fsSL https://tailscale.com/install.sh | sh
+	sudo tailscale up
+
 Just for me: set up git so I can push changes to this repository.
 
 	ssh-keygen # then upload to github
