@@ -166,11 +166,14 @@ TODO: I don't think I need this, but we'll see.
 
 ## Monitoring & Updates
 ### Watchtower
+TODO: Basic configuration done. Set up notifications, and possibly monitoring multiple hosts.
+
 ### Node-Exporter
 ### cAdvisor
 ### Prometheus
 ### Grafana
 ### AlertManager
+TODO: Set up all of the above. Consider setting up on another node.
 
 ## Communication
 ### [Protonmail](https://github.com/shenxn/protonmail-bridge-docker)
@@ -229,11 +232,16 @@ I used to use Jackett, but a [single](https://wiki.servarr.com/sonarr/troublesho
 ## Code
 ### Jupyter
 ### Code-Server
+TODO: Evaluate if I need this, and where it should live.
 
 # Services - Celebrimbor
 ## Media
 ### Torrent Client TBD
+TODO: Evaluate torrent clients, pick one compatible with \*arrs.
+
 ### FileBrowser
+TODO: Set up for filesharing requests. Possibly couple with other 
+
 ### Sonarr
 ### Radarr
 ### Lidarr
