@@ -97,7 +97,7 @@ I use tailscale to mesh all of my devices together. This makes routing between t
 	sudo tailscale up
 
 ### [Weave Net](https://www.weave.works/docs/net/latest/overview/)
-TODO
+TODO: When I bring Celebrimbor int the fold.
 
 ### External Firewall
 For every device, I have a firewall that lives outside of this configuration. This is because docker likes to [punch holes](https://news.ycombinator.com/item?id=27670058) in anything it can touch and I don't need to put up with forwarding ports anymore thanks to tailscale.
@@ -188,23 +188,43 @@ This will authenticate the bridge with Protonmail and store the session in $OPDI
 ### Apprise/Gotify
 TODO: To pass along urgent notifications.
 
-### Matrix/Synapse
-TODO: Utilize the matrix-ansible-docker-deploy script with traefik proxy.
+### [Matrix](https://matrix.org/)/[Synapse](https://github.com/matrix-org/synapse)
+TODO: Utilize the [matrix-docker-ansible-deploy](https://github.com/spantaleev/matrix-docker-ansible-deploy) script with traefik proxy.
 
 ## Backup
-### Syncthing
-### FileBrowser
-### Duplicacy/Borg
+### [Syncthing](https://docs.syncthing.net/)
+TODO: Set up for multi-device sync.
+
+### [FileBrowser](https://filebrowser.org/)
+TODO: Set up for convenient file access & sharing.
+Will probably need to set up some weird auth rules.
+
+### [Duplicacy](https://github.com/gilbertchen/duplicacy)
+TODO: Evaulate each and figure out what I want. Planning on using B2 for offsite storage.
 
 ## D&D
-### WikiJs
-### PostgreSQL
-### Foundry
+### [WikiJS](https://docs.requarks.io/)
+TODO: Migrate in existing wiki site.
+
+### [PostgreSQL](https://www.postgresql.org/docs/)
+TODO: Set up database for WkiJS.
+
+### [Foundry](https://github.com/felddy/foundryvtt-docker)
+TODO: Set up multiple independent containers abd the ability to spin up more.
 
 ## Media
-### Tautulli
-### Overseerr
-### Prowlarr
+### [Tautulli](https://github.com/Tautulli/Tautulli)
+Monitor Plex and see what people actually watch. A lot of the features I used to use (watch history, notifications, auto-updates) have since been replaced by other services, but it's nice to keep around.
+
+_Disclaimer: By using my server you give me full permission to make pretty graphs._ 
+
+### [Overseerr](https://docs.overseerr.dev/)
+A request system so simple and pretty my parents could use it. The absolute killer feature being that you log in with your Plex account, so you don't need to remember another password. Get notifications when your requests are added or your issues resolved.
+
+TODO: Migrate existing page to new site.
+
+### [Prowlarr](https://wiki.servarr.com/prowlarr)
+I used to use Jackett, but a [single](https://wiki.servarr.com/sonarr/troubleshooting#tracker-needs-rawsearch-caps) [issue](https://github.com/Jackett/Jackett/pull/11889) has pushed me to move to Prowlarr. If an indexer is doing its job, youo won't be sure it's there at all.
 
 ## Code
 ### Jupyter
