@@ -1,10 +1,16 @@
 version: "3"
 
+networks:
+  wasabi:
+    driver: bridge
+
 services:
 
   traefik:
     image: traefik:v2.6
     container_name: traefik
+    networks:
+      - wasabi
     ports:
       - 80:80
       - 443:443
@@ -12,6 +18,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - $OPDIR/traefik:/etc/traefik
     environment:
+      - TZ=$TZ
       - CF_DNS_API_TOKEN_FILE=/etc/traefik/CF_DNS_API_TOKEN
     labels:
       - traefik.enable=true
@@ -19,17 +26,27 @@ services:
       - traefik.http.routers.dashboard.entrypoints=websecure
       - traefik.http.routers.dashboard.rule=Host(`traefik.$DOMAIN`)
       - traefik.http.routers.dashboard.service=api@internal
-      - traefik.http.routers.dashboard.middlewares=auth-adminonly-basic@file
+      - traefik.http.routers.dashboard.middlewares=authelia@file
+    restart: unless-stopped
 
-  whoami:
-    image: traefik/whoami
-    container_name: simple-service
+  authelia:
+    image: authelia/authelia
+    container_name: authelia
+    networks:
+      - wasabi
+    volumes:
+      - /opt/authelia:/config
     labels:
       - traefik.enable=true
-      - traefik.http.routers.whoami.entrypoints=websecure
-      - traefik.http.routers.whoami.rule=Host(`whoami.$DOMAIN`)
-
-networks:
-  default:
-    external:
-      name: wasabi
+      - traefik.http.routers.authelia.tls=true
+      - traefik.http.routers.authelia.entrypoints=websecure
+      - traefik.http.routers.authelia.rule=Host(`auth.$DOMAIN`)
+    expose:
+      - 9091
+    restart: unless-stopped
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
+      - AUTHELIA_JWT_SECRET_FILE=/config/jwt_secret
+      - AUTHELIA_SESSION_SECRET_FILE=/config/session_secret
