@@ -1,4 +1,2 @@
 .env
 .gitsecret/keys/random_seed
-traefik/users
-traefik/CF_DNS_API_TOKEN
