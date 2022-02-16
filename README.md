@@ -96,9 +96,6 @@ I use tailscale to mesh all of my devices together. This makes routing between t
 	curl -fsSL https://tailscale.com/install.sh | sh
 	sudo tailscale up
 
-### [Weave Net](https://www.weave.works/docs/net/latest/overview/)
-TODO: When I bring Celebrimbor into the fold.
-
 ### External Firewall
 For every device, I have a firewall that lives outside of this configuration. This is because docker likes to [punch holes](https://news.ycombinator.com/item?id=27670058) in anything it can touch and I don't need to put up with forwarding ports anymore thanks to tailscale.
 
