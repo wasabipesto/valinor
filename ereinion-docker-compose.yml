@@ -9,6 +9,7 @@ services:
   traefik:
     image: traefik:v2.6
     container_name: traefik
+    restart: unless-stopped
     networks:
       - wasabi
     ports:
@@ -17,9 +18,6 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - $OPDIR/traefik:/etc/traefik
-    environment:
-      - TZ=$TZ
-      - CF_DNS_API_TOKEN=$CF_DNS_API_TOKEN
     labels:
       - traefik.enable=true
       - traefik.http.routers.dashboard.tls=true
@@ -27,13 +25,20 @@ services:
       - traefik.http.routers.dashboard.rule=Host(`traefik.$DOMAIN`)
       - traefik.http.routers.dashboard.service=api@internal
       - traefik.http.routers.dashboard.middlewares=authelia@file
-    restart: unless-stopped
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
+      - CF_DNS_API_TOKEN=$CF_DNS_API_TOKEN
 
   authelia:
     image: authelia/authelia
     container_name: authelia
+    restart: unless-stopped
     networks:
       - wasabi
+    expose:
+      - 9091
     volumes:
       - /opt/authelia:/config
     labels:
@@ -41,9 +46,25 @@ services:
       - traefik.http.routers.authelia.tls=true
       - traefik.http.routers.authelia.entrypoints=websecure
       - traefik.http.routers.authelia.rule=Host(`auth.$DOMAIN`)
-    expose:
-      - 9091
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
+
+  nginx:
+    image: lscr.io/linuxserver/nginx
+    container_name: nginx
     restart: unless-stopped
+    networks:
+      - wasabi
+    expose:
+      - 443
+    volumes:
+      - $OPDIR/nginx:/config
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.nginx.entrypoints=websecure
+      - traefik.http.routers.nginx.rule=Host(`$DOMAIN`)
     environment:
       - TZ=$TZ
       - PUID=$PUID
