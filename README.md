@@ -189,7 +189,7 @@ Note: For first-time setup, you will need to start the bridge in interactive mod
 This will authenticate the bridge with Protonmail and store the session in $OPDIR. You can then use `info` to see the bridge's SMTP username/password and use that to connect from other containers. Note that the bridge is lying to you, port 1025 is not exposed from the container (use port 25 instead, and you'll probably have to disable tls checking).
 
 ### Apprise/Gotify/Shoutrrr
-TODO: To pass along urgent notifications.
+TODO: To pass along urgent notifications. Will probably end up ignoring these in favor of using discord webhooks.
 
 ### [Matrix](https://matrix.org/)/[Synapse](https://github.com/matrix-org/synapse)
 TODO: Utilize the [matrix-docker-ansible-deploy](https://github.com/spantaleev/matrix-docker-ansible-deploy) script with traefik proxy.
