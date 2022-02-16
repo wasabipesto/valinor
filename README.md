@@ -1,4 +1,4 @@
-# The Notes of Ereinion
+# Project Valinor
 My attempt to dockerise... everything.
 
 # Top-level goals
@@ -12,18 +12,17 @@ My attempt to dockerise... everything.
 
 ## Not goals:
 8. Redundant: I do not need concurrent redundancy/load balancing for any services. My time is cheap, my services are small, and my users are forgiving.
+9. Self-Healing: Nothing beyond updating and simple re-creation of docker containers will be necessary. 
 
 # Hardware
-My general-purpose server lives in DigitalOcean:
+My general-purpose is named Erenion server lives in DigitalOcean:
 - DigitalOcean droplet, created 2/10/2022
 - I intend to upgrade as I migrate things in (I'm looking at you, Synapse)
 - 2 GB Memory / 50 GB Disk / NYC3 - Ubuntu 20.04 (LTS) x64
 
-My compute/fileserver is on my home network:
+My compute/fileserver is named Celebrimbor and lives on my home network:
 - 2x Xeon 2678 v3, 64GB Memory
 - 6x 12TB WD Elements shucked, in RAID5
-
-Note: this repo is only for the general-purpose server. I'll get to the compute server eventually.
 
 # First-time setup
 SSH in for the first time! DO images are always super old, so we're going to update everything first.
@@ -92,5 +91,3 @@ Pull this repository!
 And finish setting things up (again, just for me).
 
 	git secret reveal
-	chmod +x links.sh
-	./links.sh
