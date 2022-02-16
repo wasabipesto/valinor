@@ -80,12 +80,8 @@ services:
       - wasabi
     labels:
       - WATCHTOWER_NOTIFICATIONS_LEVEL=info
-#      - WATCHTOWER_NOTIFICATIONS=gotify
-#      - WATCHTOWER_NOTIFICATION_GOTIFY_URL="https://my.gotify.tld/"
-#      - WATCHTOWER_NOTIFICATION_GOTIFY_TOKEN="SuperSecretToken"
     environment:
       - TZ=$TZ
-    # add a second instance when celebrimbor comes on the network
 
   # Communication
   protonmail:
@@ -99,26 +95,6 @@ services:
       - 143
     volumes:
       - $OPDIR/protonmail:/root
-    environment:
-      - TZ=$TZ
-      - PUID=$PUID
-      - PGID=$PGID
-
-  gotify:
-    image: gotify/server
-    container_name: gotify
-    restart: unless-stopped
-    networks:
-      - wasabi
-    expose:
-      - 80
-    volumes:
-      - $OPDIR/gotify:/app/data
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.gotify.entrypoints=websecure
-      - traefik.http.routers.gotify.rule=Host(`gotify.$DOMAIN`)
-#      - traefik.http.routers.gotify.middlewares=authelia@file
     environment:
       - TZ=$TZ
       - PUID=$PUID
