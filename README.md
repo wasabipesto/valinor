@@ -54,14 +54,13 @@ Disable the annoying MOTD (my preference):
 
 The raison d'etre! Note: Check docker's official [installation instructions](https://docs.docker.com/engine/install/) as these may be out of date.
 
-	NEWUSER=[the user you just made]
 	sudo apt install apt-transport-https ca-certificates curl software-properties-common haveged
 	curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 	sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
 	sudo apt update
 	apt-cache policy docker-ce
 	sudo apt install docker-ce
-	sudo usermod -aG docker justin
+	sudo usermod -aG docker [your user]
 	logout
 
 Log back in to apply the user account changes (the ability to control docker via non-sudo). Then install docker-compose and test it out:
