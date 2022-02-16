@@ -104,6 +104,26 @@ services:
       - PUID=$PUID
       - PGID=$PGID
 
+  gotify:
+    image: gotify/server
+    container_name: gotify
+    restart: unless-stopped
+    networks:
+      - wasabi
+    expose:
+      - 80
+    volumes:
+      - $OPDIR/gotify:/app/data
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.gotify.entrypoints=websecure
+      - traefik.http.routers.gotify.rule=Host(`gotify.$DOMAIN`)
+#      - traefik.http.routers.gotify.middlewares=authelia@file
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
+
   # Media
   tautulli:
     image: lscr.io/linuxserver/tautulli
