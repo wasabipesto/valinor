@@ -48,5 +48,3 @@ services:
       - TZ=$TZ
       - PUID=$PUID
       - PGID=$PGID
-      - AUTHELIA_JWT_SECRET_FILE=/config/jwt_secret
-      - AUTHELIA_SESSION_SECRET_FILE=/config/session_secret
