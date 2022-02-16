@@ -96,6 +96,7 @@ And finish setting things up (again, just for me).
 ## Networking
 ### Traefik
 ### Authelia
+### Nginx
 ### Fail2Ban/Crowdsec (TBD)
 
 ## Monitoring & Updates
@@ -108,6 +109,13 @@ And finish setting things up (again, just for me).
 
 ## Communication
 ### Protonmail
+Note: You will need to start the bridge first in inteactive mode.
+
+	docker run --rm -it -v $OPDIR/protonmail:/root shenxn/protonmail-bridge init
+	login
+
+This will create the necessary login tokens so you can send mail from the bridge.
+
 ### Apprise/Gotify
 ### Matrix/Synapse
 
