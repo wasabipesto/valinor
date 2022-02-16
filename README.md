@@ -25,19 +25,20 @@ My compute/fileserver is named Celebrimbor and lives on my home network:
 - 6x 12TB WD Elements shucked, in RAID5
 
 # First-time setup
-SSH in for the first time! DO images are always super old, so we're going to update everything first.
+SSH in for the first time! If you do this with DO's basic setup, you'll be dropped in as root. We're going to make good use of it and update everything first.
 
 	apt update
 	apt upgrade
 
-Now we set up a new user so we don't keep using the root account. Obviously change the username if you're one of the many people not named Justin. We're also going to move the ssh keys from the root account over to the new one.
+Now we set up a new user so we don't keep using the root account. We're also going to move the ssh keys from the root account over to the new one so we can still login.
 
-	adduser justin
-	mkdir /home/justin/.ssh
-	mv .ssh/authorized_keys /home/justin/.ssh/authorized_keys
-	chown -R justin:justin /home/justin/.ssh
-	chown justin:justin /opt
-	usermod -aG sudo justin
+	NEWUSER=[username to be added]
+	adduser $NEWUSER
+	mkdir /home/$NEWUSER/.ssh
+	mv .ssh/authorized_keys /home/$NEWUSER/.ssh/authorized_keys
+	chown -R $NEWUSER:$NEWUSER /home/$NEWUSER/.ssh
+	chown $NEWUSER:$NEWUSER /opt
+	usermod -aG sudo $NEWUSER
 
 Now update our ssh config: Change sshd port from 22 to some other port, for security. Disable root login and password authentication.
 
@@ -51,8 +52,9 @@ Disable the annoying MOTD (my preference):
 
 	touch ~/.hushlogin
 
-The raison d'etre! Note: Check your distro before adding the listed repository.
+The raison d'etre! Note: Check docker's official [installation instructions](https://docs.docker.com/engine/install/) as these may be out of date.
 
+	NEWUSER=[the user you just made]
 	sudo apt install apt-transport-https ca-certificates curl software-properties-common haveged
 	curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 	sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
@@ -68,25 +70,20 @@ Log back in to apply the user account changes (the ability to control docker via
 	sudo chmod +x /usr/local/bin/docker-compose
 	docker-compose -v # pull the image and test
 
-Connect the machine to the tailnet:
-
-	curl -fsSL https://tailscale.com/install.sh | sh
-	sudo tailscale up
-
-Just for me: set up git so I can push changes to this repository.
-
-	ssh-keygen # then upload to github
-	git config --global user.name [github username]
-	git config --global user.email [github noreply email]
-	ssh -T git@github.com # test the config
-
 Pull this repository!
 
 	git pull git@github.com:wasabipesto/valinor.git
 	cd valinor
 
-And finish setting things up (again, just for me).
+### Just for me
+I need to set up git and git-secret to decrypt files and track changes.
 
+	ssh-keygen 
+	# upload public key to github
+	git config --global user.name [github username]
+	git config --global user.email [github noreply email]
+	ssh -T git@github.com # test the config
+	
 	sudo apt install git-secret
 	# grab gpg keys from backup
 	gpg --import gpg-privkey.gpg
@@ -94,6 +91,13 @@ And finish setting things up (again, just for me).
 
 # Services - Ereinion
 ## Networking
+### Tailscale
+I use tailscale to mesh all of my devices together. This makes routing between them super easy and much more secure than punching holes in firewalls and bypassing proxies. To connect this new machine to the tailnet:
+
+	curl -fsSL https://tailscale.com/install.sh | sh
+	sudo tailscale up
+
+### Weavenet
 ### Traefik
 ### Authelia
 ### Nginx
