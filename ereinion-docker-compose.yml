@@ -1,8 +1,8 @@
 version: "3"
 
 networks:
-  wasabi:
-    driver: bridge
+  wasabi-overlay:
+    external: true
 
 services:
 
@@ -12,7 +12,7 @@ services:
     container_name: traefik
     restart: unless-stopped
     networks:
-      - wasabi
+      - wasabi-overlay
     ports:
       - 80:80
       - 443:443
@@ -37,7 +37,7 @@ services:
     container_name: authelia
     restart: unless-stopped
     networks:
-      - wasabi
+      - wasabi-overlay
     expose:
       - 9091
     volumes:
@@ -57,7 +57,7 @@ services:
     container_name: nginx
     restart: unless-stopped
     networks:
-      - wasabi
+      - wasabi-overlay
     expose:
       - 443
     volumes:
@@ -77,7 +77,7 @@ services:
     container_name: watchtower
     restart: unless-stopped
     networks:
-      - wasabi
+      - wasabi-overlay
     labels:
       - WATCHTOWER_NOTIFICATIONS_LEVEL=info
     environment:
@@ -89,7 +89,7 @@ services:
     container_name: protonmail
     restart: unless-stopped
     networks:
-      - wasabi
+      - wasabi-overlay
     expose:
       - 25
       - 143
@@ -106,7 +106,7 @@ services:
     container_name: tautulli
     restart: unless-stopped
     networks:
-      - wasabi
+      - wasabi-overlay
     expose:
       - 8181
     volumes:
