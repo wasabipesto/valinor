@@ -173,16 +173,23 @@ TODO: I don't think I need this, but we'll see.
 ### AlertManager
 
 ## Communication
-### Protonmail
-Note: You will need to start the bridge first in inteactive mode.
+### [Protonmail](https://github.com/shenxn/protonmail-bridge-docker)
+I use Protonmail for my email, which means I can't simply forward SMTP requests to them in order to send mail from my server. They do have a bridge that works well enough in docker, so that's my "email server" now. Since it lives within the docker network, it's easy enough to configure various other services to just see the bridge as a valid email server. If I ever waned to read mail I would have to install something else, but I don't so I won't.
+
+Note: For first-time setup, you will need to start the bridge in interactive mode and log in:
 
 	docker run --rm -it -v $OPDIR/protonmail:/root shenxn/protonmail-bridge init
 	login
+	# authenticate
+	info
 
-You can then use `info` to see the SMTP username/password.
+This will authenticate the bridge with Protonmail and store the session in $OPDIR. You can then use `info` to see the bridge's SMTP username/password and use that to connect from other containers. Note that the bridge is lying to you, port 1025 is not exposed from the container (use port 25 instead, and you'll probably have to disable tls checking).
 
 ### Apprise/Gotify
+TODO: To pass along urgent notifications.
+
 ### Matrix/Synapse
+TODO: Utilize the matrix-ansible-docker-deploy script with traefik proxy.
 
 ## Backup
 ### Syncthing
