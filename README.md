@@ -63,7 +63,7 @@ The raison d'etre! Note: Check docker's official [installation instructions](htt
 	sudo usermod -aG docker [your user]
 	logout
 
-Log back in to apply the user account changes (the ability to control docker via non-sudo). Then install docker-compose and test it out:
+Log back in to apply the user account changes (the ability to control docker via non-sudo). Then [install docker-compose](https://docs.docker.com/compose/install/) and test it out:
 
 	sudo curl -L --fail https://github.com/linuxserver/docker-docker-compose/releases/download/1.27.4-ls17/docker-compose-amd64 -o /usr/local/bin/docker-compose
 	sudo chmod +x /usr/local/bin/docker-compose
