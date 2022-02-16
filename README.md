@@ -87,7 +87,7 @@ Just for me: set up git so I can push changes to this repository.
 Pull this repository!
 
 	git pull git@github.com:wasabipesto/ereinion.git
-	cd erinion
+	cd valinor
 
 And finish setting things up (again, just for me).
 
