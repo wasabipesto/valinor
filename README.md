@@ -90,17 +90,79 @@ I need to set up git and git-secret to decrypt files and track changes.
 
 # Services - Ereinion
 ## Networking
-### Tailscale
-I use tailscale to mesh all of my devices together. This makes routing between them super easy and much more secure than punching holes in firewalls and bypassing proxies. To connect this new machine to the tailnet:
+### [Tailscale](https://tailscale.com/)
+I use tailscale to mesh all of my devices together. This makes routing between them super easy and much more secure than punching holes in firewalls and bypassing proxies. I also use the tailscale DNS system to make connections between devices easy to remember. To connect this new machine to the tailnet:
 
 	curl -fsSL https://tailscale.com/install.sh | sh
 	sudo tailscale up
 
-### Weavenet
-### Traefik
-### Authelia
+### [Weave Net](https://www.weave.works/docs/net/latest/overview/)
+TODO
+
+### External Firewall
+For every device, I have a firewall that lives outside of this configuration. This is because docker likes to [punch holes](https://news.ycombinator.com/item?id=27670058) in anything it can touch and I don't need to put up with forwarding ports anymore thanks to tailscale.
+
+On Ereinion, I let DigitalOcean block all external requests except on ports 80 and 443. Traffic on these ports must pass through Traefik anyways.
+
+On Celebrimbor, my home router blocks all external requests except on plex's port, and a few other legacy systems I'm moving as part of this project. 
+
+### [Traefik](https://doc.traefik.io/traefik/)
+Traefik is the backbone of this network. It is an edge router that sits in front of any request that comes in to the network (excepting tailscale). The main features I use are:
+
+**Automatic Routing:** You'll see several entries in my docker-compose file that have labels like the ones below. These make it very simple to configure a new service, since the routin configuration lives next to the other provisioning information. Optionally I can forward to a login page or load-balance over multiple instances.
+
+| Label | Effect |
+| --- | --- |
+| traefik.enable=true | Enables monitoring this container. |
+| traefik.http.routers.example.entrypoints=websecure | Sets up a router within Traefik to look at traffic entering the network on this entrypoint. |
+| traefik.http.routers.example.rule=Host(`example.$DOMAIN`) | Looks at the incoming hostname and send traffic to this container if it matches. |
+| traefik.http.routers.example.middlewares=authelia@file | Forwards the request over to Authelia for login before serving the page. |
+
+You will need to set the docker connection in youor static configuration:
+
+	providers:
+	  file:
+	    directory: /etc/traefik/
+	  docker:
+	    exposedByDefault: false
+	    endpoint: "unix:///var/run/docker.sock"
+
+**HTTPS via Cloudflare:** Traefik atomatically grabs and updates certificates for all of my domains via a DNS challenge to Cloudflare. It also redirects all incoming HTTP (port 80) traffic to HTTPS with the proper settings. You can see the redirect configuration here:
+
+	entryPoints:
+	  web:
+	    address: :80
+	    http:
+	      redirections:
+		entryPoint:
+		  to: websecure
+	  websecure:
+	    address: :443
+	    http:
+	      tls:
+		certResolver: letsencrypt
+
+Note: If you use Cloudflare, be sure to set the SSL/TLS setting to FULL, otherwise you will get stuck in endless redirects.
+
+### [Authelia](https://www.authelia.com/docs/)
+From the configuration above, Traefik passes along all requests for non-public services to the Authelia provider. Authelia then prompts the user to log in (with 2FA in my setup) before redirecting them on to the requested service. If the user has an existing session, they are forwarded automatically. This means youo only need a single set of credentials for all internal services, and only need to log in once. 
+
+You will need to set up Authelia as a forwardAuth middleware in Traefik's dynamic configuration:
+
+	http:
+	  middlewares:
+	    authelia:
+	      forwardAuth:
+		address: http://authelia:9091/api/verify?rd=https://auth.example.com/
+		# Note: change the above domain to the subdomain you are hosting Authelia on
+
+And then set up Authelia's configuration to accept, authenticate, and redirect back to the requested service. It has a lot of options that I don't need, so I used the [local configuration example](https://github.com/authelia/authelia/tree/master/examples/compose/local) as a template for my own. The main change from the example was to set the default policy to `two_factor` (I choose which services get redirected in the docker-compose labels, so anything passed to Authelia needs auth by definition).
+
 ### Nginx
-### Fail2Ban/Crowdsec (TBD)
+I don't use nginx for anything besides a few static pages, but it's always nice to have.
+
+### Fail2Ban/Crowdsec
+TODO: I don't think I need this, but we'll see.
 
 ## Monitoring & Updates
 ### Watchtower
