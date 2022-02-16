@@ -114,7 +114,7 @@ Note: You will need to start the bridge first in inteactive mode.
 	docker run --rm -it -v $OPDIR/protonmail:/root shenxn/protonmail-bridge init
 	login
 
-This will create the necessary login tokens so you can send mail from the bridge.
+You can then use `info` to see the SMTP username/password.
 
 ### Apprise/Gotify
 ### Matrix/Synapse

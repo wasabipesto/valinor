@@ -71,6 +71,7 @@ services:
       - PUID=$PUID
       - PGID=$PGID
 
+  # Communication
   protonmail:
     image: shenxn/protonmail-bridge
     container_name: protonmail
@@ -82,6 +83,26 @@ services:
       - 143
     volumes:
       - $OPDIR/protonmail:/root
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
+
+  # Media
+  tautulli:
+    image: lscr.io/linuxserver/tautulli
+    container_name: tautulli
+    restart: unless-stopped
+    networks:
+      - wasabi
+    expose:
+      - 8181
+    volumes:
+      - $OPDIR/tautulli:/config
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.tautulli.entrypoints=websecure
+      - traefik.http.routers.tautulli.rule=Host(`tautulli.$DOMAIN`)
     environment:
       - TZ=$TZ
       - PUID=$PUID
