@@ -71,6 +71,22 @@ services:
       - PUID=$PUID
       - PGID=$PGID
 
+  # Monitoring & Updates
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    restart: unless-stopped
+    networks:
+      - wasabi
+    labels:
+      - WATCHTOWER_NOTIFICATIONS_LEVEL=info
+#      - WATCHTOWER_NOTIFICATIONS=gotify
+#      - WATCHTOWER_NOTIFICATION_GOTIFY_URL="https://my.gotify.tld/"
+#      - WATCHTOWER_NOTIFICATION_GOTIFY_TOKEN="SuperSecretToken"
+    environment:
+      - TZ=$TZ
+    # add a second instance when celebrimbor comes on the network
+
   # Communication
   protonmail:
     image: shenxn/protonmail-bridge
