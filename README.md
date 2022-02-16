@@ -1,5 +1,5 @@
 # Project Valinor
-My attempt to dockerise... everything.
+Like the elves unto Valinor, my services will embark upon ships (containers) and travel upon the straight road (VPN) to the Undying Lands (cloud). Also there will be some hobbits and a single dwarf for no particular reason.
 
 # Top-level goals
 1. Upgradable: I should be able to upgrade each service independently without affecting user data or other services.
