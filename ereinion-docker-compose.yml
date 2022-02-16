@@ -19,7 +19,7 @@ services:
       - $OPDIR/traefik:/etc/traefik
     environment:
       - TZ=$TZ
-      - CF_DNS_API_TOKEN_FILE=/etc/traefik/CF_DNS_API_TOKEN
+      - CF_DNS_API_TOKEN=$CF_DNS_API_TOKEN
     labels:
       - traefik.enable=true
       - traefik.http.routers.dashboard.tls=true
