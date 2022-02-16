@@ -102,7 +102,9 @@ In order to work with multiple hosts, I have to set up an overlay network. This 
 Pick one node as your "swarm manager". All other nodes will be "workers". I do not believe it is possible to make this a full mesh (excpet when n=2), so don't try.
 
 On the manager: `docker swarm init --advertise-addr [tailscale IP]`
+
 On the workers: `docker swarm join --token [token from manager] [manager ip:port]`
+
 On the manager: `docker network create -d overlay [network name]`
 
 ### External Firewall
