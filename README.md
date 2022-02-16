@@ -145,7 +145,7 @@ You will need to set the docker connection in your static configuration:
 Note: If you use Cloudflare, be sure to set the SSL/TLS setting to FULL, otherwise you will get stuck in endless redirects.
 
 ### [Authelia](https://www.authelia.com/docs/)
-From the configuration above, Traefik passes along all requests for non-public services to the Authelia provider. Authelia then prompts the user to log in (with 2FA in my setup) before redirecting them on to the requested service. If the user has an existing session, they are forwarded automatically. This means youo only need a single set of credentials for all internal services, and only need to log in once. 
+From the configuration above, Traefik passes along all requests for non-public services to the Authelia provider. Authelia then prompts the user to log in (with 2FA in my setup) before redirecting them on to the requested service. If the user has an existing session, they are forwarded automatically. This means you only need a single set of credentials for all internal services, and only need to log in once. 
 
 You will need to set up Authelia as a forwardAuth middleware in Traefik's dynamic configuration:
 
@@ -224,7 +224,7 @@ A request system so simple and pretty my parents could use it. The absolute kill
 TODO: Migrate existing page to new site.
 
 ### [Prowlarr](https://wiki.servarr.com/prowlarr)
-I used to use Jackett, but a [single](https://wiki.servarr.com/sonarr/troubleshooting#tracker-needs-rawsearch-caps) [issue](https://github.com/Jackett/Jackett/pull/11889) has pushed me to move to Prowlarr. If an indexer is doing its job, youo won't be sure it's there at all.
+I used to use Jackett, but a [single](https://wiki.servarr.com/sonarr/troubleshooting#tracker-needs-rawsearch-caps) [issue](https://github.com/Jackett/Jackett/pull/11889) has pushed me to move to Prowlarr. If an indexer is doing its job, you won't be sure it's there at all.
 
 ## Code
 ### Jupyter
