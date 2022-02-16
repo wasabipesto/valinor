@@ -149,8 +149,7 @@ You can then use `info` to see the SMTP username/password.
 ### Calibre-Web
 ### Plex
 
-## Monitoring & Updates
-### Watchtower
+## Monitoring
 ### Node-Exporter
 ### Exportarr
 ### Scrutiny
