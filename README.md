@@ -118,7 +118,7 @@ Traefik is the backbone of this network. It is an edge router that sits in front
 | traefik.http.routers.example.rule=Host(`example.$DOMAIN`) | Looks at the incoming hostname and send traffic to this container if it matches. |
 | traefik.http.routers.example.middlewares=authelia@file | Forwards the request over to Authelia for login before serving the page. |
 
-You will need to set the docker connection in youor static configuration:
+You will need to set the docker connection in your static configuration:
 
 	providers:
 	  file:
