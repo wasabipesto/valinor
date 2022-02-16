@@ -96,6 +96,15 @@ I use tailscale to mesh all of my devices together. This makes routing between t
 	curl -fsSL https://tailscale.com/install.sh | sh
 	sudo tailscale up
 
+## Overlay Network
+In order to work with multiple hosts, I have to set up an overlay network. This is exactly what I need, which is great, except Docker has forgotten that there are numbers between 1 and 100. Everything about overlay networks is a pain unless you're running in swarm mode, which I am not. In order to use overlay networks we have to turn on swarm mode and then ignore it forever. Sounds fun. As long as we shove it all through tailscale I think we'll be fine. If you're not using tailscale, get ready to poke some holes.
+
+Pick one node as your "swarm manager". All other nodes will be "workers". I do not believe it is possible to make this a full mesh (excpet when n=2), so don't try.
+
+On the manager: `docker swarm init --advertise-addr [tailscale IP]`
+On the workers: `docker swarm join --token [token from manager] [manager ip:port]`
+On the manager: `docker network create -d overlay [network name]`
+
 ### External Firewall
 For every device, I have a firewall that lives outside of this configuration. This is because docker likes to [punch holes](https://news.ycombinator.com/item?id=27670058) in anything it can touch and I don't need to put up with forwarding ports anymore thanks to tailscale.
 
