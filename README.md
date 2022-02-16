@@ -68,7 +68,7 @@ Log back in to apply the user account changes (the ability to control docker via
 	sudo chmod +x /usr/local/bin/docker-compose
 	docker-compose -v # pull the image and test
 
-Connect the machine to the tailnet
+Connect the machine to the tailnet:
 
 	curl -fsSL https://tailscale.com/install.sh | sh
 	sudo tailscale up
@@ -76,12 +76,9 @@ Connect the machine to the tailnet
 Just for me: set up git so I can push changes to this repository.
 
 	ssh-keygen # then upload to github
-	git config --global user.name "wasabipesto"
-	git config --global user.email "21313833+wasabipesto@users.noreply.github.com"
+	git config --global user.name [github username]
+	git config --global user.email [github noreply email]
 	ssh -T git@github.com # test the config
-	sudo apt install git-secret
-	# grab gpg keys from backup
-	gpg --import gpg-privkey.gpg
 
 Pull this repository!
 
@@ -90,4 +87,64 @@ Pull this repository!
 
 And finish setting things up (again, just for me).
 
+	sudo apt install git-secret
+	# grab gpg keys from backup
+	gpg --import gpg-privkey.gpg
 	git secret reveal
+
+# Services - Ereinion
+## Networking
+### Traefik
+### Authelia
+### Fail2Ban/Crowdsec (TBD)
+
+## Monitoring & Updates
+### Watchtower
+### Node-Exporter
+### cAdvisor
+### Prometheus
+### Grafana
+### AlertManager
+
+## Communication
+### Protonmail
+### Apprise/Gotify
+### Matrix/Synapse
+
+## Backup
+### Syncthing
+### FileBrowser
+### Duplicacy/Borg
+
+## D&D
+### WikiJs
+### PostgreSQL
+### Foundry
+
+## Media
+### Tautulli
+### Overseerr
+### Prowlarr
+
+## Code
+### Jupyter
+### Code-Server
+
+# Services - Celebrimbor
+## Media
+### Torrent Client TBD
+### FileBrowser
+### Sonarr
+### Radarr
+### Lidarr
+### Calibre
+### Calibre-Web
+### Plex
+
+## Monitoring
+### Node-Exporter
+### Exportarr
+### Scrutiny
+
+## Other
+### HomeAssistant
