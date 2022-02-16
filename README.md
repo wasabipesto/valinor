@@ -229,10 +229,12 @@ TODO: Migrate existing page to new site.
 ### [Prowlarr](https://wiki.servarr.com/prowlarr)
 I used to use Jackett, but a [single](https://wiki.servarr.com/sonarr/troubleshooting#tracker-needs-rawsearch-caps) [issue](https://github.com/Jackett/Jackett/pull/11889) has pushed me to move to Prowlarr. If an indexer is doing its job, you won't be sure it's there at all.
 
+TODO: Migrate existing config into new site (IIRC it's already dockerized).
+
 ## Code
 ### Jupyter
 ### Code-Server
-TODO: Evaluate if I need this, and where it should live.
+TODO: Evaluate if I need this, and if so where it should live.
 
 # Services - Celebrimbor
 ## Media
@@ -243,16 +245,27 @@ TODO: Evaluate torrent clients, pick one compatible with \*arrs.
 TODO: Set up for filesharing requests. Possibly couple with other 
 
 ### Sonarr
+TODO: Migrate existing config into new site.
+
 ### Radarr
+TODO: Migrate existing config into new site.
+
 ### Lidarr
+TODO: Evaluate and potentially set up.
+
 ### Calibre
 ### Calibre-Web
+TODO: Migrate existing config into new site.
+
 ### Plex
+TODO: Probably leave it alone.
 
 ## Monitoring
 ### Node-Exporter
 ### Exportarr
 ### Scrutiny
+TODO: Figure out how I want to do monitoring.
 
 ## Other
 ### HomeAssistant
+TODO: Re-create config in container.
