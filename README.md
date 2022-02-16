@@ -20,8 +20,6 @@ My general-purpose is named Erenion and lives in DigitalOcean:
 - I intend to upgrade as I migrate things in (I'm looking at you, Synapse)
 - 2 GB Memory / 50 GB Disk / NYC3 - Ubuntu 20.04 (LTS) x64
 
-My monitoring server is named Sauron and will live in DigitalOcean when I will it into being.
-
 My compute/fileserver is named Celebrimbor and lives on my home network:
 - 2x Xeon 2678 v3, 64GB Memory
 - 6x 12TB WD Elements shucked, in RAID5
@@ -166,6 +164,17 @@ I don't use nginx for anything besides a few static pages, but it's always nice 
 ### Fail2Ban/Crowdsec
 TODO: I don't think I need this, but we'll see.
 
+## Monitoring & Updates
+### Watchtower
+TODO: Set up notifications through discord.
+
+### Node-Exporter
+### cAdvisor
+### Prometheus
+### Grafana
+### AlertManager
+TODO: Set up all of the above.
+
 ## Communication
 ### [Protonmail](https://github.com/shenxn/protonmail-bridge-docker)
 I use Protonmail for my email, which means I can't simply forward SMTP requests to them in order to send mail from my server. They do have a bridge that works well enough in docker, so that's my "email server" now. Since it lives within the docker network, it's easy enough to configure various other services to just see the bridge as a valid email server. If I ever waned to read mail I would have to install something else, but I don't so I won't.
@@ -223,17 +232,6 @@ TODO: Migrate existing config into new site (IIRC it's already dockerized).
 ### Jupyter
 ### Code-Server
 TODO: Evaluate if I need this, and if so where it should live.
-
-# Monitoring & Updates - Sauron
-### Watchtower
-TODO: Move to sauron, configure for multiple targets. Set up notifications through discord(?).
-
-### Node-Exporter
-### cAdvisor
-### Prometheus
-### Grafana
-### AlertManager
-TODO: Set up all of the above.
 
 # Services - Celebrimbor
 ## Media
