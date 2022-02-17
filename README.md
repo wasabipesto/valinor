@@ -180,6 +180,8 @@ TODO: Set up notifications through discord.
 Note: The base prometheus image runs under a weird user and does not respect docker-compose. You have to set the data directory to be writable by user 65534 (or set chmod 777).
 
 ### Node-Exporter
+Note: If you have multiple instances of a service (like this one), make sure you add the hostname property to each one so prometheus can tell them apart.
+
 ### cAdvisor
 ### Grafana
 ### AlertManager
