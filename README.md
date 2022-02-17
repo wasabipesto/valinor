@@ -108,18 +108,24 @@ I use tailscale to mesh all of my devices together. This makes routing between t
 	sudo tailscale up
 
 
-### Overlay Network
+### [Overlay Network](https://docs.docker.com/network/network-tutorial-overlay/#use-an-overlay-network-for-standalone-containers)
 In order to work with multiple hosts, I have to set up an overlay network. This is exactly what I need, which is great, except Docker has forgotten that there are numbers between 1 and 100. Everything about overlay networks is a pain unless you're running in swarm mode, which I am not. In order to use overlay networks we have to turn on swarm mode and then ignore it forever. Sounds fun. As long as we shove it all through tailscale I think we'll be fine. If you're not using tailscale, get ready to poke some holes.
 
-Pick one node as your "swarm manager". All other nodes will be "workers". I do not believe it is possible to make this a full mesh (excpet when n=2), so don't try.
+Pick one node as your "swarm manager". All other nodes will be "workers". 
 
-On the manager: `docker swarm init --advertise-addr [tailscale IP]`
+On the manager, create the swarm but advertise it on the tailnet: `docker swarm init --advertise-addr [this server's tailscale IP]`
 
-On the workers: `docker swarm join --token [token from manager] [manager ip:port]`
+On the workers, join the swarm through the tailnet: `docker swarm join --advertise-addr [this server's tailscale IP] --token [token from manager] [manager's tailscale ip:port]`
 
-On the manager: `docker network create -d overlay --attachable [network name]`
+On the manager, create the overlay network: `docker network create -d overlay --attachable [network name]`
 
-On the workers: `docker run --network [network name] hello-world`
+This next part is very stupid. Docker workers do not see the manager's overlay network by default. You might think the workers would ask the manager when prompted with an unknown network. They do not. The only way, to my knowledge, to force a worker to learn about a network is to forcibly connect a container to it. This does not work through docker-compose.
+
+On the workers, force discovery of the network: `docker run -d --rm --name prime --network wasabi-overlay alpine sleep 60`
+
+You now have 60 seconds to join the overlay network via docker-compose. Because, and this is where is gets stupid, the worker _immediately forgets all overlay networks_ once the container exits. Once you've started your services via docker-compose, at least one container must continue running for the network to persist. If all containers die or disconnect from the network, you have to prime it again. 
+
+I believe promoting the worker to a manager (`docker node promote [worker]` on the manager) solves this, but I'm not entirely sure.
 
 
 ### External Firewall
