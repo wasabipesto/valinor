@@ -109,7 +109,8 @@ services:
 
   node-exporter:
     image: prom/node-exporter
-    container_name: node-exporter
+    container_name: node-ereinion
+    hostname: node-ereinion
     restart: unless-stopped
     networks:
       - wasabi-overlay
