@@ -117,7 +117,7 @@ On the manager: `docker swarm init --advertise-addr [tailscale IP]`
 
 On the workers: `docker swarm join --token [token from manager] [manager ip:port]`
 
-On the manager: `docker network create -d overlay [network name]`
+On the manager: `docker network create -d overlay --attachable [network name]`
 
 On the workers: `docker run --network [network name] hello-world`
 
