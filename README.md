@@ -4,8 +4,6 @@ Like the elves unto Valinor, my services will embark upon ships (containers) and
 This is my documentation for the project to migrate a bunch of services from bare metal/systemd to docker. I've experimented with docker a bit in the past and liked how easy it was to spin up new services and isolate runtime data from persistent volumes for easy updating. I have an old document with all of my notes from my current setup but I figured version history would be nice for this time 'round. The should be very little user-facing change as part of this move, basically everything is for my own benefit. It's also horribly overcomplicated, but it's for fun so who cares.
 
 # Mindset
-This whole thing is built around a few goals, some ungoals, and a hierarchy of needs. If these thoughts don't match yours, some of the decisions I make may not make sense to you. When in doubt, the simplest or most interesting solution should 
-
 ## Project goals
 1. Upgradable: I should be able to upgrade each service independently without affecting user data or other services.
 2. Adaptable: I should be able to add or remove services without major hassle. The fewer steps to spin up a new service, the better.
