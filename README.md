@@ -88,6 +88,7 @@ I need to set up git and git-secret to decrypt files and track changes.
 	gpg --import gpg-privkey.gpg
 	git secret reveal
 
+
 # Services - Ereinion
 ## Networking
 ### [Tailscale](https://tailscale.com/)
@@ -95,6 +96,7 @@ I use tailscale to mesh all of my devices together. This makes routing between t
 
 	curl -fsSL https://tailscale.com/install.sh | sh
 	sudo tailscale up
+
 
 ### Overlay Network
 In order to work with multiple hosts, I have to set up an overlay network. This is exactly what I need, which is great, except Docker has forgotten that there are numbers between 1 and 100. Everything about overlay networks is a pain unless you're running in swarm mode, which I am not. In order to use overlay networks we have to turn on swarm mode and then ignore it forever. Sounds fun. As long as we shove it all through tailscale I think we'll be fine. If you're not using tailscale, get ready to poke some holes.
@@ -107,12 +109,16 @@ On the workers: `docker swarm join --token [token from manager] [manager ip:port
 
 On the manager: `docker network create -d overlay [network name]`
 
+On the workers: `docker run --network [network name] hello-world`
+
+
 ### External Firewall
 For every device, I have a firewall that lives outside of this configuration. This is because docker likes to [punch holes](https://news.ycombinator.com/item?id=27670058) in anything it can touch and I don't need to put up with forwarding ports anymore thanks to tailscale.
 
 On Ereinion, I let DigitalOcean block all external requests except on ports 80 and 443. Traffic on these ports must pass through Traefik anyways.
 
 On Celebrimbor, my home router blocks all external requests except on plex's port, and a few other legacy systems I'm moving as part of this project. 
+
 
 ### [Traefik](https://doc.traefik.io/traefik/)
 Traefik is the backbone of this network. It is an edge router that sits in front of any request that comes in to the network (excepting tailscale). The main features I use are:
@@ -152,6 +158,7 @@ You will need to set the docker connection in your static configuration:
 
 Note: If you use Cloudflare, be sure to set the SSL/TLS setting to FULL, otherwise you will get stuck in endless redirects.
 
+
 ### [Authelia](https://www.authelia.com/docs/)
 From the configuration above, Traefik passes along all requests for non-public services to the Authelia provider. Authelia then prompts the user to log in (with 2FA in my setup) before redirecting them on to the requested service. If the user has an existing session, they are forwarded automatically. This means you only need a single set of credentials for all internal services, and only need to log in once. 
 
@@ -165,6 +172,7 @@ You will need to set up Authelia as a forwardAuth middleware in Traefik's dynami
 		# Note: change the above domain to the subdomain you are hosting Authelia on
 
 And then set up Authelia's configuration to accept, authenticate, and redirect back to the requested service. It has a lot of options that I don't need, so I used the [local configuration example](https://github.com/authelia/authelia/tree/master/examples/compose/local) as a template for my own. The main change from the example was to set the default policy to `two_factor` (I choose which services get redirected in the docker-compose labels, so anything passed to Authelia needs auth by definition).
+
 
 ### Nginx
 I don't use nginx for anything besides a few static pages, but it's always nice to have.
