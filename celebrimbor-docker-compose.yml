@@ -1,0 +1,40 @@
+version: "3"
+
+networks:
+  wasabi-overlay:
+    external: true
+
+services:
+
+  # Monitoring & Updates
+  watchtower:
+    image: containrrr/watchtower
+    container_name: watchtower
+    restart: unless-stopped
+    networks:
+      - wasabi-overlay
+    labels:
+      - WATCHTOWER_NOTIFICATIONS_LEVEL=info
+    environment:
+      - TZ=$TZ
+
+  node-exporter:
+    image: prom/node-exporter
+    container_name: node-celebrimbor
+    hostname: node-celebrimbor
+    restart: unless-stopped
+    networks:
+      - wasabi-overlay
+    expose:
+      - 9100
+    command:
+      - '--path.procfs=/host/proc' 
+      - '--path.sysfs=/host/sys'
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
