@@ -174,26 +174,29 @@ You will need to set up Authelia as a forwardAuth middleware in Traefik's dynami
 And then set up Authelia's configuration to accept, authenticate, and redirect back to the requested service. It has a lot of options that I don't need, so I used the [local configuration example](https://github.com/authelia/authelia/tree/master/examples/compose/local) as a template for my own. The main change from the example was to set the default policy to `two_factor` (I choose which services get redirected in the docker-compose labels, so anything passed to Authelia needs auth by definition).
 
 
-### Nginx
-I don't use nginx for anything besides a few static pages, but it's always nice to have.
+### [Nginx](https://github.com/nginxinc/docker-nginx)
+I don't use nginx for anything besides a few static pages, but it's always nice to have. Nginx catches all of the base domain traffic.
 
-### Fail2Ban/Crowdsec
-TODO: I don't think I need this, but we'll see.
 
 ## Monitoring & Updates
-### Watchtower
-TODO: Set up notifications through discord.
+### [Watchtower](https://containrrr.dev/watchtower/)
+Watchtower pulls new images for all of my containers and updates/recreates them as necessary. While it might be a security risk to automatically pull updates, it's not like I would have been more vigilant updating them all manually with `docker-compose up` anyways (provided I remembered to do it at all).
 
-### Prometheus
-Note: The base prometheus image runs under a weird user and does not respect docker-compose. You have to set the data directory to be writable by user 65534 (or set chmod 777).
+TODO: Set up notifications through discord's slack webhook.
 
-### Node-Exporter
-Note: If you have multiple instances of a service (like this one), make sure you add the hostname property to each one so prometheus can tell them apart.
 
-### cAdvisor
-### Grafana
-### AlertManager
-TODO: Set up all of the above.
+### [Prometheus](https://prometheus.io/docs/introduction/overview/)/[Node-Exporter](https://prometheus.io/docs/guides/node-exporter/)/[cAdvisor](https://prometheus.io/docs/guides/cadvisor/)[AlertManager](https://prometheus.io/docs/alerting/latest/alertmanager/)/[Grafana](https://grafana.com/docs/grafana/latest/installation/docker/)
+The services in this stack:
+- Prometheus pulls metrics from a bunch of different places and collates them for analysis. 
+  - Note: The base prometheus image runs under a weird user and does not respect the docker-compose user settings. You have to set the data directory to be writable/owned by user 65534 (or set chmod 777).
+- Node-Exprter grabs metrics from the host servers and makes them available to Prometheus.
+  - Note: If you have multiple instances of a service (like node-exporter), make sure you add the hostname property to each one so prometheus can tell them apart.
+- cAdvisor grabs metrics from each container and makes them available to Prometheus.
+- AlertManager looks at Prometheus data and evaluates a set of rules before notifying me about problems.
+- Grafana makes pretty graphs.
+
+TODO: Set up remaining services, notifications.
+
 
 ## Communication
 ### [Protonmail](https://github.com/shenxn/protonmail-bridge-docker)
@@ -208,8 +211,10 @@ Note: For first-time setup, you will need to start the bridge in interactive mod
 
 This will authenticate the bridge with Protonmail and store the session in $OPDIR. You can then use `info` to see the bridge's SMTP username/password and use that to connect from other containers. Note that the bridge is lying to you, port 1025 is not exposed from the container (use port 25 instead, and you'll probably have to disable tls checking).
 
+
 ### [Matrix](https://matrix.org/)/[Synapse](https://github.com/matrix-org/synapse)
 TODO: Utilize the [matrix-docker-ansible-deploy](https://github.com/spantaleev/matrix-docker-ansible-deploy) script with traefik proxy.
+
 
 ## Backup
 ### [Syncthing](https://docs.syncthing.net/)
@@ -238,15 +243,18 @@ Monitor Plex and see what people actually watch. A lot of the features I used to
 
 _Disclaimer: By using my server you give me full permission to make pretty graphs._ 
 
+
 ### [Overseerr](https://docs.overseerr.dev/)
 A request system so simple and pretty my parents could use it. The absolute killer feature being that you log in with your Plex account, so you don't need to remember another password. Get notifications when your requests are added or your issues resolved.
 
 TODO: Migrate existing page to new site.
 
+
 ### [Prowlarr](https://wiki.servarr.com/prowlarr)
 I used to use Jackett, but a [single](https://wiki.servarr.com/sonarr/troubleshooting#tracker-needs-rawsearch-caps) [issue](https://github.com/Jackett/Jackett/pull/11889) has pushed me to move to Prowlarr. If an indexer is doing its job, you won't be sure it's there at all.
 
 TODO: Migrate existing config into new site (IIRC it's already dockerized).
+
 
 ## Code
 ### Jupyter
