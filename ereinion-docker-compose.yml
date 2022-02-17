@@ -78,6 +78,8 @@ services:
     restart: unless-stopped
     networks:
       - wasabi-overlay
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     labels:
       - WATCHTOWER_NOTIFICATIONS_LEVEL=info
     environment:
