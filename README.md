@@ -1,7 +1,12 @@
 # Project Valinor
 Like the elves unto Valinor, my services will embark upon ships (containers) and travel upon the straight road (VPN) to the Undying Lands (cloud). Also there will be some hobbits and a single dwarf for no particular reason.
 
-# Top-level goals
+This is my documentation for the project to migrate a bunch of services from bare metal/systemd to docker. I've experimented with docker a bit in the past and liked how easy it was to spin up new services and isolate runtime data from persistent volumes for easy updating. I have an old document with all of my notes from my current setup but I figured version history would be nice for this time 'round. The should be very little user-facing change as part of this move, basically everything is for my own benefit. It's also horribly overcomplicated, but it's for fun so who cares.
+
+# Mindset
+This whole thing is built around a few goals, some ungoals, and a hierarchy of needs. If these thoughts don't match yours, some of the decisions I make may not make sense to you. When in doubt, the simplest or most interesting solution should 
+
+## Project goals
 1. Upgradable: I should be able to upgrade each service independently without affecting user data or other services.
 2. Adaptable: I should be able to add or remove services without major hassle. The fewer steps to spin up a new service, the better.
 3. Reproducible: I should be able to recreate the entire structure on a new machine. This includes restoring backups of user data.
@@ -10,9 +15,16 @@ Like the elves unto Valinor, my services will embark upon ships (containers) and
 6. Connected: I should be able to run resource-intensive services on a separate node from other general services. All services should still be able to communicate.
 7. Authenticated: All external requests should be authenticated before being passed into the network. 2FA would be preferred, but should not get in the way of usability.
 
-## Not goals:
-8. Redundant: I do not need concurrent redundancy/load balancing for any services. My time is cheap, my services are small, and my users are forgiving.
-9. Self-Healing: Nothing beyond updating and simple re-creation of docker containers will be necessary. 
+## Not goals
+1. Redundant: I do not need concurrent redundancy/load balancing for any services. My time is cheap, my services are small, and my users are forgiving.
+2. Self-Healing: Nothing beyond updating and simple re-creation of docker containers will be necessary. 
+
+## Heirarchy
+1. Media serving through Plex. This is the highest priority. I start getting angry texts if it's down for more than 20 minutes.
+2. Server administration/monitoring/backups. I should know if other things die before I need them to be not-dead.
+3. Media serving through all other channels. This includes anything where you get the content through my server and then do something with it later (books, etc).
+4. Media ingesting/requesting. Some services monitor certain channels and automatically add media users request. This is less important than serving existing media.
+5. Incidentals. Anything that's just for me, or only used by other people only when I'm there to troubleshoot when things go wrong.
 
 # Hardware
 My general-purpose is named Erenion and lives in DigitalOcean:
@@ -134,14 +146,20 @@ Traefik is the backbone of this network. It is an edge router that sits in front
 
 You will need to set the docker connection in your static configuration:
 
+<details><summary>traefik/traefik.yml</summary>
+
 	providers:
 	  file:
 	    directory: /etc/traefik/
 	  docker:
 	    exposedByDefault: false
 	    endpoint: "unix:///var/run/docker.sock"
+	
+</details>
 
-**HTTPS via Cloudflare:** Traefik atomatically grabs and updates certificates for all of my domains via a DNS challenge to Cloudflare. It also redirects all incoming HTTP (port 80) traffic to HTTPS with the proper settings. You can see the redirect configuration here:
+**HTTPS via Cloudflare:** Traefik automatically grabs and updates certificates for all of my domains via a DNS challenge to Cloudflare. It also redirects all incoming HTTP (port 80) traffic to HTTPS with the proper settings. You can see the redirect configuration here:
+
+<details><summary>traefik/traefik.yml</summary>
 
 	entryPoints:
 	  web:
@@ -156,6 +174,8 @@ You will need to set the docker connection in your static configuration:
 	      tls:
 		certResolver: letsencrypt
 
+</details>
+
 Note: If you use Cloudflare, be sure to set the SSL/TLS setting to FULL, otherwise you will get stuck in endless redirects.
 
 
@@ -164,12 +184,16 @@ From the configuration above, Traefik passes along all requests for non-public s
 
 You will need to set up Authelia as a forwardAuth middleware in Traefik's dynamic configuration:
 
+<details><summary>authelia/configuration.yml</summary>
+
 	http:
 	  middlewares:
 	    authelia:
 	      forwardAuth:
 		address: http://authelia:9091/api/verify?rd=https://auth.example.com/
 		# Note: change the above domain to the subdomain you are hosting Authelia on
+	
+</details>
 
 And then set up Authelia's configuration to accept, authenticate, and redirect back to the requested service. It has a lot of options that I don't need, so I used the [local configuration example](https://github.com/authelia/authelia/tree/master/examples/compose/local) as a template for my own. The main change from the example was to set the default policy to `two_factor` (I choose which services get redirected in the docker-compose labels, so anything passed to Authelia needs auth by definition).
 
@@ -240,8 +264,6 @@ TODO: Set up multiple independent containers abd the ability to spin up more.
 ## Media
 ### [Tautulli](https://github.com/Tautulli/Tautulli)
 Monitor Plex and see what people actually watch. A lot of the features I used to use (watch history, notifications, auto-updates) have since been replaced by other services, but it's nice to keep around.
-
-_Disclaimer: By using my server you give me full permission to make pretty graphs._ 
 
 
 ### [Overseerr](https://docs.overseerr.dev/)
