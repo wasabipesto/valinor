@@ -83,6 +83,30 @@ services:
     environment:
       - TZ=$TZ
 
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    restart: unless-stopped
+    networks:
+      - wasabi-overlay
+    expose:
+      - 9090
+    volumes:
+      - $OPDIR/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - $OPDIR/prometheus/data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.prometheus.entrypoints=websecure
+      - traefik.http.routers.prometheus.rule=Host(`prometheus.$DOMAIN`)
+      - traefik.http.routers.prometheus.middlewares=authelia@file
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
+
   # Communication
   protonmail:
     image: shenxn/protonmail-bridge
