@@ -176,9 +176,11 @@ TODO: I don't think I need this, but we'll see.
 ### Watchtower
 TODO: Set up notifications through discord.
 
+### Prometheus
+Note: The base prometheus image runs under a weird user and does not respect docker-compose. You have to set the data directory to be writable by user 65534 (or set chmod 777).
+
 ### Node-Exporter
 ### cAdvisor
-### Prometheus
 ### Grafana
 ### AlertManager
 TODO: Set up all of the above.
