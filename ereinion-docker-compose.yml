@@ -107,6 +107,26 @@ services:
       - PUID=$PUID
       - PGID=$PGID
 
+  node-exporter:
+    image: prom/node-exporter
+    container_name: node-exporter
+    restart: unless-stopped
+    networks:
+      - wasabi-overlay
+    expose:
+      - 9100
+    command:
+      - '--path.procfs=/host/proc' 
+      - '--path.sysfs=/host/sys'
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
+
   # Communication
   protonmail:
     image: shenxn/protonmail-bridge
