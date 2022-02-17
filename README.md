@@ -17,7 +17,7 @@ This is my documentation for the project to migrate a bunch of services from bar
 1. Redundant: I do not need concurrent redundancy/load balancing for any services. My time is cheap, my services are small, and my users are forgiving.
 2. Self-Healing: Nothing beyond updating and simple re-creation of docker containers will be necessary. 
 
-## Heirarchy
+## Hierarchy
 1. Media serving through Plex. This is the highest priority. I start getting angry texts if it's down for more than 20 minutes.
 2. Server administration/monitoring/backups. I should know if other things die before I need them to be not-dead.
 3. Media serving through all other channels. This includes anything where you get the content through my server and then do something with it later (books, etc).
