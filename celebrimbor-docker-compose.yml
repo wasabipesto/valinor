@@ -61,6 +61,23 @@ services:
       - TZ=$TZ
 
   # Media
+  rtorrent:
+    image: crazymax/rtorrent-rutorrent:latest
+    container_name: rtorrent
+    restart: unless-stopped
+    expose:
+      - 6881  # DHT
+      - 8000  # XMLRPC
+      - 8080  # RUTORRENT
+      - 9000  # WEBDAV
+    ports:
+      - 50000 # INCOMING
+    volumes:
+      - $OPDIR/rtorrent/data:/data
+      - $OPDIR/rtorrent/downloads:/downloads
+      - $OPDIR/rtorrent/passwd:/passwd
+    stop_grace_period: 20s
+
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:develop
     container_name: prowlarr
