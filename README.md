@@ -316,7 +316,9 @@ TODO: Migrate existing config into new site.
 TODO: Probably leave it alone.
 
 ## Monitoring
+### Watchtower
 ### Node-Exporter
+### cAdvisor
 ### Exportarr
 ### Scrutiny
 TODO: Figure out how I want to do monitoring.
