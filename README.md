@@ -274,43 +274,52 @@ A request system so simple and pretty my parents could use it. The absolute kill
 
 TODO: Migrate existing page to new site.
 
+
 ## Other
 ### Jupyter
 ### Code-Server
 Installed code-server, seems pretty good. Not sure how much I'll actually use it.
 
+
 ### Firefly III
 TODO: Evaluate and potentially set up.
 
+
 # Services - Celebrimbor
 ## Monitoring
-### Watchtower
-### Node-Exporter
-### cAdvisor
+### Watchtower/Node-Exporter/cAdvisor
 See above. All stats get scraped by Prometheus over on ereinion.
+
 
 ## Media
 ### Torrent Client TBD
 TODO: Evaluate torrent clients, pick one compatible with \*arrs.
 
+
 ### FileBrowser
 TODO: Set up for filesharing requests. Possibly couple with ereinion.
+
 
 ### [Prowlarr](https://wiki.servarr.com/prowlarr)
 I used to use Jackett, but a [single](https://wiki.servarr.com/sonarr/troubleshooting#tracker-needs-rawsearch-caps) [issue](https://github.com/Jackett/Jackett/pull/11889) has pushed me to move to Prowlarr. If an indexer is doing its job, you won't be sure it's there at all.
 
+
 ### Sonarr/Radarr
 TODO: Migrate existing config into new site.
 
+
 ### Lidarr? Bazaarr?
 TODO: Evaluate and potentially set up.
+
 
 ### Calibre
 ### Calibre-Web
 TODO: Migrate existing config into new site.
 
+
 ### Plex
 Being the core of my software, I'm probably going to end up leaving this one out of docker. Will re-evaluate later.
+
 
 ## Other
 ### HomeAssistant
