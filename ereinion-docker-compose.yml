@@ -138,7 +138,7 @@ services:
     networks:
       - wasabi-overlay
     expose:
-      - 80880
+      - 8080
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:ro
@@ -147,6 +147,26 @@ services:
       - /dev/disk/:/dev/disk:ro
     environment:
       - TZ=$TZ
+
+  grafana:
+    image: grafana/grafana-oss:main
+    container_name: grafana
+    restart: unless-stopped
+    networks:
+      - wasabi-overlay
+    expose:
+      - 3000
+    volumes:
+      - $OPDIR/grafana:/var/lib/grafana
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.grafana.entrypoints=websecure
+      - traefik.http.routers.grafana.rule=Host(`prometheus.$DOMAIN`)
+      - traefik.http.routers.grafana.middlewares=authelia@file
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
 
   # Communication
   protonmail:
