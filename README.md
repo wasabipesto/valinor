@@ -213,7 +213,7 @@ Watchtower pulls new images for all of my containers and updates/recreates them 
 TODO: Set up notifications through discord's slack webhook.
 
 
-### [Prometheus](https://prometheus.io/docs/introduction/overview/)/[Node-Exporter](https://prometheus.io/docs/guides/node-exporter/)/[cAdvisor](https://prometheus.io/docs/guides/cadvisor/)[AlertManager](https://prometheus.io/docs/alerting/latest/alertmanager/)/[Grafana](https://grafana.com/docs/grafana/latest/installation/docker/)
+### [Prometheus](https://prometheus.io/docs/introduction/overview/)/[Node-Exporter](https://prometheus.io/docs/guides/node-exporter/)/[cAdvisor](https://prometheus.io/docs/guides/cadvisor/)/[AlertManager](https://prometheus.io/docs/alerting/latest/alertmanager/)/[Grafana](https://grafana.com/docs/grafana/latest/installation/docker/)
 The services in this stack:
 - Prometheus pulls metrics from a bunch of different places and collates them for analysis. 
   - Note: The base prometheus image runs under a weird user and does not respect the docker-compose user settings. You have to set the data directory to be writable/owned by user 65534 (or set chmod 777).
@@ -223,7 +223,7 @@ The services in this stack:
 - AlertManager looks at Prometheus data and evaluates a set of rules before notifying me about problems.
 - Grafana makes pretty graphs.
 
-TODO: Set up remaining services, notifications.
+TODO: Set up graphs, notifications. Letting things run a bit to see typical load.
 
 
 ## Communication
@@ -248,22 +248,28 @@ TODO: Utilize the [matrix-docker-ansible-deploy](https://github.com/spantaleev/m
 ### [Syncthing](https://docs.syncthing.net/)
 TODO: Set up for multi-device sync.
 
+
 ### [FileBrowser](https://filebrowser.org/)
 TODO: Set up for convenient file access & sharing.
 Will probably need to set up some weird auth rules.
 
+
 ### [Duplicacy](https://github.com/gilbertchen/duplicacy)
 TODO: Evaulate each and figure out what I want. Planning on using B2 for offsite storage.
+
 
 ## D&D
 ### [WikiJS](https://docs.requarks.io/)
 TODO: Migrate in existing wiki site.
 
+
 ### [PostgreSQL](https://www.postgresql.org/docs/)
 TODO: Set up database for WkiJS.
 
+
 ### [Foundry](https://github.com/felddy/foundryvtt-docker)
 TODO: Set up multiple independent containers abd the ability to spin up more.
+
 
 ## Media
 ### [Tautulli](https://github.com/Tautulli/Tautulli)
