@@ -152,6 +152,7 @@ services:
     image: grafana/grafana-oss:main
     container_name: grafana
     restart: unless-stopped
+    user: $PUID:$PGID
     networks:
       - wasabi-overlay
     expose:
@@ -161,12 +162,10 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.grafana.entrypoints=websecure
-      - traefik.http.routers.grafana.rule=Host(`prometheus.$DOMAIN`)
+      - traefik.http.routers.grafana.rule=Host(`grafana.$DOMAIN`)
       - traefik.http.routers.grafana.middlewares=authelia@file
     environment:
       - TZ=$TZ
-      - PUID=$PUID
-      - PGID=$PGID
 
   # Communication
   protonmail:
