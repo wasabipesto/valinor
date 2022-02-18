@@ -208,9 +208,7 @@ I don't use nginx for anything besides a few static pages, but it's always nice 
 
 ## Monitoring & Updates
 ### [Watchtower](https://containrrr.dev/watchtower/)
-Watchtower pulls new images for all of my containers and updates/recreates them as necessary. While it might be a security risk to automatically pull updates, it's not like I would have been more vigilant updating them all manually with `docker-compose up` anyways (provided I remembered to do it at all).
-
-TODO: Set up notifications through discord's slack webhook.
+Watchtower pulls new images for all of my containers and updates/recreates them as necessary. While it might be a security risk to automatically pull updates, it's not like I would have been more vigilant updating them all manually with `docker-compose up` anyways (provided I remembered to do it at all). Plus now I get notifications.
 
 
 ### [Prometheus](https://prometheus.io/docs/introduction/overview/)/[Node-Exporter](https://prometheus.io/docs/guides/node-exporter/)/[cAdvisor](https://prometheus.io/docs/guides/cadvisor/)/[AlertManager](https://prometheus.io/docs/alerting/latest/alertmanager/)/[Grafana](https://grafana.com/docs/grafana/latest/installation/docker/)
@@ -246,7 +244,7 @@ TODO: Utilize the [matrix-docker-ansible-deploy](https://github.com/spantaleev/m
 
 ## Backup
 ### [Syncthing](https://docs.syncthing.net/)
-TODO: Set up for multi-device sync.
+A nice replacement for dropbox, minus all of the annoying features. Still experimenting with usability.
 
 
 ### [FileBrowser](https://filebrowser.org/)
