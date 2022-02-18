@@ -221,7 +221,7 @@ The services in this stack:
 - AlertManager looks at Prometheus data and evaluates a set of rules before notifying me about problems.
 - Grafana makes pretty graphs.
 
-TODO: Set up graphs, notifications. Letting things run a bit to see typical load.
+TODO: Set up graphs, notifications. I'm running a cool experiment where I don't do anything and later when I'm less lazy I can look back and call it a "control group".
 
 
 ## Communication
@@ -247,13 +247,8 @@ TODO: Utilize the [matrix-docker-ansible-deploy](https://github.com/spantaleev/m
 A nice replacement for dropbox, minus all of the annoying features. Still experimenting with usability.
 
 
-### [FileBrowser](https://filebrowser.org/)
-TODO: Set up for convenient file access & sharing.
-Will probably need to set up some weird auth rules.
-
-
 ### [Duplicacy](https://github.com/gilbertchen/duplicacy)
-TODO: Evaulate each and figure out what I want. Planning on using B2 for offsite storage.
+TODO: Evaulate it figure out what I want. Planning on using B2 for offsite storage.
 
 
 ## D&D
@@ -279,14 +274,13 @@ A request system so simple and pretty my parents could use it. The absolute kill
 
 TODO: Migrate existing page to new site.
 
-
-### [Prowlarr](https://wiki.servarr.com/prowlarr)
-I used to use Jackett, but a [single](https://wiki.servarr.com/sonarr/troubleshooting#tracker-needs-rawsearch-caps) [issue](https://github.com/Jackett/Jackett/pull/11889) has pushed me to move to Prowlarr. If an indexer is doing its job, you won't be sure it's there at all.
-
-## Code
+## Other
 ### Jupyter
 ### Code-Server
-TODO: Evaluate if I need this, and if so where it should live.
+Installed code-server, seems pretty good. Not sure how much I'll actually use it.
+
+### Firefly III
+TODO: Evaluate and potentially set up.
 
 # Services - Celebrimbor
 ## Monitoring
@@ -302,13 +296,13 @@ TODO: Evaluate torrent clients, pick one compatible with \*arrs.
 ### FileBrowser
 TODO: Set up for filesharing requests. Possibly couple with ereinion.
 
-### Sonarr
+### [Prowlarr](https://wiki.servarr.com/prowlarr)
+I used to use Jackett, but a [single](https://wiki.servarr.com/sonarr/troubleshooting#tracker-needs-rawsearch-caps) [issue](https://github.com/Jackett/Jackett/pull/11889) has pushed me to move to Prowlarr. If an indexer is doing its job, you won't be sure it's there at all.
+
+### Sonarr/Radarr
 TODO: Migrate existing config into new site.
 
-### Radarr
-TODO: Migrate existing config into new site.
-
-### Lidarr
+### Lidarr? Bazaarr?
 TODO: Evaluate and potentially set up.
 
 ### Calibre
@@ -316,7 +310,7 @@ TODO: Evaluate and potentially set up.
 TODO: Migrate existing config into new site.
 
 ### Plex
-TODO: Probably leave it alone.
+Being the core of my software, I'm probably going to end up leaving this one out of docker. Will re-evaluate later.
 
 ## Other
 ### HomeAssistant
