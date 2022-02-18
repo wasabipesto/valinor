@@ -71,11 +71,24 @@ services:
       - 9696
     volumes:
       - $OPDIR/prowlarr:/config
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.prowlarr.entrypoints=websecure
-      - traefik.http.routers.prowlarr.rule=Host(`prowlarr.$DOMAIN`)
     environment:
       - TZ=$TZ
       - PUID=$PUID
       - PGID=$PGID
+
+  radarr:
+    image: lscr.io/linuxserver/radarr
+    container_name: radarr
+    restart: unless-stopped
+    networks:
+      - wasabi-overlay
+    expose:
+      - 7878
+    volumes:
+      - $OPDIR/radarr:/config
+      - $DATADIR:/data
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
+

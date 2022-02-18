@@ -283,9 +283,6 @@ TODO: Migrate existing page to new site.
 ### [Prowlarr](https://wiki.servarr.com/prowlarr)
 I used to use Jackett, but a [single](https://wiki.servarr.com/sonarr/troubleshooting#tracker-needs-rawsearch-caps) [issue](https://github.com/Jackett/Jackett/pull/11889) has pushed me to move to Prowlarr. If an indexer is doing its job, you won't be sure it's there at all.
 
-TODO: Migrate existing config into new site (IIRC it's already dockerized).
-
-
 ## Code
 ### Jupyter
 ### Code-Server
