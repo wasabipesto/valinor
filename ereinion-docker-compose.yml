@@ -166,6 +166,27 @@ services:
       - PUID=$PUID
       - PGID=$PGID
 
+  # Backup
+  syncthing:
+    image: syncthing/syncthing
+    container_name: syncthing
+    restart: unless-stopped
+    networks:
+      - wasabi-overlay
+    expose:
+      - 8384
+    volumes:
+      - $OPDIR/syncthing:/var/syncthing
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.syncthing.entrypoints=websecure
+      - traefik.http.routers.syncthing.rule=Host(`syncthing.$DOMAIN`)
+      - traefik.http.routers.syncthing.middlewares=authelia@file
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
+
   # Media
   tautulli:
     image: lscr.io/linuxserver/tautulli
