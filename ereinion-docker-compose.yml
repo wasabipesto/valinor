@@ -205,3 +205,24 @@ services:
       - TZ=$TZ
       - PUID=$PUID
       - PGID=$PGID
+
+  # Code
+  code-server:
+    image: lscr.io/linuxserver/code-server
+    container_name: code-server
+    restart: unless-stopped
+    networks:
+      - wasabi-overlay
+    expose:
+      - 8443
+    volumes:
+      - $OPDIR/code:/config
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.code-server.entrypoints=websecure
+      - traefik.http.routers.code-server.rule=Host(`cood.$DOMAIN`)
+      - traefik.http.routers.code-server.middlewares=authelia@file
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
