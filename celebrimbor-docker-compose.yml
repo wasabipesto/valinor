@@ -59,3 +59,23 @@ services:
       - /dev/disk/:/dev/disk:ro
     environment:
       - TZ=$TZ
+
+  # Media
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr
+    container_name: prowlarr
+    restart: unless-stopped
+    networks:
+      - wasabi-overlay
+    expose:
+      - 9696
+    volumes:
+      - $OPDIR/prowlarr:/config
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.prowlarr.entrypoints=websecure
+      - traefik.http.routers.prowlarr.rule=Host(`prowlarr.$DOMAIN`)
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID

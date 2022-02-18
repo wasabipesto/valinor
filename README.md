@@ -292,6 +292,12 @@ TODO: Migrate existing config into new site (IIRC it's already dockerized).
 TODO: Evaluate if I need this, and if so where it should live.
 
 # Services - Celebrimbor
+## Monitoring
+### Watchtower
+### Node-Exporter
+### cAdvisor
+See above. All stats get scraped by Prometheus over on ereinion.
+
 ## Media
 ### Torrent Client TBD
 TODO: Evaluate torrent clients, pick one compatible with \*arrs.
@@ -314,12 +320,6 @@ TODO: Migrate existing config into new site.
 
 ### Plex
 TODO: Probably leave it alone.
-
-## Monitoring
-### Watchtower
-### Node-Exporter
-### cAdvisor
-See above. All stats get scraped by Prometheus over on ereinion.
 
 ## Other
 ### HomeAssistant
