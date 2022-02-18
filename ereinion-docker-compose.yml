@@ -131,6 +131,24 @@ services:
       - PUID=$PUID
       - PGID=$PGID
 
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor
+    container_name: cadvisor-ereinion
+    hostname: cadvistor-ereinion
+    restart: unless-stopped
+    networks:
+      - wasabi-overlay
+    expose:
+      - 80880
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    environment:
+      - TZ=$TZ
+
   # Communication
   protonmail:
     image: shenxn/protonmail-bridge
