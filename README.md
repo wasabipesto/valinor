@@ -319,9 +319,7 @@ TODO: Probably leave it alone.
 ### Watchtower
 ### Node-Exporter
 ### cAdvisor
-### Exportarr
-### Scrutiny
-TODO: Figure out how I want to do monitoring.
+See above. All stats get scraped by Prometheus over on ereinion.
 
 ## Other
 ### HomeAssistant
