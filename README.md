@@ -292,8 +292,8 @@ See above. All stats get scraped by Prometheus over on ereinion.
 
 
 ## Media
-### Torrent Client TBD
-TODO: Evaluate torrent clients, pick one compatible with \*arrs.
+### [r+utorrent](https://github.com/crazy-max/docker-rtorrent-rutorrent)
+In-progress.
 
 
 ### FileBrowser

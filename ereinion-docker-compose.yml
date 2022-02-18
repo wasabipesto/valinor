@@ -225,7 +225,7 @@ services:
       - PUID=$PUID
       - PGID=$PGID
 
-  # Code
+  # Other
   code-server:
     image: lscr.io/linuxserver/code-server
     container_name: code-server
