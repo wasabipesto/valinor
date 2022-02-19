@@ -225,6 +225,25 @@ services:
       - PUID=$PUID
       - PGID=$PGID
 
+  overseerr:
+    image: sctx/overseerr
+    container_name: overseerr
+    restart: unless-stopped
+    networks:
+      - wasabi-overlay
+    expose:
+      - 5055
+    volumes:
+      - $OPDIR/overseerr:/app/config
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.overseerr.entrypoints=websecure
+      - traefik.http.routers.overseerr.rule=Host(`requests.$DOMAIN`)
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
+
   # Other
   code-server:
     image: lscr.io/linuxserver/code-server
