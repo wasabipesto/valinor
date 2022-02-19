@@ -272,8 +272,6 @@ Monitor Plex and see what people actually watch. A lot of the features I used to
 ### [Overseerr](https://docs.overseerr.dev/)
 A request system so simple and pretty my parents could use it. The absolute killer feature being that you log in with your Plex account, so you don't need to remember another password. Get notifications when your requests are added or your issues resolved.
 
-TODO: Migrate existing page to new site.
-
 
 ## Other
 ### Jupyter
