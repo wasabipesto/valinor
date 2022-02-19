@@ -10,6 +10,7 @@ services:
   watchtower:
     image: containrrr/watchtower
     container_name: watchtower
+    hostname: watchtower-celebrimbor
     restart: unless-stopped
     networks:
       - wasabi-overlay
@@ -65,6 +66,8 @@ services:
     image: crazymax/rtorrent-rutorrent:latest
     container_name: rtorrent
     restart: unless-stopped
+    networks:
+      - wasabi-overlay
     expose:
       - 6881  # DHT
       - 8000  # XMLRPC
@@ -73,14 +76,20 @@ services:
     ports:
       - 50000 # INCOMING
     volumes:
-      - $OPDIR/rtorrent/data:/data
-      - $OPDIR/rtorrent/downloads:/downloads
-      - $OPDIR/rtorrent/passwd:/passwd
-    stop_grace_period: 20s
+      - $OPDIR/rtorrent/data/geoip:/data/geoip
+      - $OPDIR/rtorrent/data/rtorrent:/data/rtorrent
+      - $OPDIR/rtorrent/data/rutorrent:/data/rutorrent
+      - $DATADIR/Seeds:/data/Seeds
+    stop_grace_period: 15s
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
 
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:develop
     container_name: prowlarr
+    hostname: prowlarr
     restart: unless-stopped
     networks:
       - wasabi-overlay
@@ -96,6 +105,7 @@ services:
   radarr:
     image: lscr.io/linuxserver/radarr
     container_name: radarr
+    hostname: radarr
     restart: unless-stopped
     networks:
       - wasabi-overlay
