@@ -205,6 +205,29 @@ services:
       - PUID=$PUID
       - PGID=$PGID
 
+  duplicacy:
+    container_name: duplicacy
+    image: cr.hotio.dev/hotio/duplicacy
+    hostname: duplicacy
+    networks:
+      - wasabi-overlay
+    expose:
+      - 3875
+    volumes:
+      - $OPDIR/duplicacy/config:/config
+      - $OPDIR/duplicacy/cache:/cache
+      - $OPDIR/duplicacy/logs:/logs
+      - $OPDIR:/data:ro
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.duplicacy.entrypoints=websecure
+      - traefik.http.routers.duplicacy.rule=Host(`duplicacy.$DOMAIN`)
+      - traefik.http.routers.duplicacy.middlewares=authelia@file
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
+
   # Media
   tautulli:
     image: lscr.io/linuxserver/tautulli
