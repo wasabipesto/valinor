@@ -102,6 +102,23 @@ services:
       - PUID=$PUID
       - PGID=$PGID
 
+  sonarr:
+    image: lscr.io/linuxserver/sonarr
+    container_name: sonarr
+    hostname: sonarr
+    restart: unless-stopped
+    networks:
+      - wasabi-overlay
+    expose:
+      - 8989
+    volumes:
+      - $OPDIR/sonarr:/config
+      - $DATADIR:/data
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
+
   radarr:
     image: lscr.io/linuxserver/radarr
     container_name: radarr
