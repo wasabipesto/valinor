@@ -10,6 +10,7 @@ services:
   traefik:
     image: traefik:v2.6
     container_name: traefik
+    hostname: traefik
     restart: unless-stopped
     networks:
       - wasabi-overlay
@@ -34,6 +35,7 @@ services:
   authelia:
     image: authelia/authelia
     container_name: authelia
+    hostname: authelia
     restart: unless-stopped
     networks:
       - wasabi-overlay
@@ -54,6 +56,7 @@ services:
   nginx:
     image: lscr.io/linuxserver/nginx
     container_name: nginx
+    hostname: nginx
     restart: unless-stopped
     networks:
       - wasabi-overlay
@@ -74,6 +77,7 @@ services:
   watchtower:
     image: containrrr/watchtower
     container_name: watchtower
+    hostname: watchtower-ereinion
     restart: unless-stopped
     networks:
       - wasabi-overlay
@@ -88,6 +92,7 @@ services:
   prometheus:
     image: prom/prometheus
     container_name: prometheus
+    hostname: prometheus
     restart: unless-stopped
     networks:
       - wasabi-overlay
@@ -151,6 +156,7 @@ services:
   grafana:
     image: grafana/grafana-oss:main
     container_name: grafana
+    hostname: grafana
     restart: unless-stopped
     user: $PUID:$PGID
     networks:
@@ -171,6 +177,7 @@ services:
   protonmail:
     image: shenxn/protonmail-bridge
     container_name: protonmail
+    hostname: protonmail
     restart: unless-stopped
     networks:
       - wasabi-overlay
@@ -188,6 +195,7 @@ services:
   syncthing:
     image: syncthing/syncthing
     container_name: syncthing
+    hostname: syncthing
     restart: unless-stopped
     networks:
       - wasabi-overlay
@@ -209,6 +217,7 @@ services:
   tautulli:
     image: lscr.io/linuxserver/tautulli
     container_name: tautulli
+    hostname: tautulli
     restart: unless-stopped
     networks:
       - wasabi-overlay
@@ -228,6 +237,7 @@ services:
   overseerr:
     image: sctx/overseerr
     container_name: overseerr
+    hostname: overseerr
     restart: unless-stopped
     networks:
       - wasabi-overlay
@@ -248,6 +258,7 @@ services:
   code-server:
     image: lscr.io/linuxserver/code-server
     container_name: code-server
+    hostname: code-server
     restart: unless-stopped
     networks:
       - wasabi-overlay
