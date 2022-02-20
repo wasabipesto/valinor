@@ -248,7 +248,7 @@ A nice replacement for dropbox, minus all of the annoying features. Still experi
 
 
 ### [Duplicacy](https://github.com/gilbertchen/duplicacy)
-TODO: Evaulate it figure out what I want. Planning on using B2 for offsite storage.
+Still evaluating.
 
 
 ## D&D
@@ -271,8 +271,6 @@ Monitor Plex and see what people actually watch. A lot of the features I used to
 
 ### [Overseerr](https://docs.overseerr.dev/)
 A request system so simple and pretty my parents could use it. The absolute killer feature being that you log in with your Plex account, so you don't need to remember another password. Get notifications when your requests are added or your issues resolved.
-
-TODO: Migrate existing page to new site.
 
 
 ## Other
@@ -305,11 +303,7 @@ I used to use Jackett, but a [single](https://wiki.servarr.com/sonarr/troublesho
 
 
 ### Sonarr/Radarr
-TODO: Migrate existing config into new site.
-
-
-### Lidarr? Bazaarr?
-TODO: Evaluate and potentially set up.
+Done! Easy as pie. Just make sure the paths mappings inside each container are consistent.
 
 
 ### Calibre
