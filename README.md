@@ -281,7 +281,7 @@ And then we run the [federation tester](https://federationtester.matrix.org) to 
 
 
 ### [Element](https://github.com/vector-im/element-webd)
-Element is really simple to set up, you don't even really need to mount the config file if you're okay with the defaults. If you do, make sure youo create an empty file first. Otherwise docker will create a folder there, which you probably don't want.
+Element is really simple to set up, you don't even really need to mount the config file if you're okay with the defaults. If you do, make sure you create an empty file first. Otherwise docker will create a folder there, which you probably don't want.
 
 
 ## Backup
