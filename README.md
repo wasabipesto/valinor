@@ -239,7 +239,45 @@ This will authenticate the bridge with Protonmail and store the session in $OPDI
 
 
 ### [Matrix](https://matrix.org/)/[Synapse](https://github.com/matrix-org/synapse)
-TODO: Utilize the [matrix-docker-ansible-deploy](https://github.com/spantaleev/matrix-docker-ansible-deploy) script with traefik proxy.
+In order to run, synapse needs a configuration file located at /data/homeserver.yaml. You can have it generate one automatically with your domain by using: 
+
+	docker run -it --rm \
+		-v /opt/synapse:/data \
+		-e SYNAPSE_SERVER_NAME=[your domain] \
+		-e SYNAPSE_REPORT_STATS=yes \
+		-e UID=1000 \
+		-e GID=1000 \
+		matrixdotorg/synapse:latest generate
+
+Then pop over and edit it to your liking. This will also generate some other random necessary files in synapse's default structure. If you spin it up now, you should get a nice little "it works!" page. 
+
+NOTE: The domain you use in that command should be your base domain (example.com NOT matrix.example.com). If you mess this up, just delete it and start over. Trust me.
+
+Next I'm going to give synapse a postgres database because we outgrew our sqlite pants a few years ago. When you specify the postgres container in compose, just give it a username, password, and startup options. Note: when you first launch postgres, it will try to initialize the database. It [cannot](https://github.com/docker-library/postgres/pull/253) do this while running under some UIDs. What I do is run it once as the default user (UID 40), stop the container, chown the files back to 1000, then recreate the container running as 1000. Something something stateless architecture.
+
+After that's done, synapse will log in with the hostname, username, and password you specify in the config:
+
+	database:
+	  name: psycopg2
+	  txn_limit: 10000
+	  args:
+		user: synapse
+		password: [that password you set in your .env for postgres]
+		database: synapse
+		host: postgres-synapse
+		port: 5432
+		cp_min: 5
+		cp_max: 10
+
+If you use redis for worker management, you can do that here too. I won't, but you can. 
+
+Synapse follows [these rules](https://spec.matrix.org/latest/server-server-api/#resolving-server-names) to find your server. 
+- As a first step it assumes synapse is available at port 8448 and tries contacting it there. If you're comfortable allowing non-proxied traffic into your network, you can just open port 8448 on traefik and pipe all of that directly to synapse for it to deal with. 
+- Unfortunately, I've gone to some hassle to make all of cloudflare's buttons orange so we're going to do it the hard way. The next step is to look for a .well-known file at the base domain (served over port 443) that lists where we can find synapse. 
+- Interestingly, synapse is capable of generating this file for us. When we pass it [this configuration](https://matrix-org.github.io/synapse/latest/delegate.html) it will put the .well-known files from the internal webserver. We can copy those over to nginx to point new connections in the right direction.
+- Now, since synapse is already capable of falling back to port 443 to check for a .well-known file (which is ironically served by synapse) why doesn't it just fall back to federation over port 443? We may never know. 
+
+And then we run the [federation tester](https://federationtester.matrix.org) to make sure everything checks out.
 
 
 ## Backup
