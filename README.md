@@ -280,6 +280,10 @@ Synapse follows [these rules](https://spec.matrix.org/latest/server-server-api/#
 And then we run the [federation tester](https://federationtester.matrix.org) to make sure everything checks out.
 
 
+### [Element](https://github.com/vector-im/element-webd)
+Element is really simple to set up, you don't even really need to mount the config file if you're okay with the defaults. If you do, make sure youo create an empty file first. Otherwise docker will create a folder there, which you probably don't want.
+
+
 ## Backup
 ### [Syncthing](https://docs.syncthing.net/)
 A nice replacement for dropbox, minus all of the annoying features. Still experimenting with usability.

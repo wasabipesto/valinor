@@ -234,6 +234,24 @@ services:
     volumes:
       - $OPDIR/postgres-matrix:/var/lib/postgresql/data
 
+  element:
+    image: vectorim/element-web
+    container_name: element
+    hostname: element
+    restart: unless-stopped
+    networks:
+      - wasabi-overlay
+    expose:
+      - 80
+    volumes:
+      - $OPDIR/element/config.json:/app/config.json:ro
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.element.entrypoints=websecure
+      - traefik.http.routers.element.rule=Host(`element.$DOMAIN`)
+    environment:
+      - TZ=$TZ
+
   # Backup
   syncthing:
     image: syncthing/syncthing
@@ -332,6 +350,7 @@ services:
       - 8443
     volumes:
       - $OPDIR/code:/config
+      - $OPDIR:/opt
     labels:
       - traefik.enable=true
       - traefik.http.routers.code-server.entrypoints=websecure
