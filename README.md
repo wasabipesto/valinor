@@ -277,7 +277,7 @@ Synapse follows [these rules](https://spec.matrix.org/latest/server-server-api/#
 - Interestingly, synapse is capable of generating this file for us. When we pass it [this configuration](https://matrix-org.github.io/synapse/latest/delegate.html) it will put the .well-known files from the internal webserver. We can copy those over to nginx to point new connections in the right direction.
 - Now, since synapse is already capable of falling back to port 443 to check for a .well-known file (which is ironically served by synapse) why doesn't it just fall back to federation over port 443? We may never know. 
 
-And then we run the [federation tester](https://federationtester.matrix.org) to make sure everything checks out.
+And then we run the [federation tester](https://federationtester.matrix.org) to make sure everything checks out. Note: You may need to set the MIME types of the `server` and `client` files to application/json in nginx.
 
 
 ## Backup
