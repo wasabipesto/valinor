@@ -86,6 +86,21 @@ services:
       - PUID=$PUID
       - PGID=$PGID
 
+  filebrowser:
+    image: filebrowser/filebrowser
+    container_name: filebrowser
+    hostname: filebrowser
+    user: $PUID:$PGID
+    restart: unless-stopped
+    networks:
+      - wasabi-overlay
+    expose:
+      - 80
+    volumes:
+      - $OPDIR/filebrowser/filebrowser.db:/database/filebrowser.db
+      - $OPDIR/filebrowser/.filebrowser.json:/.filebrowser.json
+      - $DATADIR:/data
+
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:develop
     container_name: prowlarr
