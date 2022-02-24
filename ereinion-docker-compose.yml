@@ -200,7 +200,7 @@ services:
     networks:
       - wasabi-overlay
     expose:
-      - 8448
+      - 8008
     volumes:
       - $OPDIR/synapse:/data
     labels:
@@ -251,6 +251,18 @@ services:
       - traefik.http.routers.element.rule=Host(`element.$DOMAIN`)
     environment:
       - TZ=$TZ
+
+  heisenbridge:
+    image: hif1/heisenbridge
+    container_name: heisenbridge
+    restart: unless-stopped
+    networks:
+      - wasabi-overlay
+    expose:
+      - 9898
+    volumes:
+      - $OPDIR/synapse:/data:ro
+    command: -v -c /data/heisenbridge.yaml http://synapse:8008
 
   # Backup
   syncthing:

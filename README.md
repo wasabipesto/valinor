@@ -284,6 +284,24 @@ And then we run the [federation tester](https://federationtester.matrix.org) to 
 Element is really simple to set up, you don't even really need to mount the config file if you're okay with the defaults. If you do, make sure you create an empty file first. Otherwise docker will create a folder there, which you probably don't want.
 
 
+### [Heisenbridge](https://github.com/hifi/heisenbridge)
+Heisenbridge is like ZNC but for matrix. When you first start heisenbridge it will need to generate a registration file:
+
+	docker run --rm \
+		-v /opt/synapse:/data \
+		hif1/heisenbridge \
+		-c /data/heisenbridge.yaml \
+		-l 0.0.0.0 \
+		--generate \
+		-o @adminuser:example.com
+
+
+Then in your synapse homeserver.yaml you will need to add:
+
+	app_service_config_files:
+	  - /data/heisenbridge.yaml
+
+
 ## Backup
 ### [Syncthing](https://docs.syncthing.net/)
 A nice replacement for dropbox, minus all of the annoying features. Still experimenting with usability.
