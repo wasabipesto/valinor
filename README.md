@@ -241,6 +241,8 @@ This will authenticate the bridge with Protonmail and store the session in $OPDI
 ### [Matrix](https://matrix.org/)/[Synapse](https://github.com/matrix-org/synapse)
 In order to run, synapse needs a configuration file located at /data/homeserver.yaml. You can have it generate one automatically with your domain by using: 
 
+<details><summary>docker run</summary>
+
 	docker run -it --rm \
 		-v /opt/synapse:/data \
 		-e SYNAPSE_SERVER_NAME=[your domain] \
@@ -249,6 +251,8 @@ In order to run, synapse needs a configuration file located at /data/homeserver.
 		-e GID=1000 \
 		matrixdotorg/synapse:latest generate
 
+</details>
+
 Then pop over and edit it to your liking. This will also generate some other random necessary files in synapse's default structure. If you spin it up now, you should get a nice little "it works!" page. 
 
 NOTE: The domain you use in that command should be your base domain (example.com NOT matrix.example.com). If you mess this up, just delete it and start over. Trust me.
@@ -256,6 +260,8 @@ NOTE: The domain you use in that command should be your base domain (example.com
 Next I'm going to give synapse a postgres database because we outgrew our sqlite pants a few years ago. When you specify the postgres container in compose, just give it a username, password, and startup options. Note: when you first launch postgres, it will try to initialize the database. It [cannot](https://github.com/docker-library/postgres/pull/253) do this while running under some UIDs. What I do is run it once as the default user (UID 40), stop the container, chown the files back to 1000, then recreate the container running as 1000. Something something stateless architecture.
 
 After that's done, synapse will log in with the hostname, username, and password you specify in the config:
+
+<details><summary>synapse/homeserver.yaml</summary>
 
 	database:
 	  name: psycopg2
@@ -268,6 +274,8 @@ After that's done, synapse will log in with the hostname, username, and password
 		port: 5432
 		cp_min: 5
 		cp_max: 10
+
+</details>
 
 If you use redis for worker management, you can do that here too. I won't, but you can. 
 
@@ -287,19 +295,27 @@ Element is really simple to set up, you don't even really need to mount the conf
 ### [Heisenbridge](https://github.com/hifi/heisenbridge)
 Heisenbridge is like ZNC but for matrix. When you first start heisenbridge it will need to generate a registration file:
 
+<details><summary>docker run</summary>
+
 	docker run --rm \
-		-v /opt/synapse:/data \
+		-v [/opt]/synapse:/data \
 		hif1/heisenbridge \
 		-c /data/heisenbridge.yaml \
 		-l 0.0.0.0 \
 		--generate \
-		-o @adminuser:example.com
+		-o @[admin user]:example.com
+
+</details>
 
 
 Then in your synapse homeserver.yaml you will need to add:
 
+<details><summary>synapse/homeserver.yaml</summary>
+
 	app_service_config_files:
 	  - /data/heisenbridge.yaml
+
+</details>
 
 
 ## Backup
@@ -307,17 +323,13 @@ Then in your synapse homeserver.yaml you will need to add:
 A nice replacement for dropbox, minus all of the annoying features. Still experimenting with usability.
 
 
-### [Duplicacy](https://github.com/gilbertchen/duplicacy)
-Still evaluating.
+### [Duplicacy](https://github.com/gilbertchen/duplicacy)/Other Backup
+Still evaluating. Trying to have everything back up to b2 for easy restores.
 
 
 ## D&D
-### [WikiJS](https://docs.requarks.io/)
+### [WikiJS](https://docs.requarks.io/)/[PostgreSQL](https://www.postgresql.org/docs/)
 TODO: Migrate in existing wiki site.
-
-
-### [PostgreSQL](https://www.postgresql.org/docs/)
-TODO: Set up database for WkiJS.
 
 
 ### [Foundry](https://github.com/felddy/foundryvtt-docker)
@@ -336,11 +348,7 @@ A request system so simple and pretty my parents could use it. The absolute kill
 ## Other
 ### Jupyter
 ### Code-Server
-Installed code-server, seems pretty good. Not sure how much I'll actually use it.
-
-
-### Firefly III
-TODO: Evaluate and potentially set up.
+I have code-server set up with its own local storage for settings and config, and then another mount to /opt for my entire working directory. This lets me edit yaml/config files through all of my services without doing a thing. As an added bonus I can ssh into the host (172.17.0.1 by default) and run docker commands in the same window! Pretty handy so far.
 
 
 # Services - Celebrimbor
@@ -351,7 +359,9 @@ See above. All stats get scraped by Prometheus over on ereinion.
 
 ## Media
 ### [r+utorrent](https://github.com/crazy-max/docker-rtorrent-rutorrent)
-In-progress.
+As far as I've found, r(u)torrent is the only solution for managing a large amount of torrents. Since I use sonarr/radarr's hardlink function, as long as I keep the media in one form or another I can keep seeding it. So I have rtorrent set up to download to a special `$DATADIR` which lives on celebrimbor's RAID array and sonarr/radarr pull from there. One thing to note: the path for this folder should be mapped the same in every container (ie /data/downloads). 
+
+If this container ever becomes unmanageable, I'll probably spin it off somehow and just start a new one. Did I mention docker networking is uper easy?
 
 
 ### FileBrowser
