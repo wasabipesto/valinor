@@ -365,15 +365,21 @@ If this container ever becomes unmanageable, I'll probably spin it off somehow a
 
 
 ### FileBrowser
-TODO: Set up for filesharing requests. Possibly couple with ereinion.
+Filebrowser sits on the storage server and has a nice little webui so I can move/edit/upload/download anything on-the-go. More importantly, it has a "sharing" feature where I can click on any file and generate a link to it (with password and/or time limit) for easy and secure access.
 
 
 ### [Prowlarr](https://wiki.servarr.com/prowlarr)
 I used to use Jackett, but a [single](https://wiki.servarr.com/sonarr/troubleshooting#tracker-needs-rawsearch-caps) [issue](https://github.com/Jackett/Jackett/pull/11889) has pushed me to move to Prowlarr. If an indexer is doing its job, you won't be sure it's there at all.
 
 
-### Sonarr/Radarr
-Done! Easy as pie. Just make sure the paths mappings inside each container are consistent.
+### [Sonarr](https://wiki.servarr.com/sonarr)/[Radarr](https://wiki.servarr.com/radarr)
+Sonarr and Radarr are the core of my media ingestion. The typical flow looks like:
+
+1. I (or a user) request an item through Overseerr. The settings in Overseerr determine the standard quality profile, destination folder, etc.
+2. That information is passed along to the relevant {son,rad}arr container. It autommatically sets up an RSS watch to look for new items matching that request and, depending on the settings, also begins a backfill search.
+3. Those requests are passed to Prowlarr, which is connected to all of my trackers. It will cache, bundle, and interpet content-aware requests before passing them off to the relevant trackers.
+4. If anything is found, it will be sent to rtorrent to download. Sonarr and radarr will poll rtorrent to find out when the download is complete and then hardlink the file into Plex's media directory.
+5. Plex (hopefully) sees the file and parses it correctly, making it available to stream.
 
 
 ### Calibre
