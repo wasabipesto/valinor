@@ -286,28 +286,62 @@ services:
       - PUID=$PUID
       - PGID=$PGID
 
-  duplicacy:
-    container_name: duplicacy
-    image: cr.hotio.dev/hotio/duplicacy
-    hostname: duplicacy
+  # D&D
+  foundry-kirkwall:
+    image: felddy/foundryvtt:release
+    container_name: foundry-kirkwall
+    hostname: foundry-kirkwall
+    restart: unless-stopped
     networks:
       - wasabi-overlay
     expose:
-      - 3875
+      - 30000
     volumes:
-      - $OPDIR/duplicacy/config:/config
-      - $OPDIR/duplicacy/cache:/cache
-      - $OPDIR/duplicacy/logs:/logs
-      - $OPDIR:/data:ro
+      - $OPDIR/kirkwall:/data
     labels:
       - traefik.enable=true
-      - traefik.http.routers.duplicacy.entrypoints=websecure
-      - traefik.http.routers.duplicacy.rule=Host(`duplicacy.$DOMAIN`)
-      - traefik.http.routers.duplicacy.middlewares=authelia@file
+      - traefik.http.routers.kirkwall.entrypoints=websecure
+      - traefik.http.routers.kirkwall.rule=Host(`kirkwall.$DOMAIN`)
+      - traefik.http.routers.kirkwall.middlewares=authelia@file
     environment:
-      - TZ=$TZ
-      - PUID=$PUID
-      - PGID=$PGID
+      - TIMEZONE=$TZ
+      - FOUNDRY_UID=$PUID
+      - FOUNDRY_GID=$PGID
+      - FOUNDRY_PASSWORD=$FOUNDRY_PASSWORD
+      - FOUNDRY_USERNAME=$FOUNDRY_USERNAME
+      - CONTAINER_PRESERVE_CONFIG=true
+      - FOUNDRY_HOSTNAME=kirkwall.$DOMAIN
+      - FOUNDRY_IP_DISCOVERY=false
+      - FOUNDRY_MINIFY_STATIC_FILES=true
+      - FOUNDRY_PROXY_SSL=true
+
+  foundry-afterstory:
+    image: felddy/foundryvtt:release
+    container_name: foundry-afterstory
+    hostname: foundry-afterstory
+    restart: unless-stopped
+    networks:
+      - wasabi-overlay
+    expose:
+      - 30000
+    volumes:
+      - $OPDIR/afterstory:/data
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.afterstory.entrypoints=websecure
+      - traefik.http.routers.afterstory.rule=Host(`afterstory.$DOMAIN`)
+      - traefik.http.routers.afterstory.middlewares=authelia@file
+    environment:
+      - TIMEZONE=$TZ
+      - FOUNDRY_UID=$PUID
+      - FOUNDRY_GID=$PGID
+      - FOUNDRY_PASSWORD=$FOUNDRY_PASSWORD
+      - FOUNDRY_USERNAME=$FOUNDRY_USERNAME
+      - CONTAINER_PRESERVE_CONFIG=true
+      - FOUNDRY_HOSTNAME=afterstory.$DOMAIN
+      - FOUNDRY_IP_DISCOVERY=false
+      - FOUNDRY_MINIFY_STATIC_FILES=true
+      - FOUNDRY_PROXY_SSL=true
 
   # Media
   tautulli:
@@ -372,6 +406,29 @@ services:
       - TZ=$TZ
       - PUID=$PUID
       - PGID=$PGID
+
+  jupyter:
+    image: jupyter/datascience-notebook
+    container_name: jupyter
+    hostname: jupyter
+    restart: unless-stopped
+    networks:
+      - wasabi-overlay
+    expose:
+      - 8888
+    volumes:
+      - $OPDIR/jupyter:/home/joyvan
+      - $OPDIR/nginx/www/jupyter:/home/joyvan/www
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.jupyter.entrypoints=websecure
+      - traefik.http.routers.jupyter.rule=Host(`jupyter.$DOMAIN`)
+      - traefik.http.routers.jupyter.middlewares=authelia@file
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
+      - JUPYTER_ENABLE_LAB=yes
 
   heimdall:
     image: lscr.io/linuxserver/heimdall

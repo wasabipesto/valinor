@@ -323,12 +323,12 @@ Then in your synapse homeserver.yaml you will need to add:
 A nice replacement for dropbox, minus all of the annoying features. Still experimenting with usability.
 
 
-### [Duplicacy](https://github.com/gilbertchen/duplicacy)/Other Backup
-Still evaluating. Trying to have everything back up to b2 for easy restores.
+### Other Backup
+Still evaluating. Trying to have everything back up to b2 for easy restores. Looking into restic, will probably have to roll my own image/scripts.
 
 
 ## D&D
-### [WikiJS](https://docs.requarks.io/)/[PostgreSQL](https://www.postgresql.org/docs/)
+### [WikiJS](https://docs.requarks.io/)
 TODO: Migrate in existing wiki site.
 
 
@@ -346,9 +346,16 @@ A request system so simple and pretty my parents could use it. The absolute kill
 
 
 ## Other
-### Jupyter
-### Code-Server
+### [Code-Server](https://github.com/coder/code-server)
 I have code-server set up with its own local storage for settings and config, and then another mount to /opt for my entire working directory. This lets me edit yaml/config files through all of my services without doing a thing. As an added bonus I can ssh into the host (172.17.0.1 by default) and run docker commands in the same window! Pretty handy so far.
+
+
+### [Jupyter](https://docs.jupyter.org/en/latest/)
+TODO
+
+
+### [Heimdall](https://github.com/linuxserver/Heimdall)
+TODO
 
 
 # Services - Celebrimbor
@@ -364,7 +371,7 @@ As far as I've found, r(u)torrent is the only solution for managing a large amou
 If this container ever becomes unmanageable, I'll probably spin it off somehow and just start a new one. Did I mention docker networking is uper easy?
 
 
-### FileBrowser
+### [FileBrowser](https://github.com/filebrowser/filebrowser)
 Filebrowser sits on the storage server and has a nice little webui so I can move/edit/upload/download anything on-the-go. More importantly, it has a "sharing" feature where I can click on any file and generate a link to it (with password and/or time limit) for easy and secure access.
 
 
