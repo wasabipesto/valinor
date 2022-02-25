@@ -333,7 +333,7 @@ TODO: Migrate in existing wiki site.
 
 
 ### [Foundry](https://github.com/felddy/foundryvtt-docker)
-TODO: Set up multiple independent containers abd the ability to spin up more.
+This Foundry image downloads the newest app version every time it starts, which is an interesting choice. It mounts in all of the config, system, and world files from there and boots up into a session. I have multiple sessions hosted on seperate containers so I can have them running simultaneously.
 
 
 ## Media
@@ -351,11 +351,11 @@ I have code-server set up with its own local storage for settings and config, an
 
 
 ### [Jupyter](https://docs.jupyter.org/en/latest/)
-TODO
+Jupyter is quite nice for ingesting and visualizing lots of data. This container is a bit finnicky to get set up, I'd like to get it under control at some point.
 
 
 ### [Heimdall](https://github.com/linuxserver/Heimdall)
-TODO
+Pretty buttons I tend to not use. I also don't love having to set them up manually. Let's see if that changes this time.
 
 
 # Services - Celebrimbor
