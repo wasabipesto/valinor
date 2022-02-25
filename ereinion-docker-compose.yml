@@ -372,3 +372,22 @@ services:
       - TZ=$TZ
       - PUID=$PUID
       - PGID=$PGID
+
+  heimdall:
+    image: lscr.io/linuxserver/heimdall
+    container_name: heimdall
+    hostname: heimdall
+    restart: unless-stopped
+    networks:
+      - wasabi-overlay
+    volumes:
+      - $OPDIR/heimdall:/config
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.heimdall.entrypoints=websecure
+      - traefik.http.routers.heimdall.rule=Host(`heimdall.$DOMAIN`)
+      - traefik.http.routers.heimdall.middlewares=authelia@file
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
