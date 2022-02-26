@@ -100,6 +100,7 @@ services:
       - $OPDIR/filebrowser/filebrowser.db:/database/filebrowser.db
       - $OPDIR/filebrowser/.filebrowser.json:/.filebrowser.json
       - $DATADIR:/data
+#    entrypoint: /bin/sh # only used with docker-compose run to edit config
 
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:develop
@@ -161,12 +162,14 @@ services:
       - wasabi-overlay
     expose:
       - 8123
+#    ports:
+#      - 8123:8123
     volumes:
       - $OPDIR/homeassistant:/config
       - /etc/localtime:/etc/localtime:ro
     restart: unless-stopped
-    privileged: true
-    network_mode: host
-    # pass through usb devices
+#    privileged: true
+#    network_mode: host
+#    pass through usb devices
 #    devices:
 #      - /dev/ttyUSB0:/dev/ttyUSB0
