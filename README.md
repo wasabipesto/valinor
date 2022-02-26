@@ -88,7 +88,7 @@ Pull this repository!
 I need to set up git and git-secret to decrypt files and track changes.
 
 	ssh-keygen 
-	# upload public key to github
+	# upload public key to github, add to all other servers
 	git config --global user.name [github username]
 	git config --global user.email [github noreply email]
 	ssh -T git@github.com # test the config
@@ -201,6 +201,19 @@ You will need to set up Authelia as a forwardAuth middleware in Traefik's dynami
 
 And then set up Authelia's configuration to accept, authenticate, and redirect back to the requested service. It has a lot of options that I don't need, so I used the [local configuration example](https://github.com/authelia/authelia/tree/master/examples/compose/local) as a template for my own. The main change from the example was to set the default policy to `two_factor` (I choose which services get redirected in the docker-compose labels, so anything passed to Authelia needs auth by definition).
 
+#### Grafana Integration
+You can tell Grafana to use authelia's forwarded headers with this snippet: 
+
+<details><summary>grafana/grafana.ini</summary>
+
+	[auth.proxy]
+	enabled = true
+	header_name = Remote-User
+	header_property = username
+	auto_sign_up = true
+	sync_ttl = 60
+
+</details>
 
 ### [Nginx](https://github.com/nginxinc/docker-nginx)
 I don't use nginx for anything besides a few static pages, but it's always nice to have. Nginx catches all of the base domain traffic.
@@ -220,6 +233,7 @@ The services in this stack:
 - cAdvisor grabs metrics from each container and makes them available to Prometheus.
 - AlertManager looks at Prometheus data and evaluates a set of rules before notifying me about problems.
 - Grafana makes pretty graphs.
+  - Note: I have pulled out a custom `grafana.ini` file and placed it at `/var/lib/grafana`. Grafana will not start unless you manually place a valid ini file there. If you want to use the defaults, remove the environment variable `GF_PATHS_CONFIG`.
 
 TODO: Set up graphs, notifications. I'm running a cool experiment where I don't do anything and later when I'm less lazy I can look back and call it a "control group".
 
@@ -373,6 +387,39 @@ If this container ever becomes unmanageable, I'll probably spin it off somehow a
 
 ### [FileBrowser](https://github.com/filebrowser/filebrowser)
 Filebrowser sits on the storage server and has a nice little webui so I can move/edit/upload/download anything on-the-go. More importantly, it has a "sharing" feature where I can click on any file and generate a link to it (with password and/or time limit) for easy and secure access.
+
+Note: you cannot run `filebrowser config` or similar commands while filebrowser is [running in docker](https://github.com/filebrowser/filebrowser/issues/1036), even with `docker exec`. In order to do things like set up proxy auth, you must do the following:
+1. Stop the running container with `docker stop filebrowser`
+2. Add/Uncomment the line in the relevant docker-compose.yml that specifies `entrypoint: /bin/sh`
+3. Run `docker-compose run filebrowser` and wait for it to drop you into the shell
+4. Run whatever command you want, like `./filebrowser config set --auth.method=proxy --auth.header=Remote-User`
+5. Exit the conatiner and uncomment/remove the entrypoint line in your docker-compose.
+
+In order to allow others to reach your (explicity) shared files, you will need to add a second router to your traefik configuration. The routers should look something like:
+
+<details><summary>traefik/traefik.yml</summary>
+
+	routers:
+		filebrowser:
+			entrypoints:
+				- "websecure"
+			rule: "Host(`filebrowser.example.com`)"
+			middlewares:
+				- authelia
+			service: filebrowser
+		filebrowser-share:
+			entrypoints:
+				- "websecure"
+			rule: "Host(`filebrowser.example.com`) && (PathPrefix(`/share`) || PathPrefix(`/api/public`))"
+			service: filebrowser
+	...
+	services:
+		filebrowser:
+		loadBalancer:
+			servers:
+			- url: "http://filebrowser:80"
+	
+</details>
 
 
 ### [Prowlarr](https://wiki.servarr.com/prowlarr)
