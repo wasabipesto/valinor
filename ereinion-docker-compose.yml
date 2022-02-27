@@ -173,6 +173,7 @@ services:
       - traefik.http.routers.grafana.middlewares=authelia@file
     environment:
       - TZ=$TZ
+      - GF_PATHS_CONFIG=/var/lib/grafana/grafana.ini
 
   # Communication
   protonmail:
