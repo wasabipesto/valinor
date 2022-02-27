@@ -303,7 +303,6 @@ services:
       - traefik.enable=true
       - traefik.http.routers.kirkwall.entrypoints=websecure
       - traefik.http.routers.kirkwall.rule=Host(`kirkwall.$DOMAIN`)
-      - traefik.http.routers.kirkwall.middlewares=authelia@file
     environment:
       - TIMEZONE=$TZ
       - FOUNDRY_UID=$PUID
@@ -331,7 +330,6 @@ services:
       - traefik.enable=true
       - traefik.http.routers.afterstory.entrypoints=websecure
       - traefik.http.routers.afterstory.rule=Host(`afterstory.$DOMAIN`)
-      - traefik.http.routers.afterstory.middlewares=authelia@file
     environment:
       - TIMEZONE=$TZ
       - FOUNDRY_UID=$PUID

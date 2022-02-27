@@ -1,6 +1,6 @@
 # Project Valinor
 Like the elves unto Valinor, my services will embark upon ships (containers) and travel upon the straight road (VPN) to the Undying Lands (cloud). Also there will be some hobbits and a single dwarf for no particular reason.
-
+# Paz enjoys the reference to the glory that is J.R.R. Tolkien's works. Good job. :)
 This is my documentation for the project to migrate a bunch of services from bare metal/systemd to docker. I've experimented with docker a bit in the past and liked how easy it was to spin up new services and isolate runtime data from persistent volumes for easy updating. I have an old document with all of my notes from my current setup but I figured version history would be nice for this time 'round. The should be very little user-facing change as part of this move, basically everything is for my own benefit. It's also horribly overcomplicated, but it's for fun so who cares.
 
 # Mindset
@@ -436,15 +436,27 @@ Sonarr and Radarr are the core of my media ingestion. The typical flow looks lik
 5. Plex (hopefully) sees the file and parses it correctly, making it available to stream.
 
 
-### Calibre
-### Calibre-Web
-TODO: Migrate existing config into new site.
+### [Calibre](https://calibre-ebook.com/) & [Calibre-Web](https://github.com/janeczku/calibre-web)
+LSIO bundles together calibre and calibre-web, which is auful nice of them. All I had to do was pull in my existing database and point it at the books.
 
-
-### Plex
-Being the core of my software, I'm probably going to end up leaving this one out of docker. Will re-evaluate later.
+Unfortunately there's an [issue](https://github.com/janeczku/calibre-web/issues/1466) in calibre-web right now that invalidates sessions coming through cloudflare. The solution is to pin the image at 0.6.12 and add a script to `custom-cont-init.d` that modifies the program at launch (not a fan). Also apparently amazon's requiring that you verify all emails sent to your kindle, which kinda sucks.
 
 
 ## Other
-### HomeAssistant
-TODO: Re-create config in container.
+### [Home Assistant](https://www.home-assistant.io/docs/)
+Home Assistant is great for running physical devices and sensors in the home. I also use it for simple automations and monitoring.
+
+Note: when you launch this docker-compose Home Assistant will not accept proxied connections be default. You can enable this setting by adding the following to the configuration file. Be sure to change the trusted_proxies whitelist to something matching your traefik installation.
+
+<details><summary>homeassistant/configuration.yml</summary>
+
+	http:
+	use_x_forwarded_for: true
+	trusted_proxies:
+		- 10.0.1.0/24
+
+</details>
+
+## Untouched
+### [Plex](https://support.plex.tv/articles/200264746-quick-start-step-by-step-guides/)
+Being the core of my software, I'm probably going to end up leaving this one out of docker. Will re-evaluate later.
