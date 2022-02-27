@@ -152,9 +152,28 @@ services:
       - PUID=$PUID
       - PGID=$PGID
 
+  calibre-web:
+    image: ghcr.io/linuxserver/calibre-web:version-0.6.12 
+    # pinned due to this bug https://github.com/janeczku/calibre-web/issues/1466
+    container_name: calibre-web
+    hostname: calibre-web
+    restart: unless-stopped
+    networks:
+      - wasabi-overlay
+    expose:
+      - 8083
+    volumes:
+      - $OPDIR/calibre-web:/config
+      - $DATADIR/Books:/data/Books
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
+      - DOCKER_MODS=linuxserver/calibre-web:calibre
+
   # Other
   homeassistant:
-    image: ghcr.io/home-assistant/home-assistant:stable
+    image: lscr.io/linuxserver/homeassistant
     container_name: homeassistant
     hostname: homeassistant
     restart: unless-stopped
@@ -173,3 +192,7 @@ services:
 #    pass through usb devices
 #    devices:
 #      - /dev/ttyUSB0:/dev/ttyUSB0
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
