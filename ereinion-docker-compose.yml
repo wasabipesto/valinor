@@ -265,6 +265,29 @@ services:
       - $OPDIR/synapse:/data:ro
     command: -v -c /data/heisenbridge.yaml http://synapse:8008
 
+  mx-puppet-groupme:
+    build: https://gitlab.com/robintown/mx-puppet-groupme.git#main
+    container_name: mx-puppet-groupme
+    restart: unless-stopped
+    networks:
+      - wasabi-overlay
+    expose:
+      - 8437
+    volumes:
+      - $OPDIR/groupme:/data
+      #- $OPDIR/synapse:/data:ro
+
+#  mx-puppet-discord:
+#    build: $BUILDDIR/mx-puppet-discord
+#    container_name: mx-puppet-discord
+#    restart: unless-stopped
+#    networks:
+#      - wasabi-overlay
+#    expose:
+#      - 8434
+#    volumes:
+#      - $OPDIR/synapse:/data:ro
+
   # Backup
   syncthing:
     image: syncthing/syncthing

@@ -79,12 +79,19 @@ Log back in to apply the user account changes (the ability to control docker via
 	sudo chmod +x /usr/local/bin/docker-compose
 	docker-compose -v # pull the image and test
 
-Pull this repository!
+ALTERNATIVELY: Install [docker compose v2](https://docs.docker.com/compose/cli-command/). Note that this version is not yet in [general availability](https://github.com/docker/roadmap/issues/257) but I'm trying it anyways. Since the commands are different you can actually have them both installed at the same time, BUT ONLY USE ONE.
+
+	DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
+	mkdir -p $DOCKER_CONFIG/cli-plugins
+	curl -SL https://github.com/docker/compose/releases/download/v2.2.3/docker-compose-linux-x86_64 -o $DOCKER_CONFIG/cli-plugins/docker-compose
+	chmod +x $DOCKER_CONFIG/cli-plugins/docker-compose
+
+Then pull this repository!
 
 	git pull git@github.com:wasabipesto/valinor.git
 	cd valinor
 
-### Just for me
+#### Just for me
 I need to set up git and git-secret to decrypt files and track changes.
 
 	ssh-keygen 
@@ -321,7 +328,6 @@ Heisenbridge is like ZNC but for matrix. When you first start heisenbridge it wi
 
 </details>
 
-
 Then in your synapse homeserver.yaml you will need to add:
 
 <details><summary>synapse/homeserver.yaml</summary>
@@ -330,6 +336,12 @@ Then in your synapse homeserver.yaml you will need to add:
 	  - /data/heisenbridge.yaml
 
 </details>
+
+Note that in all of the registration files for synapse, both containers must be able to communicate with each other. This means providing each with the other's container name (which is resolved via docker DNS) and exposed port.
+
+
+### [mx-puppet-groupme](https://gitlab.com/robintown/mx-puppet-groupme)
+I still have one group chat that lives on GroupMe. I fucking hate GroupMe. I fucking love `mx-puppet-groupme`.
 
 
 ## Backup
@@ -451,9 +463,9 @@ Note: when you launch this docker-compose Home Assistant will not accept proxied
 <details><summary>homeassistant/configuration.yml</summary>
 
 	http:
-	use_x_forwarded_for: true
-	trusted_proxies:
-		- 10.0.1.0/24
+		use_x_forwarded_for: true
+		trusted_proxies:
+			- 10.0.1.0/24
 
 </details>
 
