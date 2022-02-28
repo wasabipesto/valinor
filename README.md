@@ -1,6 +1,6 @@
 # Project Valinor
 Like the elves unto Valinor, my services will embark upon ships (containers) and travel upon the straight road (VPN) to the Undying Lands (cloud). Also there will be some hobbits and a single dwarf for no particular reason.
-# Paz enjoys the reference to the glory that is J.R.R. Tolkien's works. Good job. :)
+
 This is my documentation for the project to migrate a bunch of services from bare metal/systemd to docker. I've experimented with docker a bit in the past and liked how easy it was to spin up new services and isolate runtime data from persistent volumes for easy updating. I have an old document with all of my notes from my current setup but I figured version history would be nice for this time 'round. The should be very little user-facing change as part of this move, basically everything is for my own benefit. It's also horribly overcomplicated, but it's for fun so who cares.
 
 # Mindset
