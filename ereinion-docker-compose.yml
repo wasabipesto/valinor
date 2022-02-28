@@ -262,7 +262,7 @@ services:
     expose:
       - 9898
     volumes:
-      - $OPDIR/synapse:/data:ro
+      - $OPDIR/synapse/heisenbridge:/data
     command: -v -c /data/heisenbridge.yaml http://synapse:8008
 
   mx-puppet-groupme:
@@ -274,19 +274,20 @@ services:
     expose:
       - 8437
     volumes:
-      - $OPDIR/groupme:/data
-      #- $OPDIR/synapse:/data:ro
+      - $OPDIR/synapse/mx-puppet-groupme:/data
 
-#  mx-puppet-discord:
-#    build: $BUILDDIR/mx-puppet-discord
-#    container_name: mx-puppet-discord
-#    restart: unless-stopped
-#    networks:
-#      - wasabi-overlay
-#    expose:
-#      - 8434
-#    volumes:
-#      - $OPDIR/synapse:/data:ro
+  mx-puppet-discord:
+    # build: git@github.com:matrix-discord/mx-puppet-discord.git
+    # forked due to https://github.com/matrix-discord/mx-puppet-discord/issues/201
+    build: $BUILDDIR/mx-puppet-discord
+    container_name: mx-puppet-discord
+    restart: unless-stopped
+    networks:
+      - wasabi-overlay
+    expose:
+      - 8434
+    volumes:
+      - $OPDIR/synapse/mx-puppet-discord:/data
 
   # Backup
   syncthing:
