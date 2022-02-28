@@ -355,7 +355,7 @@ Still evaluating. Trying to have everything back up to b2 for easy restores. Loo
 
 ## D&D
 ### [WikiJS](https://docs.requarks.io/)
-TODO: Migrate in existing wiki site.
+A good wiki platform that I like to integrate with discord for easy user management. Mainly a platform for D&D notes.
 
 
 ### [Foundry](https://github.com/felddy/foundryvtt-docker)

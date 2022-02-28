@@ -229,7 +229,7 @@ services:
       - 5432
     environment:
       - POSTGRES_USER=synapse
-      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+      - POSTGRES_PASSWORD=$MATRIX_POSTGRES_PASSWORD
       # https://matrix-org.github.io/synapse/latest/postgres.html#set-up-database
       - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
     volumes:
@@ -312,6 +312,44 @@ services:
       - PGID=$PGID
 
   # D&D
+  wikijs:
+    image: ghcr.io/requarks/wiki:2
+    container_name: wikijs
+    hostname: wikijs
+    restart: unless-stopped
+    user: $PUID:$PGID
+    networks:
+      - wasabi-overlay
+    expose:
+      - 3000
+    volumes:
+      - $OPDIR/wikijs/config.yml:/wiki/config.yml
+      - $OPDIR/wikijs/backup:/wiki/backup
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.wikijs.entrypoints=websecure
+      - traefik.http.routers.wikijs.rule=Host(`wiki.$DOMAIN`)
+    environment:
+      - TZ=$TZ
+      - CONFIG_FILE=/wiki/config.yml
+
+  postgres-wikijs:
+    image: postgres:11-alpine
+    container_name: postgres-wikijs
+    hostname: postgres-wikijs
+    restart: unless-stopped
+    user: $PUID:$PGID # postgres will not init database as 1000:1000
+    networks:
+      - wasabi-overlay
+    expose:
+      - 5432
+    volumes:
+      - $OPDIR/postgres-wikijs:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=wiki
+      - POSTGRES_PASSWORD=$WIKIJS_POSTGRES_PASSWORD
+      - POSTGRES_USER=wikijs
+
   foundry-kirkwall:
     image: felddy/foundryvtt:release
     container_name: foundry-kirkwall
