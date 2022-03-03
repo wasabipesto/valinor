@@ -73,13 +73,7 @@ The raison d'etre! Note: Check docker's official [installation instructions](htt
 	sudo usermod -aG docker [your user]
 	logout
 
-Log back in to apply the user account changes (the ability to control docker via non-sudo). Then [install docker-compose](https://docs.docker.com/compose/install/) and test it out:
-
-	sudo curl -L --fail https://github.com/linuxserver/docker-docker-compose/releases/download/1.27.4-ls17/docker-compose-amd64 -o /usr/local/bin/docker-compose
-	sudo chmod +x /usr/local/bin/docker-compose
-	docker-compose -v # pull the image and test
-
-ALTERNATIVELY: Install [docker compose v2](https://docs.docker.com/compose/cli-command/). Note that this version is not yet in [general availability](https://github.com/docker/roadmap/issues/257) but I'm trying it anyways. Since the commands are different you can actually have them both installed at the same time, BUT ONLY USE ONE.
+Install [docker compose v2](https://docs.docker.com/compose/cli-command/). Note that this version is not yet in [general availability](https://github.com/docker/roadmap/issues/257) but I'm trying it anyways.
 
 	DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
 	mkdir -p $DOCKER_CONFIG/cli-plugins
@@ -104,6 +98,16 @@ I need to set up git and git-secret to decrypt files and track changes.
 	# grab gpg keys from backup
 	gpg --import gpg-privkey.gpg
 	git secret reveal
+
+
+# Useful Notes
+Some useful commands that I will inevitably forget:
+
+| Command | Effect |
+| --- | --- |
+| docker ps | List all running containers |
+| docker stats | List container resource usage |
+| docker compose -f /opt/valinor/$(hostname)-docker-compose.yaml up -d | Build/pull/start a service/all services |
 
 
 # Services - Ereinion
@@ -308,9 +312,61 @@ Synapse follows [these rules](https://spec.matrix.org/latest/server-server-api/#
 
 And then we run the [federation tester](https://federationtester.matrix.org) to make sure everything checks out. Note: You may need to set the MIME types of the `server` and `client` files to application/json in nginx.
 
+I also like to enable metrics and some other goodies:
+
+<details><summary>synapse/homeserver.yaml</summary>
+
+	enable_metrics: true
+	listeners:
+		...
+		- port: 9000
+			type: metrics
+			bind_addresses:
+			- '0.0.0.0'
+
+	url_preview_enabled: true
+	url_preview_ip_range_blacklist:
+	- '127.0.0.0/8'
+	- '10.0.0.0/8'
+	- '172.16.0.0/12'
+	- '192.168.0.0/16'
+	- '100.64.0.0/10'
+	- '192.0.0.0/24'
+	- '169.254.0.0/16'
+	- '192.88.99.0/24'
+	- '198.18.0.0/15'
+	- '192.0.2.0/24'
+	- '198.51.100.0/24'
+	- '203.0.113.0/24'
+	- '224.0.0.0/4'
+	- '::1/128'
+	- 'fe80::/10'
+	- 'fc00::/7'
+	- '2001:db8::/32'
+	- 'ff00::/8'
+	- 'fec0::/10'
+
+</details>
+
 
 ### [Element](https://github.com/vector-im/element-webd)
 Element is really simple to set up, you don't even really need to mount the config file if you're okay with the defaults. If you do, make sure you create an empty file first. Otherwise docker will create a folder there, which you probably don't want.
+
+<details><summary>element/config.json (optional)</summary>
+
+    "default_server_config": {
+        "m.homeserver": {
+            "base_url": "https://synapse.wasabipesto.com",
+            "server_name": "wasabipesto.com"
+        }
+    "brand": "Matrix via WasabiPea",
+    "default_theme": "dark",
+	...
+    "showLabsSettings": true,
+	...
+	etc.
+
+</details>
 
 
 ### [Heisenbridge](https://github.com/hifi/heisenbridge)
@@ -333,16 +389,37 @@ Then in your synapse homeserver.yaml you will need to add:
 <details><summary>synapse/homeserver.yaml</summary>
 
 	app_service_config_files:
-	  - /data/heisenbridge.yaml
+	  - /data/heisenbridge/heisenbridge.yaml
 
 </details>
 
 Note that in all of the registration files for synapse, both containers must be able to communicate with each other. This means providing each with the other's container name (which is resolved via docker DNS) and exposed port.
 
 
-### [mx-puppet-groupme](https://gitlab.com/robintown/mx-puppet-groupme)
-I still have one group chat that lives on GroupMe. I fucking hate GroupMe. I fucking love `mx-puppet-groupme`.
+### [mx-puppet-groupme](https://gitlab.com/robintown/mx-puppet-groupme)/[mx-puppet-discord](https://github.com/matrix-discord/mx-puppet-discord)
+The mx-puppet bridges all work similarly. You pass them a config file, they generate a registration file, synapse reads the registration file, they negotiate from there. 
 
+<details><summary>synapse/mx-puppet-[bridge]/config.yaml</summary>
+
+	port: [default port]
+	bindAddress: [resolvable container name]
+	domain: [base url (example.com)]
+	homeserverUrl: [matrix federation url (synapse.example.com)]
+
+</details>
+
+<details><summary>synapse/mx-puppet-whatever/config.yaml</summary>
+
+	url: 'http://mx-puppet-[bridge]:[port]'
+
+</details>
+
+<details><summary>synapse/homeserver.yaml</summary>
+
+	app_service_config_files:
+	  - /data/mx-puppet-[bridge]/[bridge]-registration.yaml
+
+</details>
 
 ## Backup
 ### [Syncthing](https://docs.syncthing.net/)
@@ -385,6 +462,11 @@ Pretty buttons I tend to not use. I also don't love having to set them up manual
 
 
 # Services - Celebrimbor
+As my file server and compute server, Celebrimbor handles anything directy related to media ingestion, storage, and serving to users. If other servers go down, these services hsould at least be able to continue core functions, even if they can't be served through the proxy.
+
+### A note on networking
+Since (to my knowledge) traefik cannot see the labels on another host's docker engine, it cann't route to these containers based on those labels. Instead, those routers and services are listed in traefik's dynamic configuration.
+
 ## Monitoring
 ### Watchtower/Node-Exporter/cAdvisor
 See above. All stats get scraped by Prometheus over on ereinion.

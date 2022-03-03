@@ -275,6 +275,8 @@ services:
       - 8437
     volumes:
       - $OPDIR/synapse/mx-puppet-groupme:/data
+    labels:
+      - com.centurylinklabs.watchtower.enable=false
 
   mx-puppet-discord:
     # build: git@github.com:matrix-discord/mx-puppet-discord.git
@@ -288,6 +290,8 @@ services:
       - 8434
     volumes:
       - $OPDIR/synapse/mx-puppet-discord:/data
+    labels:
+      - com.centurylinklabs.watchtower.enable=false
 
   # Backup
   syncthing:
