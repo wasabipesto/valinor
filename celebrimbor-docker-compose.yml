@@ -61,6 +61,16 @@ services:
     environment:
       - TZ=$TZ
 
+  smartctl:
+    image: matusnovak/prometheus-smartctl:latest
+    container_name: smartctl
+    restart: unless-stopped
+    networks:
+      - wasabi-overlay
+    expose:
+      - 9902
+    privileged: true
+
   # Media
   rtorrent:
     image: crazymax/rtorrent-rutorrent:latest
