@@ -315,7 +315,7 @@ services:
       - PUID=$PUID
       - PGID=$PGID
 
-  # D&D
+  # Games
   wikijs:
     image: ghcr.io/requarks/wiki:2
     container_name: wikijs
@@ -444,6 +444,29 @@ services:
       - traefik.enable=true
       - traefik.http.routers.overseerr.entrypoints=websecure
       - traefik.http.routers.overseerr.rule=Host(`requests.$DOMAIN`)
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
+
+  owncast:
+    image: gabekangas/owncast:latest
+    container_name: owncast
+    hostname: owncast
+    restart: unless-stopped
+    networks:
+      - wasabi-overlay
+    expose:
+      - 8080
+    ports:
+      - 1935:1935 # this is protected by tailscale, not traefik
+    volumes:
+      - $OPDIR/owncast:/app/data
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.owncast.entrypoints=websecure
+      - traefik.http.routers.owncast.rule=Host(`stream.$DOMAIN`)
+      - traefik.http.services.owncast.loadbalancer.server.port=8080
     environment:
       - TZ=$TZ
       - PUID=$PUID

@@ -34,14 +34,13 @@ services:
     command:
       - '--path.procfs=/host/proc' 
       - '--path.sysfs=/host/sys'
+      - '--path.rootfs=/rootfs'
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /:/rootfs:ro
     environment:
       - TZ=$TZ
-      - PUID=$PUID
-      - PGID=$PGID
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor
