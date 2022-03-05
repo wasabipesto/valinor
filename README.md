@@ -246,7 +246,43 @@ The services in this stack:
 - Grafana makes pretty graphs.
   - Note: I have pulled out a custom `grafana.ini` file and placed it at `/var/lib/grafana`. Grafana will not start unless you manually place a valid ini file there. If you want to use the defaults, remove the environment variable `GF_PATHS_CONFIG`.
 
-TODO: Set up graphs, notifications. I'm running a cool experiment where I don't do anything and later when I'm less lazy I can look back and call it a "control group".
+After setting everything up, you need to tell Prometheus where to scrape from. This is my configuration:
+
+<details><summary>prometheus/prometheus.yml</summary>
+
+	global:
+	scrape_interval: 15s
+
+	scrape_configs:
+	- job_name: 'prometheus'
+		static_configs:
+		- targets: ['localhost:9090']
+
+	- job_name: 'node'
+		static_configs:
+		- targets: ['node-ereinion:9100']
+		- targets: ['node-celebrimbor:9100']
+
+	- job_name: 'cadvisor'
+		static_configs:
+		- targets: ['cadvisor-ereinion:8080']
+		- targets: ['cadvisor-celebrimbor:8080']
+
+	- job_name: 'smartctl'
+		metrics_path: "/metrics"
+		static_configs:
+		- targets: ['smartctl:9902']
+
+	- job_name: 'traefik'
+		static_configs:
+		- targets: ['traefik:8080']
+
+	- job_name: 'synapse'
+		metrics_path: "/_synapse/metrics"
+		static_configs:
+		- targets: ['synapse:9000']
+
+</details>
 
 
 ## Communication
@@ -430,7 +466,7 @@ A nice replacement for dropbox, minus all of the annoying features. Still experi
 Still evaluating. Trying to have everything back up to b2 for easy restores. Looking into restic, will probably have to roll my own image/scripts.
 
 
-## D&D
+## Games
 ### [WikiJS](https://docs.requarks.io/)
 A good wiki platform that I like to integrate with discord for easy user management. Mainly a platform for D&D notes.
 
@@ -446,6 +482,10 @@ Monitor Plex and see what people actually watch. A lot of the features I used to
 
 ### [Overseerr](https://docs.overseerr.dev/)
 A request system so simple and pretty my parents could use it. The absolute killer feature being that you log in with your Plex account, so you don't need to remember another password. Get notifications when your requests are added or your issues resolved.
+
+
+### [Owncast](https://owncast.online/docs/)
+A simple self-serve streaming site. Yet to use extensively.
 
 
 ## Other
