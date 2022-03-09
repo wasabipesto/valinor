@@ -497,8 +497,8 @@ I have code-server set up with its own local storage for settings and config, an
 Jupyter is quite nice for ingesting and visualizing lots of data. This container is a bit finnicky to get set up, I'd like to get it under control at some point.
 
 
-### [Heimdall](https://github.com/linuxserver/Heimdall)
-Pretty buttons I tend to not use. I also don't love having to set them up manually. Let's see if that changes this time.
+### [Flame](https://github.com/pawelmalak/flame)
+A pretty dashboard for all of my stuff. More importantly, it adds items from docker labels. I'm still hoping for header auth (or just no auth) but what's there works great.
 
 
 # Services - Celebrimbor

@@ -8,7 +8,7 @@ services:
 
   # Monitoring & Updates
   watchtower:
-    image: containrrr/watchtower
+    image: containrrr/watchtower:latest
     container_name: watchtower
     hostname: watchtower-celebrimbor
     restart: unless-stopped
@@ -23,7 +23,7 @@ services:
       - WATCHTOWER_NOTIFICATIONS_LEVEL=info
 
   node-exporter:
-    image: prom/node-exporter
+    image: prom/node-exporter:latest
     container_name: node-celebrimbor
     hostname: node-celebrimbor
     restart: unless-stopped
@@ -43,7 +43,7 @@ services:
       - TZ=$TZ
 
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor
+    image: gcr.io/cadvisor/cadvisor:latest
     container_name: cadvisor-celebrimbor
     hostname: cadvistor-celebrimbor
     restart: unless-stopped
@@ -96,7 +96,7 @@ services:
       - PGID=$PGID
 
   filebrowser:
-    image: filebrowser/filebrowser
+    image: filebrowser/filebrowser:latest
     container_name: filebrowser
     hostname: filebrowser
     user: $PUID:$PGID
@@ -128,7 +128,7 @@ services:
       - PGID=$PGID
 
   sonarr:
-    image: lscr.io/linuxserver/sonarr
+    image: lscr.io/linuxserver/sonarr:latest
     container_name: sonarr
     hostname: sonarr
     restart: unless-stopped
@@ -145,7 +145,7 @@ services:
       - PGID=$PGID
 
   radarr:
-    image: lscr.io/linuxserver/radarr
+    image: lscr.io/linuxserver/radarr:latest
     container_name: radarr
     hostname: radarr
     restart: unless-stopped
@@ -182,7 +182,7 @@ services:
 
   # Other
   homeassistant:
-    image: lscr.io/linuxserver/homeassistant
+    image: lscr.io/linuxserver/homeassistant:latest
     container_name: homeassistant
     hostname: homeassistant
     restart: unless-stopped

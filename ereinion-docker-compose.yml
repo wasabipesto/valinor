@@ -27,6 +27,10 @@ services:
       - traefik.http.routers.dashboard.rule=Host(`traefik.$DOMAIN`)
       - traefik.http.routers.dashboard.service=api@internal
       - traefik.http.routers.dashboard.middlewares=authelia@file
+      - flame.type=application
+      - flame.name=traefik
+      - flame.url=https://traefik.$DOMAIN
+      - flame.icon=traffic-light
     environment:
       - TZ=$TZ
       - PUID=$PUID
@@ -34,7 +38,7 @@ services:
       - CF_DNS_API_TOKEN=$CF_DNS_API_TOKEN
 
   authelia:
-    image: authelia/authelia
+    image: authelia/authelia:latest
     container_name: authelia
     hostname: authelia
     restart: unless-stopped
@@ -49,13 +53,17 @@ services:
       - traefik.http.routers.authelia.tls=true
       - traefik.http.routers.authelia.entrypoints=websecure
       - traefik.http.routers.authelia.rule=Host(`auth.$DOMAIN`)
+      - flame.type=application
+      - flame.name=authelia
+      - flame.url=https://auth.$DOMAIN
+      - flame.icon=shield-account
     environment:
       - TZ=$TZ
       - PUID=$PUID
       - PGID=$PGID
 
   nginx:
-    image: lscr.io/linuxserver/nginx
+    image: lscr.io/linuxserver/nginx:latest
     container_name: nginx
     hostname: nginx
     restart: unless-stopped
@@ -76,7 +84,7 @@ services:
 
   # Monitoring & Updates
   watchtower:
-    image: containrrr/watchtower
+    image: containrrr/watchtower:latest
     container_name: watchtower
     hostname: watchtower-ereinion
     restart: unless-stopped
@@ -91,7 +99,7 @@ services:
       - WATCHTOWER_NOTIFICATIONS_LEVEL=info
 
   prometheus:
-    image: prom/prometheus
+    image: prom/prometheus:latest
     container_name: prometheus
     hostname: prometheus
     restart: unless-stopped
@@ -110,13 +118,17 @@ services:
       - traefik.http.routers.prometheus.entrypoints=websecure
       - traefik.http.routers.prometheus.rule=Host(`prometheus.$DOMAIN`)
       - traefik.http.routers.prometheus.middlewares=authelia@file
+      - flame.type=application
+      - flame.name=prometheus
+      - flame.url=https://prometheus.$DOMAIN
+      - flame.icon=database
     environment:
       - TZ=$TZ
       - PUID=$PUID
       - PGID=$PGID
 
   node-exporter:
-    image: prom/node-exporter
+    image: prom/node-exporter:latest
     container_name: node-ereinion
     hostname: node-ereinion
     restart: unless-stopped
@@ -137,7 +149,7 @@ services:
       - PGID=$PGID
 
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor
+    image: gcr.io/cadvisor/cadvisor:latest
     container_name: cadvisor-ereinion
     hostname: cadvistor-ereinion
     restart: unless-stopped
@@ -171,13 +183,18 @@ services:
       - traefik.http.routers.grafana.entrypoints=websecure
       - traefik.http.routers.grafana.rule=Host(`grafana.$DOMAIN`)
       - traefik.http.routers.grafana.middlewares=authelia@file
+      - flame.type=application
+      - flame.name=grafana
+      - flame.url=https://grafana.$DOMAIN
+      - flame.icon=chart-areaspline
+    environment:
     environment:
       - TZ=$TZ
       - GF_PATHS_CONFIG=/var/lib/grafana/grafana.ini
 
   # Communication
   protonmail:
-    image: shenxn/protonmail-bridge
+    image: shenxn/protonmail-bridge:latest
     container_name: protonmail
     hostname: protonmail
     restart: unless-stopped
@@ -236,7 +253,7 @@ services:
       - $OPDIR/postgres-matrix:/var/lib/postgresql/data
 
   element:
-    image: vectorim/element-web
+    image: vectorim/element-web:latest
     container_name: element
     hostname: element
     restart: unless-stopped
@@ -250,11 +267,15 @@ services:
       - traefik.enable=true
       - traefik.http.routers.element.entrypoints=websecure
       - traefik.http.routers.element.rule=Host(`element.$DOMAIN`)
+      - flame.type=application
+      - flame.name=element
+      - flame.url=https://element.$DOMAIN
+      - flame.icon=matrix
     environment:
       - TZ=$TZ
 
   heisenbridge:
-    image: hif1/heisenbridge
+    image: hif1/heisenbridge:latest
     container_name: heisenbridge
     restart: unless-stopped
     networks:
@@ -295,7 +316,7 @@ services:
 
   # Backup
   syncthing:
-    image: syncthing/syncthing
+    image: syncthing/syncthing:latest
     container_name: syncthing
     hostname: syncthing
     restart: unless-stopped
@@ -310,6 +331,10 @@ services:
       - traefik.http.routers.syncthing.entrypoints=websecure
       - traefik.http.routers.syncthing.rule=Host(`syncthing.$DOMAIN`)
       - traefik.http.routers.syncthing.middlewares=authelia@file
+      - flame.type=application
+      - flame.name=syncthing
+      - flame.url=https://syncthing.$DOMAIN
+      - flame.icon=globe-model
     environment:
       - TZ=$TZ
       - PUID=$PUID
@@ -333,6 +358,10 @@ services:
       - traefik.enable=true
       - traefik.http.routers.wikijs.entrypoints=websecure
       - traefik.http.routers.wikijs.rule=Host(`wiki.$DOMAIN`)
+      - flame.type=application
+      - flame.name=wikijs
+      - flame.url=https://wiki.$DOMAIN
+      - flame.icon=flower-tulip
     environment:
       - TZ=$TZ
       - CONFIG_FILE=/wiki/config.yml
@@ -369,6 +398,10 @@ services:
       - traefik.enable=true
       - traefik.http.routers.kirkwall.entrypoints=websecure
       - traefik.http.routers.kirkwall.rule=Host(`kirkwall.$DOMAIN`)
+      - flame.type=application
+      - flame.name=foundry/kirkwall
+      - flame.url=https://kirkwall.$DOMAIN
+      - flame.icon=anvil
     environment:
       - TIMEZONE=$TZ
       - FOUNDRY_UID=$PUID
@@ -396,6 +429,10 @@ services:
       - traefik.enable=true
       - traefik.http.routers.afterstory.entrypoints=websecure
       - traefik.http.routers.afterstory.rule=Host(`afterstory.$DOMAIN`)
+      - flame.type=application
+      - flame.name=foundry/afterstory
+      - flame.url=https://afterstory.$DOMAIN
+      - flame.icon=anvil
     environment:
       - TIMEZONE=$TZ
       - FOUNDRY_UID=$PUID
@@ -410,7 +447,7 @@ services:
 
   # Media
   tautulli:
-    image: lscr.io/linuxserver/tautulli
+    image: lscr.io/linuxserver/tautulli:latest
     container_name: tautulli
     hostname: tautulli
     restart: unless-stopped
@@ -424,13 +461,17 @@ services:
       - traefik.enable=true
       - traefik.http.routers.tautulli.entrypoints=websecure
       - traefik.http.routers.tautulli.rule=Host(`tautulli.$DOMAIN`)
+      - flame.type=application
+      - flame.name=tautulli
+      - flame.url=https://tautulli.$DOMAIN
+      - flame.icon=alphabet-greek
     environment:
       - TZ=$TZ
       - PUID=$PUID
       - PGID=$PGID
 
   overseerr:
-    image: sctx/overseerr
+    image: sctx/overseerr:latest
     container_name: overseerr
     hostname: overseerr
     restart: unless-stopped
@@ -444,6 +485,10 @@ services:
       - traefik.enable=true
       - traefik.http.routers.overseerr.entrypoints=websecure
       - traefik.http.routers.overseerr.rule=Host(`requests.$DOMAIN`)
+      - flame.type=application
+      - flame.name=overseerr
+      - flame.url=https://requests.$DOMAIN
+      - flame.icon=eye
     environment:
       - TZ=$TZ
       - PUID=$PUID
@@ -467,6 +512,10 @@ services:
       - traefik.http.routers.owncast.entrypoints=websecure
       - traefik.http.routers.owncast.rule=Host(`stream.$DOMAIN`)
       - traefik.http.services.owncast.loadbalancer.server.port=8080
+      - flame.type=application
+      - flame.name=owncast
+      - flame.url=https://stream.$DOMAIN
+      - flame.icon=twitch
     environment:
       - TZ=$TZ
       - PUID=$PUID
@@ -474,7 +523,7 @@ services:
 
   # Other
   code-server:
-    image: lscr.io/linuxserver/code-server
+    image: lscr.io/linuxserver/code-server:latest
     container_name: code-server
     hostname: code-server
     restart: unless-stopped
@@ -490,13 +539,17 @@ services:
       - traefik.http.routers.code-server.entrypoints=websecure
       - traefik.http.routers.code-server.rule=Host(`cood.$DOMAIN`)
       - traefik.http.routers.code-server.middlewares=authelia@file
+      - flame.type=application
+      - flame.name=code-server
+      - flame.url=https://cood.$DOMAIN
+      - flame.icon=code-braces
     environment:
       - TZ=$TZ
       - PUID=$PUID
       - PGID=$PGID
 
   jupyter:
-    image: jupyter/datascience-notebook
+    image: jupyter/datascience-notebook:latest
     container_name: jupyter
     hostname: jupyter
     restart: unless-stopped
@@ -512,27 +565,31 @@ services:
       - traefik.http.routers.jupyter.entrypoints=websecure
       - traefik.http.routers.jupyter.rule=Host(`jupyter.$DOMAIN`)
       - traefik.http.routers.jupyter.middlewares=authelia@file
+      - flame.type=application
+      - flame.name=jupyter
+      - flame.url=https://jupyter.$DOMAIN
+      - flame.icon=language-python
     environment:
       - TZ=$TZ
       - PUID=$PUID
       - PGID=$PGID
       - JUPYTER_ENABLE_LAB=yes
 
-  heimdall:
-    image: lscr.io/linuxserver/heimdall
-    container_name: heimdall
-    hostname: heimdall
+  flame:
+    image: pawelmalak/flame:latest
+    container_name: flame
+    hostname: flame
     restart: unless-stopped
     networks:
       - wasabi-overlay
     volumes:
-      - $OPDIR/heimdall:/config
+      - $OPDIR/flame:/app/data
+      - /var/run/docker.sock:/var/run/docker.sock
     labels:
       - traefik.enable=true
-      - traefik.http.routers.heimdall.entrypoints=websecure
-      - traefik.http.routers.heimdall.rule=Host(`heimdall.$DOMAIN`)
-      - traefik.http.routers.heimdall.middlewares=authelia@file
+      - traefik.http.routers.flame.entrypoints=websecure
+      - traefik.http.routers.flame.rule=Host(`flame.$DOMAIN`)
+      - traefik.http.routers.flame.middlewares=authelia@file
     environment:
       - TZ=$TZ
-      - PUID=$PUID
-      - PGID=$PGID
+      - PASSWORD=$FLAME_PASSWORD
