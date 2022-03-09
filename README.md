@@ -603,3 +603,17 @@ Another note: if Home Assistant is running with `network_mode: host`, you cannot
 ## Untouched
 ### [Plex](https://support.plex.tv/articles/200264746-quick-start-step-by-step-guides/)
 Being the core of my software stack, I'm probably going to end up leaving this one out of docker. Will re-evaluate later.
+
+
+# Next Steps
+- Finish setting up syncthing for full mesh with introducer nodes
+- Finish setting up jupyter, ideally with easy authentication
+- Finish setting up restic, maybe with ofelia
+- Install loki to monitor logs
+- Install NUT and components to monitor server UPS
+- Install guacamole for remote RDP/SSH
+- Implement goodies from flame 2.2.2 once released
+- Implement mx-puppet-discorda and calibre latest versions once fixed
+- Implement authelia header auth wherever possible
+- Look into Unigraph for brower-based notes & feeds
+- Look into a proper LDAP server
