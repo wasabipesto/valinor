@@ -186,18 +186,18 @@ services:
     container_name: homeassistant
     hostname: homeassistant
     restart: unless-stopped
-    networks:
-      - wasabi-overlay
-    expose:
-      - 8123
-#    ports:
-#      - 8123:8123
+#    networks:
+#      - wasabi-overlay
+#    expose:
+#      - 8123
+    ports:
+      - 8123:8123
     volumes:
       - $OPDIR/homeassistant:/config
       - /etc/localtime:/etc/localtime:ro
     restart: unless-stopped
-#    privileged: true
-#    network_mode: host
+    privileged: true
+    network_mode: host
 #    pass through usb devices
 #    devices:
 #      - /dev/ttyUSB0:/dev/ttyUSB0
@@ -205,3 +205,5 @@ services:
       - TZ=$TZ
       - PUID=$PUID
       - PGID=$PGID
+      - DOCKER_MODS=linuxserver/mods:universal-package-install
+      - INSTALL_PACKAGES=nmap
