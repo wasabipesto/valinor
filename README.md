@@ -221,7 +221,7 @@ You can tell Grafana to use authelia's forwarded headers with this snippet:
 	enabled = true
 	header_name = Remote-User
 	header_property = username
-	auto_sign_up = true
+	auto_sign_up = true # or false
 	sync_ttl = 60
 
 </details>
@@ -232,21 +232,20 @@ I don't use nginx for anything besides a few static pages, but it's always nice 
 
 ## Monitoring & Updates
 ### [Watchtower](https://containrrr.dev/watchtower/)
-Watchtower pulls new images for all of my containers and updates/recreates them as necessary. While it might be a security risk to automatically pull updates, it's not like I would have been more vigilant updating them all manually with `docker-compose up` anyways (provided I remembered to do it at all). Plus now I get notifications.
+Watchtower pulls new images for all of my containers and updates/recreates them as necessary. While it might be a security risk to automatically pull updates from `:latest`, it's not like I would have been more vigilant updating them all manually with `docker-compose up` anyways (provided I remembered to do it at all). Plus now I get notifications.
 
 
-### [Prometheus](https://prometheus.io/docs/introduction/overview/)/[Node-Exporter](https://prometheus.io/docs/guides/node-exporter/)/[cAdvisor](https://prometheus.io/docs/guides/cadvisor/)/[AlertManager](https://prometheus.io/docs/alerting/latest/alertmanager/)/[Grafana](https://grafana.com/docs/grafana/latest/installation/docker/)
+### [Prometheus](https://prometheus.io/docs/introduction/overview/)/[Node-Exporter](https://prometheus.io/docs/guides/node-exporter/)/[cAdvisor](https://prometheus.io/docs/guides/cadvisor/)/[Grafana](https://grafana.com/docs/grafana/latest/installation/docker/)
 The services in this stack:
 - Prometheus pulls metrics from a bunch of different places and collates them for analysis. 
-  - Note: The base prometheus image runs under a weird user and does not respect the docker-compose user settings. You have to set the data directory to be writable/owned by user 65534 (or set chmod 777).
+  - Note: The base prometheus image runs under a weird user and does not respect the docker-compose user settings. You have to set the data directory on the host to be writable/owned by user 65534 (or set chmod 777).
 - Node-Exprter grabs metrics from the host servers and makes them available to Prometheus.
-  - Note: If you have multiple instances of a service (like node-exporter), make sure you add the hostname property to each one so prometheus can tell them apart.
+  - Note: If you have multiple instances of a service (like node-exporter), make sure you add the hostname property to each container so prometheus can tell them apart.
 - cAdvisor grabs metrics from each container and makes them available to Prometheus.
-- AlertManager looks at Prometheus data and evaluates a set of rules before notifying me about problems.
-- Grafana makes pretty graphs.
+- Grafana makes pretty graphs and alerts me if there are problems.
   - Note: I have pulled out a custom `grafana.ini` file and placed it at `/var/lib/grafana`. Grafana will not start unless you manually place a valid ini file there. If you want to use the defaults, remove the environment variable `GF_PATHS_CONFIG`.
 
-After setting everything up, you need to tell Prometheus where to scrape from. This is my configuration:
+After setting everything up, you need to tell Prometheus where to scrape from. This is part of my configuration:
 
 <details><summary>prometheus/prometheus.yml</summary>
 
@@ -268,19 +267,7 @@ After setting everything up, you need to tell Prometheus where to scrape from. T
 		- targets: ['cadvisor-ereinion:8080']
 		- targets: ['cadvisor-celebrimbor:8080']
 
-	- job_name: 'smartctl'
-		metrics_path: "/metrics"
-		static_configs:
-		- targets: ['smartctl:9902']
-
-	- job_name: 'traefik'
-		static_configs:
-		- targets: ['traefik:8080']
-
-	- job_name: 'synapse'
-		metrics_path: "/_synapse/metrics"
-		static_configs:
-		- targets: ['synapse:9000']
+	and so on
 
 </details>
 
@@ -459,7 +446,7 @@ The mx-puppet bridges all work similarly. You pass them a config file, they gene
 
 ## Backup
 ### [Syncthing](https://docs.syncthing.net/)
-A nice replacement for dropbox, minus all of the annoying features. Still experimenting with usability.
+A nice replacement for dropbox, minus all of the annoying features. Still experimenting with usability. Right now the goal is to have buckets for notes, projects, and other random documents that sync to ereinion and all relevant devices. Then the files get backed up to b2 via restic or whatever.
 
 
 ### Other Backup
@@ -468,7 +455,7 @@ Still evaluating. Trying to have everything back up to b2 for easy restores. Loo
 
 ## Games
 ### [WikiJS](https://docs.requarks.io/)
-A good wiki platform that I like to integrate with discord for easy user management. Mainly a platform for D&D notes.
+A good wiki platform that I like to integrate with discord for easy user management. Mainly a platform for D&D notes. It spits out markdown files every day and has the option to sync bidirectionally, which I may pair with syncthing + obsidian at some point.
 
 
 ### [Foundry](https://github.com/felddy/foundryvtt-docker)
@@ -485,7 +472,7 @@ A request system so simple and pretty my parents could use it. The absolute kill
 
 
 ### [Owncast](https://owncast.online/docs/)
-A simple self-serve streaming site. Yet to use extensively.
+A simple self-serve streaming site. Yet to use extensively. The RTMP port is exposed outside of docker, but the DO firewall blocks incoming connections on that port. In order to stream to the container you must be on the tailnet or set an exception in the firewall. Or add a rule to traefik, I guess.
 
 
 ## Other
@@ -499,6 +486,14 @@ Jupyter is quite nice for ingesting and visualizing lots of data. This container
 
 ### [Flame](https://github.com/pawelmalak/flame)
 A pretty dashboard for all of my stuff. More importantly, it adds items from docker labels. I'm still hoping for header auth (or just no auth) but what's there works great.
+
+To add a service to flame, add the following labels:
+      - flame.type=application # this can be set to anything, flame just checks to see if the flag is present at all
+      - flame.name=owncast # the name of the item in flame
+      - flame.url=https://stream.$DOMAIN # the connectable address (probably the same as what you proxied)
+      - flame.icon=twitch # mdi icon for the service
+
+You cannot set descriptions with labels at this time, but it's [in development](https://github.com/pawelmalak/flame/pull/315). Same story with [multiple docker hosts](https://github.com/pawelmalak/flame/pull/321).
 
 
 # Services - Celebrimbor
@@ -518,6 +513,13 @@ As far as I've found, r(u)torrent is the only solution for managing a large amou
 
 If this container ever becomes unmanageable, I'll probably spin it off somehow and just start a new one. Did I mention docker networking is uper easy?
 
+If you choose to use sonarr/radarr, there are a few things to note here. First, to connect you must use the following settings:
+- Host: rtorrent (conatiner name)
+- Port: 8080 (r*u*torrent port)
+- Path: RPC2
+
+Then, make sure your labels are all unique between radarr/sonarr/etc. If any share labels (ie, `unfinished`) they will all take responsibility at the same time and try to sort it/throw errors when they cannot.
+
 
 ### [FileBrowser](https://github.com/filebrowser/filebrowser)
 Filebrowser sits on the storage server and has a nice little webui so I can move/edit/upload/download anything on-the-go. More importantly, it has a "sharing" feature where I can click on any file and generate a link to it (with password and/or time limit) for easy and secure access.
@@ -528,6 +530,8 @@ Note: you cannot run `filebrowser config` or similar commands while filebrowser 
 3. Run `docker-compose run filebrowser` and wait for it to drop you into the shell
 4. Run whatever command you want, like `./filebrowser config set --auth.method=proxy --auth.header=Remote-User`
 5. Exit the conatiner and uncomment/remove the entrypoint line in your docker-compose.
+
+There is probably an easier way, but that's how I got it working.
 
 In order to allow others to reach your (explicity) shared files, you will need to add a second router to your traefik configuration. The routers should look something like:
 
@@ -569,6 +573,8 @@ Sonarr and Radarr are the core of my media ingestion. The typical flow looks lik
 4. If anything is found, it will be sent to rtorrent to download. Sonarr and radarr will poll rtorrent to find out when the download is complete and then hardlink the file into Plex's media directory.
 5. Plex (hopefully) sees the file and parses it correctly, making it available to stream.
 
+I didn't have to do anything fancy to set up these images. I may look into other *arrs in the future, their stack has been working pretty well for me.
+
 
 ### [Calibre](https://calibre-ebook.com/) & [Calibre-Web](https://github.com/janeczku/calibre-web)
 LSIO bundles together calibre and calibre-web, which is auful nice of them. All I had to do was pull in my existing database and point it at the books.
@@ -578,9 +584,9 @@ Unfortunately there's an [issue](https://github.com/janeczku/calibre-web/issues/
 
 ## Other
 ### [Home Assistant](https://www.home-assistant.io/docs/)
-Home Assistant is great for running physical devices and sensors in the home. I also use it for simple automations and monitoring.
+Home Assistant is great for running physical devices and sensors in the home. I also use it for simple automations and monitoring. Most of the fiddly configuration is held in yaml files that I can mount and back up however I please.
 
-Note: when you launch this docker-compose Home Assistant will not accept proxied connections be default. You can enable this setting by adding the following to the configuration file. Be sure to change the trusted_proxies whitelist to something matching your traefik installation.
+Note: when you launch this docker-compose Home Assistant will not accept proxied connections by default. You can enable this setting by adding the following to the configuration file. Be sure to change the trusted_proxies whitelist to something matching your traefik installation.
 
 <details><summary>homeassistant/configuration.yml</summary>
 
@@ -591,6 +597,9 @@ Note: when you launch this docker-compose Home Assistant will not accept proxied
 
 </details>
 
+Another note: if Home Assistant is running with `network_mode: host`, you cannot connect to it with the standard docker DNS system where you just call it `homeassistant`. Instead, you must connect to `celebrimbor:8123` (or whatever your host's hostname is (assuming you're using tailscale's DNS)). This is relevant for both traefik to proxy traffic in and prometheus to scrape metrics out.
+
+
 ## Untouched
 ### [Plex](https://support.plex.tv/articles/200264746-quick-start-step-by-step-guides/)
-Being the core of my software, I'm probably going to end up leaving this one out of docker. Will re-evaluate later.
+Being the core of my software stack, I'm probably going to end up leaving this one out of docker. Will re-evaluate later.
