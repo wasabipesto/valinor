@@ -27,12 +27,11 @@ This is my documentation for the project to migrate a bunch of services from bar
 # Hardware
 My general-purpose is named Erenion and lives in DigitalOcean:
 - DigitalOcean droplet, created 2/10/2022
-- I intend to upgrade as I migrate things in (I'm looking at you, Synapse)
-- 2 GB Memory / 50 GB Disk / NYC3 - Ubuntu 20.04 (LTS) x64
+- 8 GB Memory / 160 GB Disk / NYC3 - Ubuntu 20.04 (LTS) x64
 
 My compute/fileserver is named Celebrimbor and lives on my home network:
 - 2x Xeon 2678 v3, 64GB Memory
-- 6x 12TB WD Elements shucked, in RAID5
+- 7x 12TB WD Elements shucked, in RAID5
 
 # First-time setup
 SSH in for the first time! If you do this with DO's basic setup, you'll be dropped in as root. We're going to make good use of it and update everything first.
