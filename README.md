@@ -99,16 +99,6 @@ I need to set up git and git-secret to decrypt files and track changes.
 	git secret reveal
 
 
-# Useful Notes
-Some useful commands that I will inevitably forget:
-
-| Command | Effect |
-| --- | --- |
-| docker ps | List all running containers |
-| docker stats | List container resource usage |
-| docker compose -f /opt/valinor/$(hostname)-docker-compose.yaml up -d | Build/pull/start a service/all services |
-
-
 # Services - Ereinion
 ## Networking
 ### [Tailscale](https://tailscale.com/)
