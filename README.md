@@ -595,7 +595,6 @@ Being the core of my software stack, I'm probably going to end up leaving this o
 
 
 # Next Steps
-- Finish setting up syncthing for full mesh with introducer nodes
 - Finish setting up jupyter, ideally with easy authentication
 - Finish setting up restic, maybe with ofelia
 - Install loki to monitor logs
