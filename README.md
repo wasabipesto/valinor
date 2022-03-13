@@ -477,6 +477,7 @@ Jupyter is quite nice for ingesting and visualizing lots of data. This container
 A pretty dashboard for all of my stuff. More importantly, it adds items from docker labels. I'm still hoping for header auth (or just no auth) but what's there works great.
 
 To add a service to flame, add the following labels:
+
       - flame.type=application # this can be set to anything, flame just checks to see if the flag is present at all
       - flame.name=owncast # the name of the item in flame
       - flame.url=https://stream.$DOMAIN # the connectable address (probably the same as what you proxied)
