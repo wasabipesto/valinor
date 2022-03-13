@@ -593,3 +593,60 @@ services:
     environment:
       - TZ=$TZ
       - PASSWORD=$FLAME_PASSWORD
+
+  guacd:
+    image: guacamole/guacd
+    container_name: guacd
+    hostname: guacd
+    restart: unless-stopped
+    networks:
+      - wasabi-overlay
+    expose:
+      - 4822
+
+  guacamole:
+    image: guacamole/guacamole
+    container_name: guacamole
+    hostname: guacamole
+    restart: unless-stopped
+    networks:
+      - wasabi-overlay
+    expose:
+      - 8080
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.guacamole.entrypoints=websecure
+      - traefik.http.routers.guacamole.rule=Host(`guacamole.$DOMAIN`)
+      - traefik.http.routers.guacamole.middlewares=authelia@file,guac-prefix@docker
+      - traefik.http.middlewares.guac-prefix.addprefix.prefix=/guacamole
+      - flame.type=application
+      - flame.name=guacamole
+      - flame.url=https://guacamole.$DOMAIN
+      - flame.icon=feather
+    environment:
+      - TZ=$TZ
+      - HEADER_ENABLED=true
+      - HTTP_AUTH_HEADER=Remote-User
+      - GUACD_HOSTNAME=guacd
+      - POSTGRES_HOSTNAME=postgres-guacamole
+      - POSTGRES_DATABASE=guacamole
+      - POSTGRES_USER=guacamole
+      - POSTGRES_PASSWORD=$GUACAMOLE_POSTGRES_PASSWORD
+
+  postgres-guacamole:
+    image: postgres:11-alpine
+    container_name: postgres-guacamole
+    hostname: postgres-guacamole
+    restart: unless-stopped
+    user: $PUID:$PGID # postgres will not init database as 1000:1000
+    networks:
+      - wasabi-overlay
+    expose:
+      - 5432
+    volumes:
+      #- ./initdb.sql:/docker-entrypoint-initdb.d/initdb.sql:ro # for init only
+      - $OPDIR/postgres-guacamole:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=guacamole
+      - POSTGRES_USER=guacamole
+      - POSTGRES_PASSWORD=$GUACAMOLE_POSTGRES_PASSWORD

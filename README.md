@@ -485,6 +485,24 @@ To add a service to flame, add the following labels:
 You cannot set descriptions with labels at this time, but it's [in development](https://github.com/pawelmalak/flame/pull/315). Same story with [multiple docker hosts](https://github.com/pawelmalak/flame/pull/321).
 
 
+### [Guacamole](https://guacamole.apache.org/doc/gug/guacamole-docker.html)
+A browser-based clientless remote access solution. I use it for VNC connections to my server and RDP connections to my desktop while away from home. It also supports SSH and other goodies. This docker image was pretty simple to configure in comparison to bare metal, and it even connects with authelia for header auth. 
+
+First, generate the initialization script: `docker run --rm guacamole/guacamole /opt/guacamole/bin/initdb.sh --postgres > ./initdb.sql`
+
+Then, run postgres with the script mounted: `./initdb.sql:/docker-entrypoint-initdb.d/initdb.sql:ro`
+
+If you like to run postgres as a different user, stop the container (`docker stop postgres-guacamole`) and chmod the data directory (`sudo chown -R 1000:1000 $OPDIR/postgres-guacamole`).
+
+Optionally, edit the compose file to remove the script mount and change the user. Once everything's running. Log in with the default username/password `guacadmin`/`guacadmin` and change the password. 
+
+If you're trying to connect to a windows machine using RDP, make sure you use the target user's username and password, and check `ingore server certificate`. 
+
+In order to transparently add the `/guacamole` prefix, we use traefik's addprefix middleware: `traefik.http.middlewares.guac-prefix.addprefix.prefix=/guacamole`
+
+There seems to be an issue with using newer keys to authenticate ssh. Not too worried about it since I have other ways of accessing ssh via web (cose-server) and mobile (juicessh).
+
+
 # Services - Celebrimbor
 As my file server and compute server, Celebrimbor handles anything directy related to media ingestion, storage, and serving to users. If other servers go down, these services hsould at least be able to continue core functions, even if they can't be served through the proxy.
 
@@ -516,7 +534,7 @@ Filebrowser sits on the storage server and has a nice little webui so I can move
 Note: you cannot run `filebrowser config` or similar commands while filebrowser is [running in docker](https://github.com/filebrowser/filebrowser/issues/1036), even with `docker exec`. In order to do things like set up proxy auth, you must do the following:
 1. Stop the running container with `docker stop filebrowser`
 2. Add/Uncomment the line in the relevant docker-compose.yml that specifies `entrypoint: /bin/sh`
-3. Run `docker-compose run filebrowser` and wait for it to drop you into the shell
+3. Run `docker compose run filebrowser` and wait for it to drop you into the shell
 4. Run whatever command you want, like `./filebrowser config set --auth.method=proxy --auth.header=Remote-User`
 5. Exit the conatiner and uncomment/remove the entrypoint line in your docker-compose.
 
@@ -600,7 +618,6 @@ Being the core of my software stack, I'm probably going to end up leaving this o
 - Finish setting up restic, maybe with ofelia
 - Install loki to monitor logs
 - Install NUT and components to monitor server UPS
-- Install guacamole for remote RDP/SSH
 - Implement goodies from flame 2.2.2 once released
 - Implement mx-puppet-discorda and calibre latest versions once fixed
 - Implement authelia header auth wherever possible
