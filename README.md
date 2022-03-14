@@ -261,6 +261,30 @@ After setting everything up, you need to tell Prometheus where to scrape from. T
 </details>
 
 
+## [Loki](https://grafana.com/docs/loki/latest/)
+In order to get host logs like syslog, promtail is given read-only access to `/var/log`. Loki will then scrape those logs automatically. 
+
+In order to get logs from each docker container, we need to first install the plugin: `docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions`
+
+Then append the following configuration to each container we want to monitor: 
+
+	logging:
+		driver: loki
+		options:
+			loki-url: http://localhost:3100/loki/api/v1/push
+
+Or add the following to your /etc/docker/daemon.json:
+
+	"debug" : true,
+	"log-driver": "loki",
+	"log-opts": {
+		"loki-url": "http://localhost:3100/loki/api/v1/push",
+		"loki-batch-size": "400"
+	}
+
+The we pop over to grafana and play with them as needed.
+
+
 ## Communication
 ### [Protonmail](https://github.com/shenxn/protonmail-bridge-docker)
 I use Protonmail for my email, which means I can't simply forward SMTP requests to them in order to send mail from my server. They do have a bridge that works well enough in docker, so that's my "email server" now. Since it lives within the docker network, it's easy enough to configure various other services to just see the bridge as a valid email server. If I ever waned to read mail I would have to install something else, but I don't so I won't.

@@ -166,6 +166,32 @@ services:
     environment:
       - TZ=$TZ
 
+  loki:
+    image: grafana/loki
+    container_name: loki
+    hostname: loki
+    restart: unless-stopped
+    networks:
+      - wasabi-overlay
+    ports:
+      - 3100:3100 # expose outside of dockernet
+    environment:
+      - TZ=$TZ
+    command: -config.file=/etc/loki/local-config.yaml
+
+  promtail:
+    image: grafana/promtail
+    container_name: promtail
+    hostname: promtail
+    restart: unless-stopped
+    networks:
+      - wasabi-overlay
+    volumes:
+      - /var/log:/var/log:ro
+    environment:
+      - TZ=$TZ
+    command: -config.file=/etc/promtail/config.yml
+
   grafana:
     image: grafana/grafana-oss:main
     container_name: grafana
