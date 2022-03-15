@@ -77,10 +77,39 @@ services:
       - traefik.enable=true
       - traefik.http.routers.nginx.entrypoints=websecure
       - traefik.http.routers.nginx.rule=Host(`$DOMAIN`)
+      - traefik.http.routers.nginx.middlewares=errorpage
     environment:
       - TZ=$TZ
       - PUID=$PUID
       - PGID=$PGID
+
+  error-pages:
+    image: tarampampam/error-pages:latest # Using the latest tag is highly discouraged. Please, use tags in X.Y.Z format
+    container_name: error-pages
+    hostname: error-pages
+    restart: unless-stopped
+    networks:
+      - wasabi-overlay
+    expose:
+      - 8080
+    environment:
+      TEMPLATE_NAME: l7-dark # set the error pages template
+    labels:
+      traefik.enable: true
+      # use as "fallback" for any NON-registered services (with priority below normal)
+      traefik.http.routers.errorpage.rule: HostRegexp(`{host:.+}`)
+      traefik.http.routers.errorpage.priority: 10
+      # should say that all of your services work on https
+      traefik.http.routers.errorpage.entrypoints: websecure
+      traefik.http.routers.errorpage.middlewares: errorpage
+      # "errors" middleware settings
+      traefik.http.middlewares.errorpage.errors.status: 400-599
+      traefik.http.middlewares.errorpage.errors.service: errorpage
+      traefik.http.middlewares.errorpage.errors.query: /{status}.html
+      # define service properties
+      traefik.http.services.errorpage.loadbalancer.server.port: 8080
+    depends_on:
+      - traefik
 
   # Monitoring & Updates
   watchtower:
