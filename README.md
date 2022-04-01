@@ -636,12 +636,8 @@ Being the core of my software stack, I'm probably going to end up leaving this o
 
 
 # Next Steps
-- Finish setting up jupyter, ideally with easy authentication
 - Finish setting up restic, maybe with ofelia
-- Install loki to monitor logs
+- Add node-red for complex hassio automations
 - Install NUT and components to monitor server UPS
-- Implement goodies from flame 2.2.2 once released
-- Implement mx-puppet-discorda and calibre latest versions once fixed
-- Implement authelia header auth wherever possible
-- Look into Unigraph for brower-based notes & feeds
+- Implement mx-puppet-discord and calibre latest versions once fixed
 - Look into a proper LDAP server
