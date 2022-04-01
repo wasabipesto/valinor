@@ -498,7 +498,11 @@ To add a service to flame, add the following labels:
       - flame.url=https://stream.$DOMAIN # the connectable address (probably the same as what you proxied)
       - flame.icon=twitch # mdi icon for the service
 
-You cannot set descriptions with labels at this time, but it's [in development](https://github.com/pawelmalak/flame/pull/315). Same story with [multiple docker hosts](https://github.com/pawelmalak/flame/pull/321).
+You cannot set descriptions with labels at this time, but it's [in development](https://github.com/pawelmalak/flame/pull/315)? Same story with [multiple docker hosts](https://github.com/pawelmalak/flame/pull/321).
+
+
+### [Node-RED](https://nodered.org/docs/)
+Will it work? Will I use it? One way to find out!
 
 
 ### [Guacamole](https://guacamole.apache.org/doc/gug/guacamole-docker.html)

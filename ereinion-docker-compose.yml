@@ -614,10 +614,33 @@ services:
       - traefik.enable=true
       - traefik.http.routers.flame.entrypoints=websecure
       - traefik.http.routers.flame.rule=Host(`flame.$DOMAIN`)
-      - traefik.http.routers.flame.middlewares=authelia@file
     environment:
       - TZ=$TZ
       - PASSWORD=$FLAME_PASSWORD
+
+services:
+  node-red:
+    image: nodered/node-red:latest
+    container_name: node-red
+    hostname: node-red
+    restart: unless-stopped
+    networks:
+      - wasabi-overlay
+    expose:
+      - 1880
+    volumes:
+      - $OPDIR/node-red:/data
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.node-red.entrypoints=websecure
+      - traefik.http.routers.node-red.rule=Host(`nodered.$DOMAIN`)
+      - traefik.http.routers.node-red.middlewares=authelia@file
+      - flame.type=application
+      - flame.name=node-red
+      - flame.url=https://nodered.$DOMAIN
+      - flame.icon=vector-link
+    environment:
+      - TZ=$TZ
 
   guacd:
     image: guacamole/guacd
