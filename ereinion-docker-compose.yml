@@ -365,32 +365,6 @@ services:
     labels:
       - com.centurylinklabs.watchtower.enable=false
 
-  # Backup
-  syncthing:
-    image: syncthing/syncthing:latest
-    container_name: syncthing
-    hostname: syncthing
-    restart: unless-stopped
-    networks:
-      - wasabi-overlay
-    expose:
-      - 8384
-    volumes:
-      - $OPDIR/syncthing:/var/syncthing
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.syncthing.entrypoints=websecure
-      - traefik.http.routers.syncthing.rule=Host(`syncthing.$DOMAIN`)
-      - traefik.http.routers.syncthing.middlewares=authelia@file
-      - flame.type=application
-      - flame.name=syncthing
-      - flame.url=https://syncthing.$DOMAIN
-      - flame.icon=globe-model
-    environment:
-      - TZ=$TZ
-      - PUID=$PUID
-      - PGID=$PGID
-
   # Games
   wikijs:
     image: ghcr.io/requarks/wiki:2

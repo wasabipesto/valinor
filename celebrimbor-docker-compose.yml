@@ -180,6 +180,23 @@ services:
       - PGID=$PGID
       - DOCKER_MODS=linuxserver/calibre-web:calibre
 
+  # Backup
+  syncthing:
+    image: syncthing/syncthing:latest
+    container_name: syncthing
+    hostname: syncthing
+    restart: unless-stopped
+    networks:
+      - wasabi-overlay
+    expose:
+      - 8384
+    volumes:
+      - $OPDIR/syncthing:/var/syncthing
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
+
   # Other
   homeassistant:
     image: lscr.io/linuxserver/homeassistant:latest

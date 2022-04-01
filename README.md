@@ -457,15 +457,6 @@ The mx-puppet bridges all work similarly. You pass them a config file, they gene
 
 </details>
 
-## Backup
-### [Syncthing](https://docs.syncthing.net/)
-A nice replacement for dropbox, minus all of the annoying features. Still experimenting with usability. Right now the goal is to have buckets for notes, projects, and other random documents that sync to ereinion and all relevant devices. Then the files get backed up to b2 via restic or whatever.
-
-
-### Other Backup
-Still evaluating. Trying to have everything back up to b2 for easy restores. Looking into restic, will probably have to roll my own image/scripts.
-
-
 ## Games
 ### [WikiJS](https://docs.requarks.io/)
 A good wiki platform that I like to integrate with discord for easy user management. Mainly a platform for D&D notes. It spits out markdown files every day and has the option to sync bidirectionally, which I may pair with syncthing + obsidian at some point.
@@ -537,6 +528,13 @@ Since (to my knowledge) traefik cannot see the labels on another host's docker e
 ## Monitoring
 ### Watchtower/Node-Exporter/cAdvisor
 See above. All stats get scraped by Prometheus over on ereinion.
+
+
+## Backup
+### [Syncthing](https://docs.syncthing.net/)
+A nice replacement for dropbox, minus all of the annoying features that I don't use.
+
+Currently I have buckets for different kinds of notes, documents, etc. Some things are one-way sync for backup/archival only. Others get fully synchronized, like obsidian vaults. Then everything gets shot off to backblaze land for posterity.
 
 
 ## Media
