@@ -583,8 +583,8 @@ services:
     expose:
       - 8888
     volumes:
-      - $OPDIR/jupyter:/home/joyvan
-      - $OPDIR/nginx/www/jupyter:/home/joyvan/www
+      - $OPDIR/jupyter:/home/jovyan
+      - $OPDIR/nginx/www/jupyter:/home/jovyan/www
     labels:
       - traefik.enable=true
       - traefik.http.routers.jupyter.entrypoints=websecure
