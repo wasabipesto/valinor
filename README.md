@@ -98,6 +98,12 @@ I need to set up git and git-secret to decrypt files and track changes.
 	gpg --import gpg-privkey.gpg
 	git secret reveal
 
+#### Miscellaneous
+Other goodies, completely optional (unless they aren't).
+
+	sudo apt install restic
+	sudo restic self-update
+
 
 # Services - Ereinion
 ## Networking
@@ -261,7 +267,7 @@ After setting everything up, you need to tell Prometheus where to scrape from. T
 </details>
 
 
-## [Loki](https://grafana.com/docs/loki/latest/)
+### [Loki](https://grafana.com/docs/loki/latest/)
 In order to get host logs like syslog, promtail is given read-only access to `/var/log`. Loki will then scrape those logs automatically. 
 
 In order to get logs from each docker container, we need to first install the plugin: `docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions`
@@ -541,6 +547,12 @@ A nice replacement for dropbox, minus all of the annoying features that I don't 
 Currently I have buckets for different kinds of notes, documents, etc. Some things are one-way sync for backup/archival only. Others get fully synchronized, like obsidian vaults. Then everything gets shot off to backblaze land for posterity.
 
 
+### [Restic](https://restic.readthedocs.io/en/stable/index.html)
+I'm working on some custom scripts to run/manage my backups automagically. This takes place ooutside of docker for a couple reasons (it's a pain to do cron inside a container, it ends up sitting around idle most of the time, and you lose certain metadata like hostname) so make sure you have it installed first. I shoot my repository off to Backblaze because I feel like I need to compensate them after abusing their unlimited backup for so long.
+
+These scripts are a work in progress, and rely on a lot of assumptions that I've made about my setup that may not be true for yours. If you want something like this but better, check out [restic-runner](https://github.com/alphapapa/restic-runner).
+
+
 ## Media
 ### [r+utorrent](https://github.com/crazy-max/docker-rtorrent-rutorrent)
 As far as I've found, r(u)torrent is the only solution for managing a large amount of torrents. Since I use sonarr/radarr's hardlink function, as long as I keep the media in one form or another I can keep seeding it. So I have rtorrent set up to download to a special `$DATADIR` which lives on celebrimbor's RAID array and sonarr/radarr pull from there. One thing to note: the path for this folder should be mapped the same in every container (ie /data/downloads). 
@@ -640,8 +652,7 @@ Being the core of my software stack, I'm probably going to end up leaving this o
 
 
 # Next Steps
-- Finish setting up restic, maybe with ofelia
-- Add node-red for complex hassio automations
+- Finish setting up restic (cron?)
 - Install NUT and components to monitor server UPS
 - Implement mx-puppet-discord and calibre latest versions once fixed
 - Look into a proper LDAP server
