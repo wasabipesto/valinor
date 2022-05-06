@@ -226,10 +226,6 @@ I don't use nginx for anything besides a few static pages, but it's always nice 
 
 
 ## Monitoring & Updates
-### [Watchtower](https://containrrr.dev/watchtower/)
-Watchtower pulls new images for all of my containers and updates/recreates them as necessary. While it might be a security risk to automatically pull updates from `:latest`, it's not like I would have been more vigilant updating them all manually with `docker-compose up` anyways (provided I remembered to do it at all). Plus now I get notifications.
-
-
 ### [Prometheus](https://prometheus.io/docs/introduction/overview/)/[Node-Exporter](https://prometheus.io/docs/guides/node-exporter/)/[cAdvisor](https://prometheus.io/docs/guides/cadvisor/)/[Grafana](https://grafana.com/docs/grafana/latest/installation/docker/)
 The services in this stack:
 - Prometheus pulls metrics from a bunch of different places and collates them for analysis. 
@@ -289,6 +285,10 @@ Or add the following to your /etc/docker/daemon.json:
 	}
 
 The we pop over to grafana and play with them as needed.
+
+
+#### Updates
+I used to use Watchtower for this, but it would often restart containers unnecessarialy, or fail to build sometimes. Nowadays I just run `up` when I do my regular server updates.
 
 
 ## Communication
@@ -536,7 +536,7 @@ As my file server and compute server, Celebrimbor handles anything directy relat
 Since (to my knowledge) traefik cannot see the labels on another host's docker engine, it cann't route to these containers based on those labels. Instead, those routers and services are listed in traefik's dynamic configuration.
 
 ## Monitoring
-### Watchtower/Node-Exporter/cAdvisor
+### Node-Exporter/cAdvisor
 See above. All stats get scraped by Prometheus over on ereinion.
 
 
@@ -652,10 +652,8 @@ Being the core of my software stack, I'm probably going to end up leaving this o
 
 
 # Next Steps
-- Finish setting up restic (cron?)
+- Finish setting up restic (new repo)
 - Install NUT and components to monitor server UPS
 - Implement mx-puppet-discord and calibre latest versions once fixed
 - Add matrix-hookshot for RSS and other gibs
 - Look into a proper LDAP server
-- Look into portainer or another docker config GUI
-- Make watchtower updates weekly, sync with restic, maybe move away from watchtower?
