@@ -21,7 +21,7 @@ This is my documentation for the project to migrate a bunch of services from bar
 1. Media serving through Plex. This is the highest priority. I start getting angry texts if it's down for more than 20 minutes.
 2. Server administration/monitoring/backups. I should know if other things die before I need them to be not-dead.
 3. Media serving through all other channels. This includes anything where you get the content through my server and then do something with it later (books, etc).
-4. Media ingesting/requesting. Some services monitor certain channels and automatically add media users request. This is less important than serving existing media.
+4. Media ingesting/requesting. Some services monitor certain channels and automatically add media that users request. This is less important than serving existing media.
 5. Incidentals. Anything that's just for me, or only used by other people only when I'm there to troubleshoot when things go wrong.
 
 # Hardware
@@ -72,7 +72,7 @@ The raison d'etre! Note: Check docker's official [installation instructions](htt
 	sudo usermod -aG docker [your user]
 	logout
 
-Install [docker compose v2](https://docs.docker.com/compose/cli-command/). Note that this version is not yet in [general availability](https://github.com/docker/roadmap/issues/257) but I'm trying it anyways.
+Install [docker compose v2](https://docs.docker.com/compose/cli-command/). Note that this version has only recently been introduced to [general availability](https://www.docker.com/blog/announcing-compose-v2-general-availability/) and v1 has not yet reached [end-of-life](https://github.com/docker/roadmap/issues/257) but I'm jumping on the v2 bandwagon because running a core feature of docker *inside a docker container* is ridiculous. 
 
 	DOCKER_CONFIG=${DOCKER_CONFIG:-$HOME/.docker}
 	mkdir -p $DOCKER_CONFIG/cli-plugins
@@ -625,7 +625,7 @@ I didn't have to do anything fancy to set up these images. I may look into other
 ### [Calibre](https://calibre-ebook.com/) & [Calibre-Web](https://github.com/janeczku/calibre-web)
 LSIO bundles together calibre and calibre-web, which is auful nice of them. All I had to do was pull in my existing database and point it at the books.
 
-Unfortunately there's an [issue](https://github.com/janeczku/calibre-web/issues/1466) in calibre-web right now that invalidates sessions coming through cloudflare. The solution is to pin the image at 0.6.12 and add a script to `custom-cont-init.d` that modifies the program at launch (not a fan). Also apparently amazon's requiring that you verify all emails sent to your kindle, which kinda sucks.
+Unfortunately there's an [issue](https://github.com/janeczku/calibre-web/issues/2381) in calibre-web right now that invalidates sessions coming through cloudflare. The solution is to pin the image at 0.6.12 and add a script to `custom-cont-init.d` that modifies the program at launch (not a fan). Also apparently amazon's requiring that you verify all emails sent to your kindle, which kinda sucks.
 
 
 ## Other
