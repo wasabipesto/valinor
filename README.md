@@ -655,4 +655,7 @@ Being the core of my software stack, I'm probably going to end up leaving this o
 - Finish setting up restic (cron?)
 - Install NUT and components to monitor server UPS
 - Implement mx-puppet-discord and calibre latest versions once fixed
+- Add matrix-hookshot for RSS and other gibs
 - Look into a proper LDAP server
+- Look into portainer or another docker config GUI
+- Make watchtower updates weekly, sync with restic, maybe move away from watchtower?

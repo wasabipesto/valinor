@@ -546,6 +546,27 @@ services:
       - PUID=$PUID
       - PGID=$PGID
 
+  xbackbone:
+    image: lscr.io/linuxserver/xbackbone
+    container_name: xbackbone
+    restart: unless-stopped
+    ports:
+      - 8069:80
+    volumes:
+      - $OPDIR/xbackbone:/config
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.xbackbone.entrypoints=websecure
+      - traefik.http.routers.xbackbone.rule=Host(`xbackbone.$DOMAIN`)
+      - flame.type=application
+      - flame.name=xbackbone
+      - flame.url=https://xbackbone.$DOMAIN
+      - flame.icon=export-variant
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
+
   # Other
   code-server:
     image: lscr.io/linuxserver/code-server:latest
@@ -697,3 +718,26 @@ services:
       - POSTGRES_DB=guacamole
       - POSTGRES_USER=guacamole
       - POSTGRES_PASSWORD=$GUACAMOLE_POSTGRES_PASSWORD
+
+  actual:
+    build: git@github.com:actualbudget/actual-server.git
+    container_name: actual
+    restart: unless-stopped
+    networks:
+      - wasabi-overlay
+    expose:
+      - 5006
+    volumes:
+      - $OPDIR/actual/server-files:/app/server-files
+      - $OPDIR/actual/user-files:/app/user-files
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.actual.entrypoints=websecure
+      - traefik.http.routers.actual.rule=Host(`actual.$DOMAIN`)
+      - traefik.http.routers.actual.middlewares=authelia@file
+      - flame.type=application
+      - flame.name=actual
+      - flame.url=https://actual.$DOMAIN
+      - flame.icon=wallet
+    environment:
+      - TZ=$TZ
