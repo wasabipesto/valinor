@@ -531,8 +531,30 @@ services:
       - PUID=$PUID
       - PGID=$PGID
 
+  nextcloud:
+    image: lscr.io/linuxserver/nextcloud:latest
+    container_name: nextcloud
+    restart: unless-stopped
+    ports:
+      - 44300:443
+    volumes:
+      - $OPDIR/nextcloud/appdata:/config
+      - $OPDIR/nextcloud/data:/data
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.nextcloud.entrypoints=websecure
+      - traefik.http.routers.nextcloud.rule=Host(`cloud.$DOMAIN`)
+      - flame.type=application
+      - flame.name=nextcloud
+      - flame.url=https://cloud.$DOMAIN
+      - flame.icon=cloud-outline
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - PGID=$PGID
+
   xbackbone:
-    image: lscr.io/linuxserver/xbackbone
+    image: lscr.io/linuxserver/xbackbone:latest
     container_name: xbackbone
     restart: unless-stopped
     ports:
@@ -542,10 +564,10 @@ services:
     labels:
       - traefik.enable=true
       - traefik.http.routers.xbackbone.entrypoints=websecure
-      - traefik.http.routers.xbackbone.rule=Host(`xbackbone.$DOMAIN`)
+      - traefik.http.routers.xbackbone.rule=Host(`x.$DOMAIN`)
       - flame.type=application
       - flame.name=xbackbone
-      - flame.url=https://xbackbone.$DOMAIN
+      - flame.url=https://x.$DOMAIN
       - flame.icon=export-variant
     environment:
       - TZ=$TZ
@@ -624,29 +646,6 @@ services:
       - TZ=$TZ
       - PASSWORD=$FLAME_PASSWORD
 
-  node-red:
-    image: nodered/node-red:latest
-    container_name: node-red
-    hostname: node-red
-    restart: unless-stopped
-    networks:
-      - wasabi-overlay
-    expose:
-      - 1880
-    volumes:
-      - $OPDIR/node-red:/data
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.node-red.entrypoints=websecure
-      - traefik.http.routers.node-red.rule=Host(`nodered.$DOMAIN`)
-      - traefik.http.routers.node-red.middlewares=authelia@file
-      - flame.type=application
-      - flame.name=node-red
-      - flame.url=https://nodered.$DOMAIN
-      - flame.icon=vector-link
-    environment:
-      - TZ=$TZ
-
   guacd:
     image: guacamole/guacd
     container_name: guacd
@@ -691,7 +690,6 @@ services:
     container_name: postgres-guacamole
     hostname: postgres-guacamole
     restart: unless-stopped
-    user: $PUID:$PGID # postgres will not init database as 1000:1000
     networks:
       - wasabi-overlay
     expose:
@@ -726,3 +724,65 @@ services:
       - flame.icon=wallet
     environment:
       - TZ=$TZ
+
+  redis-paperless:
+    image: redis:6.0
+    container_name: redis-paperless
+    restart: unless-stopped
+    networks:
+      - wasabi-overlay
+    volumes:
+      - $OPDIR/redis-paperless:/data
+
+  postgres-paperless:
+    image: postgres:13
+    container_name: postgres-paperless
+    restart: unless-stopped
+    networks:
+      - wasabi-overlay
+    volumes:
+      - $OPDIR/postgres-paperless:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: paperless
+      POSTGRES_USER: paperless
+      POSTGRES_PASSWORD: $PAPERLESS_POSTGRES_PASSWORD
+
+  paperless:
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    container_name: paperless
+    restart: unless-stopped
+    networks:
+      - wasabi-overlay
+    depends_on:
+      - redis-paperless
+      - postgres-paperless
+    expose:
+      - 8000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - $OPDIR/paperless/data:/usr/src/paperless/data
+      - $OPDIR/paperless/media:/usr/src/paperless/media
+      - $OPDIR/paperless/export:/usr/src/paperless/export
+      - $OPDIR/paperless/consume:/usr/src/paperless/consume
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.paperless.entrypoints=websecure
+      - traefik.http.routers.paperless.rule=Host(`paperless.$DOMAIN`)
+      #- traefik.http.routers.paperless.middlewares=authelia@file
+      - flame.type=application
+      - flame.name=paperless
+      - flame.url=https://paperless.$DOMAIN
+      - flame.icon=file-outline
+    environment:
+      PAPERLESS_TIME_ZONE: $TZ
+      USERMAP_UID: $PUID
+      USERMAP_GID: $PGID
+      PAPERLESS_REDIS: redis://redis-paperless:6379
+      PAPERLESS_DBHOST: postgres-paperless
+      PAPERLESS_POSTGRES_PASSWORD: $PAPERLESS_POSTGRES_PASSWORD
+      PAPERLESS_URL: https://paperless.$DOMAIN
+    env_file: $OPDIR/paperless/config.env

@@ -529,6 +529,10 @@ In order to transparently add the `/guacamole` prefix, we use traefik's addprefi
 There seems to be an issue with using newer keys to authenticate ssh. Not too worried about it since I have other ways of accessing ssh via web (cose-server) and mobile (juicessh).
 
 
+# [Paperless-ngx]()
+Testing
+
+
 # Services - Celebrimbor
 As my file server and compute server, Celebrimbor handles anything directy related to media ingestion, storage, and serving to users. If other servers go down, these services hsould at least be able to continue core functions, even if they can't be served through the proxy.
 
