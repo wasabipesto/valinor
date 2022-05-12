@@ -522,10 +522,6 @@ To add a service to flame, add the following labels:
 You cannot set descriptions with labels at this time, but it's [in development](https://github.com/pawelmalak/flame/pull/315)? Same story with [multiple docker hosts](https://github.com/pawelmalak/flame/pull/321).
 
 
-### [Node-RED](https://nodered.org/docs/)
-Will it work? Will I use it? One way to find out!
-
-
 ### [Guacamole](https://guacamole.apache.org/doc/gug/guacamole-docker.html)
 A browser-based clientless remote access solution. I use it for VNC connections to my server and RDP connections to my desktop while away from home. It also supports SSH and other goodies. This docker image was pretty simple to configure in comparison to bare metal, and it even connects with authelia for header auth. 
 
@@ -550,6 +546,17 @@ A game-changer for record-keeping. It's been super easy to ingest media, even sc
 Configuration is done through a `config.env` file in the paperless directory with all of the relevant variables. I should do that with some other apps.
 
 The main web page lives behind authelia (like filebrowser does) and only `/api` paths are exposed (those live behind basicauth, which will [soon](https://github.com/bauerj/paperless_app/issues/81) be replaced by token auth).
+
+<details><summary>paperless/config.env (all options [here](https://paperless-ngx.readthedocs.io/en/latest/configuration.html))</summary>
+
+	PAPERLESS_ADMIN_USER=[username]
+	PAPERLESS_ADMIN_MAIL=[email]
+	PAPERLESS_ADMIN_PASSWORD=[password]
+	PAPERLESS_SECRET_KEY=[random string]
+	PAPERLESS_ENABLE_HTTP_REMOTE_USER=true
+	PAPERLESS_FILENAME_DATE_ORDER=MDY
+
+</details>
 
 
 # Services - Celebrimbor
