@@ -1,7 +1,7 @@
 version: "3"
 
 networks:
-  $NETWORK:
+  wasabi-overlay: # find a way to make this variable
     external: true
 
 services:
@@ -188,6 +188,7 @@ services:
     container_name: homeassistant
     hostname: homeassistant
     restart: unless-stopped
+    privileged: true
     network_mode: host    # Note: You cannot use http://homeassistant:8123 to access this container
     ports:                #       since it has network_mode: host. Instead you need to connect to
       - 8123:8123         #       the host's port 8123. This is relevant for traefik and prometheus.

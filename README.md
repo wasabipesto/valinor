@@ -57,9 +57,16 @@ Now update our ssh config: Change sshd port from 22 to some other port, for secu
 
 Log back in, but this time with feeling.
 
-Disable the annoying MOTD (my preference):
+Disable the annoying MOTD:
 
 	touch ~/.hushlogin
+
+Or make them fortunes instead:
+
+	sudo apt install fortune
+	sudo chmod -x /etc/update-motd.d/*
+	echo fortune | sudo tee -a /etc/update-motd.d/20-fortune
+	sudo chmod +x /etc/update-motd.d/20-fortune
 
 The raison d'etre! Note: Check docker's official [installation instructions](https://docs.docker.com/engine/install/) as these may be out of date.
 
