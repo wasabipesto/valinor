@@ -749,7 +749,9 @@ services:
       - traefik.enable=true
       - traefik.http.routers.paperless.entrypoints=websecure
       - traefik.http.routers.paperless.rule=Host(`paperless.$DOMAIN`)
-      #- traefik.http.routers.paperless.middlewares=authelia@file
+      - traefik.http.routers.paperless.middlewares=authelia@file
+      - traefik.http.routers.paperless-api.entrypoints=websecure
+      - "traefik.http.routers.paperless-api.rule=Host(`paperless.$DOMAIN`) && PathPrefix(`/api`)"
       - flame.type=application
       - flame.name=paperless
       - flame.url=https://paperless.$DOMAIN

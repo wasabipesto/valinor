@@ -485,6 +485,14 @@ A request system so simple and pretty my parents could use it. The absolute kill
 A simple self-serve streaming site. Yet to use extensively. The RTMP port is exposed outside of docker, but the DO firewall blocks incoming connections on that port. In order to stream to the container you must be on the tailnet or set an exception in the firewall. Or add a rule to traefik, I guess.
 
 
+### [Nextcloud]()
+TODO
+
+
+### [XBackBone]()
+TODO
+
+
 ## Other
 ### [Code-Server](https://github.com/coder/code-server)
 I have code-server set up with its own local storage for settings and config, and then another mount to /opt for my entire working directory. This lets me edit yaml/config files through all of my services without doing a thing. As an added bonus I can ssh into the host (172.17.0.1 by default) and run docker commands in the same window! Pretty handy so far.
@@ -534,7 +542,7 @@ A game-changer for record-keeping. It's been super easy to ingest media, even sc
 
 Configuration is done through a `config.env` file in the paperless directory with all of the relevant variables. I should do that with some other apps.
 
-Working on getting the main page behind authelia for ease of login, but I'll need to keep the API available (like filebrowser).
+The main web page lives behind authelia (like filebrowser does) and only `/api` paths are exposed (those live behind basicauth, which will [soon](https://github.com/bauerj/paperless_app/issues/81) be replaced by token auth).
 
 
 # Services - Celebrimbor
