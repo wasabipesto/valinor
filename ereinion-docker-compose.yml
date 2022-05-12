@@ -702,29 +702,6 @@ services:
       - POSTGRES_USER=guacamole
       - POSTGRES_PASSWORD=$GUACAMOLE_POSTGRES_PASSWORD
 
-  actual:
-    build: git@github.com:actualbudget/actual-server.git
-    container_name: actual
-    restart: unless-stopped
-    networks:
-      - wasabi-overlay
-    expose:
-      - 5006
-    volumes:
-      - $OPDIR/actual/server-files:/app/server-files
-      - $OPDIR/actual/user-files:/app/user-files
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.actual.entrypoints=websecure
-      - traefik.http.routers.actual.rule=Host(`actual.$DOMAIN`)
-      - traefik.http.routers.actual.middlewares=authelia@file
-      - flame.type=application
-      - flame.name=actual
-      - flame.url=https://actual.$DOMAIN
-      - flame.icon=wallet
-    environment:
-      - TZ=$TZ
-
   redis-paperless:
     image: redis:6.0
     container_name: redis-paperless
