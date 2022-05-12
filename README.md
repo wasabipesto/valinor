@@ -669,7 +669,12 @@ Being the core of my software stack, I'm probably going to end up leaving this o
 
 # Next Steps
 - Finish setting up restic (new repo)
+- Make databases (postgres, hassio) back up automatically (ofelia?)
+- Finish setting up Nextcloud & XBB (getting cloudflare errors)
 - Install NUT and components to monitor server UPS
+- Make it easy to log into Jupyter
 - Implement mx-puppet-discord and calibre latest versions once fixed
 - Add matrix-hookshot for RSS and other gibs
 - Look into a proper LDAP server
+- Make sure all services use proper labels
+- Add healthchecks

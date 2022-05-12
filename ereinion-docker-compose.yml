@@ -1,7 +1,7 @@
 version: "3"
 
 networks:
-  wasabi-overlay:
+  wasabi-overlay: # find a way to make this variable
     external: true
 
 services:
@@ -13,7 +13,7 @@ services:
     hostname: traefik
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     ports:
       - 80:80
       - 443:443
@@ -22,20 +22,20 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - $OPDIR/traefik:/etc/traefik
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.dashboard.entrypoints=websecure
-      - traefik.http.routers.dashboard.rule=Host(`traefik.$DOMAIN`)
-      - traefik.http.routers.dashboard.service=api@internal
-      - traefik.http.routers.dashboard.middlewares=authelia@file
-      - flame.type=application
-      - flame.name=traefik
-      - flame.url=https://traefik.$DOMAIN
-      - flame.icon=traffic-light
+      traefik.enable: true
+      traefik.http.routers.dashboard.entrypoints: websecure
+      traefik.http.routers.dashboard.rule: Host(`traefik.$DOMAIN`)
+      traefik.http.routers.dashboard.service: api@internal
+      traefik.http.routers.dashboard.middlewares: authelia@file
+      flame.type: application
+      flame.name: traefik
+      flame.url: https://traefik.$DOMAIN
+      flame.icon: traffic-light
     environment:
-      - TZ=$TZ
-      - PUID=$PUID
-      - PGID=$PGID
-      - CF_DNS_API_TOKEN=$CF_DNS_API_TOKEN
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+      CF_DNS_API_TOKEN: $CF_DNS_API_TOKEN # for DNS challenge
 
   authelia:
     image: authelia/authelia:latest
@@ -43,24 +43,24 @@ services:
     hostname: authelia
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 9091
     volumes:
       - /opt/authelia:/config
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.authelia.tls=true
-      - traefik.http.routers.authelia.entrypoints=websecure
-      - traefik.http.routers.authelia.rule=Host(`auth.$DOMAIN`)
-      - flame.type=application
-      - flame.name=authelia
-      - flame.url=https://auth.$DOMAIN
-      - flame.icon=shield-account
+      traefik.enable: true
+      traefik.http.routers.authelia.tls: true # why is this here?
+      traefik.http.routers.authelia.entrypoints: websecure
+      traefik.http.routers.authelia.rule: Host(`auth.$DOMAIN`)
+      flame.type: application
+      flame.name: authelia
+      flame.url: https://auth.$DOMAIN
+      flame.icon: shield-account
     environment:
-      - TZ=$TZ
-      - PUID=$PUID
-      - PGID=$PGID
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
 
   nginx:
     image: lscr.io/linuxserver/nginx:latest
@@ -68,20 +68,21 @@ services:
     hostname: nginx
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 443
     volumes:
       - $OPDIR/nginx:/config
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.nginx.entrypoints=websecure
-      - traefik.http.routers.nginx.rule=Host(`$DOMAIN`)
-      - traefik.http.routers.nginx.middlewares=errorpage
+      traefik.enable: true
+      traefik.http.routers.nginx.entrypoints: websecure
+      traefik.http.routers.nginx.rule: Host(`$DOMAIN`)
+      traefik.http.routers.nginx.middlewares: errorpage
+      traefik.http.routers.nginx.priority: 2 # second-lowest priority
     environment:
-      - TZ=$TZ
-      - PUID=$PUID
-      - PGID=$PGID
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
 
   error-pages:
     image: tarampampam/error-pages:latest
@@ -89,32 +90,30 @@ services:
     hostname: error-pages
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 8080
     environment:
       TEMPLATE_NAME: l7-dark
     labels:
       traefik.enable: true
-      traefik.http.routers.errorpage.rule: HostRegexp(`{host:.+}`)
-      traefik.http.routers.errorpage.priority: 10 # fallback mode
+      traefik.http.routers.errorpage.rule: HostRegexp(`{host:.+}`) # any host
+      traefik.http.routers.errorpage.priority: 1 # lowest priority, fallback only
       traefik.http.routers.errorpage.entrypoints: websecure
       traefik.http.routers.errorpage.middlewares: errorpage
       traefik.http.middlewares.errorpage.errors.status: 400-599
       traefik.http.middlewares.errorpage.errors.service: errorpage
       traefik.http.middlewares.errorpage.errors.query: /{status}.html
       traefik.http.services.errorpage.loadbalancer.server.port: 8080
-    depends_on:
-      - traefik
+
 
   # Monitoring & Updates
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
-    hostname: prometheus
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 9090
     volumes:
@@ -124,18 +123,18 @@ services:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.prometheus.entrypoints=websecure
-      - traefik.http.routers.prometheus.rule=Host(`prometheus.$DOMAIN`)
-      - traefik.http.routers.prometheus.middlewares=authelia@file
-      - flame.type=application
-      - flame.name=prometheus
-      - flame.url=https://prometheus.$DOMAIN
-      - flame.icon=database
+      traefik.enable: true
+      traefik.http.routers.prometheus.entrypoints: websecure
+      traefik.http.routers.prometheus.rule: Host(`prometheus.$DOMAIN`)
+      traefik.http.routers.prometheus.middlewares: authelia@file
+      flame.type: application
+      flame.name: prometheus
+      flame.url: https://prometheus.$DOMAIN
+      flame.icon: database
     environment:
-      - TZ=$TZ
-      - PUID=$PUID
-      - PGID=$PGID
+      TZ: $TZ
+      PUID: $PUID # does this work?
+      PGID: $PGID
 
   node-exporter:
     image: prom/node-exporter:latest
@@ -143,7 +142,7 @@ services:
     hostname: node-ereinion
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 9100
     command:
@@ -154,9 +153,9 @@ services:
       - /sys:/host/sys:ro
       - /:/rootfs:ro
     environment:
-      - TZ=$TZ
-      - PUID=$PUID
-      - PGID=$PGID
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
@@ -164,7 +163,7 @@ services:
     hostname: cadvistor-ereinion
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 8080
     volumes:
@@ -174,7 +173,7 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
       - /dev/disk/:/dev/disk:ro
     environment:
-      - TZ=$TZ
+      TZ: $TZ
 
   loki:
     image: grafana/loki
@@ -182,11 +181,11 @@ services:
     hostname: loki
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     ports:
-      - 3100:3100 # expose outside of dockernet
+      - 3100:3100 # expose for docker plugin to connect (dumb)
     environment:
-      - TZ=$TZ
+      TZ: $TZ
     command: -config.file=/etc/loki/local-config.yaml
 
   promtail:
@@ -195,11 +194,11 @@ services:
     hostname: promtail
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     volumes:
       - /var/log:/var/log:ro
     environment:
-      - TZ=$TZ
+      TZ: $TZ
     command: -config.file=/etc/promtail/config.yml
 
   grafana:
@@ -209,24 +208,23 @@ services:
     restart: unless-stopped
     user: $PUID:$PGID
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 3000
     volumes:
       - $OPDIR/grafana:/var/lib/grafana
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.grafana.entrypoints=websecure
-      - traefik.http.routers.grafana.rule=Host(`grafana.$DOMAIN`)
-      - traefik.http.routers.grafana.middlewares=authelia@file
-      - flame.type=application
-      - flame.name=grafana
-      - flame.url=https://grafana.$DOMAIN
-      - flame.icon=chart-areaspline
+      traefik.enable: true
+      traefik.http.routers.grafana.entrypoints: websecure
+      traefik.http.routers.grafana.rule: Host(`grafana.$DOMAIN`)
+      traefik.http.routers.grafana.middlewares: authelia@file
+      flame.type: application
+      flame.name: grafana
+      flame.url: https://grafana.$DOMAIN
+      flame.icon: chart-areaspline
     environment:
-    environment:
-      - TZ=$TZ
-      - GF_PATHS_CONFIG=/var/lib/grafana/grafana.ini
+      TZ: $TZ
+      GF_PATHS_CONFIG: /var/lib/grafana/grafana.ini
 
   # Communication
   protonmail:
@@ -235,16 +233,16 @@ services:
     hostname: protonmail
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 25
       - 143
     volumes:
       - $OPDIR/protonmail:/root
     environment:
-      - TZ=$TZ
-      - PUID=$PUID
-      - PGID=$PGID
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
 
   synapse:
     image: docker.io/matrixdotorg/synapse:latest
@@ -252,22 +250,22 @@ services:
     hostname: synapse
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 8008
     volumes:
       - $OPDIR/synapse:/data
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.synapse.entrypoints=websecure
-      - traefik.http.routers.synapse.rule=Host(`synapse.$DOMAIN`)
-      - traefik.http.routers.synapse.service=synapse
-      - traefik.http.services.synapse.loadbalancer.server.port=8008
+      traefik.enable: true
+      traefik.http.routers.synapse.entrypoints: websecure
+      traefik.http.routers.synapse.rule: Host(`synapse.$DOMAIN`)
+      traefik.http.routers.synapse.service: synapse
+      traefik.http.services.synapse.loadbalancer.server.port: 8008
     environment:
-      - TZ=$TZ
-      - UID=$PUID
-      - GID=$PGID
-      - SYNAPSE_CONFIG_PATH=/data/homeserver.yaml
+      TZ: $TZ
+      UID: $PUID
+      GID: $PGID
+      SYNAPSE_CONFIG_PATH: /data/homeserver.yaml
     depends_on:
       - postgres-matrix
 
@@ -277,63 +275,64 @@ services:
     restart: unless-stopped
     user: $PUID:$PGID # postgres will not init database as 1000:1000
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 5432
-    environment:
-      - POSTGRES_USER=synapse
-      - POSTGRES_PASSWORD=$MATRIX_POSTGRES_PASSWORD
-      # https://matrix-org.github.io/synapse/latest/postgres.html#set-up-database
-      - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
     volumes:
       - $OPDIR/postgres-matrix:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: synapse
+      POSTGRES_PASSWORD: $MATRIX_POSTGRES_PASSWORD
+      # https://matrix-org.github.io/synapse/latest/postgres.html#set-up-database
+      POSTGRES_INITDB_ARGS: --encoding=UTF-8 --lc-collate=C --lc-ctype=C
 
   element:
     image: vectorim/element-web:latest
     container_name: element
-    hostname: element
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 80
     volumes:
       - $OPDIR/element/config.json:/app/config.json:ro
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.element.entrypoints=websecure
-      - traefik.http.routers.element.rule=Host(`element.$DOMAIN`)
-      - flame.type=application
-      - flame.name=element
-      - flame.url=https://element.$DOMAIN
-      - flame.icon=matrix
+      traefik.enable: true
+      traefik.http.routers.element.entrypoints: websecure
+      traefik.http.routers.element.rule: Host(`element.$DOMAIN`)
+      flame.type: application
+      flame.name: element
+      flame.url: https://element.$DOMAIN
+      flame.icon: matrix
     environment:
-      - TZ=$TZ
+      TZ: $TZ
 
   heisenbridge:
     image: hif1/heisenbridge:latest
     container_name: heisenbridge
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 9898
     volumes:
       - $OPDIR/synapse/heisenbridge:/data
     command: -v -c /data/heisenbridge.yaml http://synapse:8008
+    depends_on:
+      - synapse
 
   mx-puppet-groupme:
     build: https://gitlab.com/robintown/mx-puppet-groupme.git#main
     container_name: mx-puppet-groupme
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 8437
     volumes:
       - $OPDIR/synapse/mx-puppet-groupme:/data
-    labels:
-      - com.centurylinklabs.watchtower.enable=false
+    depends_on:
+      - synapse
 
   mx-puppet-discord:
     # build: git@github.com:matrix-discord/mx-puppet-discord.git
@@ -342,13 +341,13 @@ services:
     container_name: mx-puppet-discord
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 8434
     volumes:
       - $OPDIR/synapse/mx-puppet-discord:/data
-    labels:
-      - com.centurylinklabs.watchtower.enable=false
+    depends_on:
+      - synapse
 
   # Games
   wikijs:
@@ -358,40 +357,41 @@ services:
     restart: unless-stopped
     user: $PUID:$PGID
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 3000
     volumes:
       - $OPDIR/wikijs/config.yml:/wiki/config.yml
       - $OPDIR/wikijs/backup:/wiki/backup
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.wikijs.entrypoints=websecure
-      - traefik.http.routers.wikijs.rule=Host(`wiki.$DOMAIN`)
-      - flame.type=application
-      - flame.name=wikijs
-      - flame.url=https://wiki.$DOMAIN
-      - flame.icon=flower-tulip
+      traefik.enable: true
+      traefik.http.routers.wikijs.entrypoints: websecure
+      traefik.http.routers.wikijs.rule: Host(`wiki.$DOMAIN`)
+      flame.type: application
+      flame.name: wikijs
+      flame.url: https://wiki.$DOMAIN
+      flame.icon: flower-tulip
     environment:
-      - TZ=$TZ
-      - CONFIG_FILE=/wiki/config.yml
+      TZ: $TZ
+      CONFIG_FILE: /wiki/config.yml
+    depends_on:
+      - postgres-wikijs
 
   postgres-wikijs:
     image: postgres:11-alpine
     container_name: postgres-wikijs
-    hostname: postgres-wikijs
     restart: unless-stopped
     user: $PUID:$PGID # postgres will not init database as 1000:1000
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 5432
     volumes:
       - $OPDIR/postgres-wikijs:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=wiki
-      - POSTGRES_PASSWORD=$WIKIJS_POSTGRES_PASSWORD
-      - POSTGRES_USER=wikijs
+      POSTGRES_DB: wiki
+      POSTGRES_USER: wikijs
+      POSTGRES_PASSWORD: $WIKIJS_POSTGRES_PASSWORD
 
   foundry-kirkwall:
     image: felddy/foundryvtt:release
@@ -399,30 +399,25 @@ services:
     hostname: foundry-kirkwall
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 30000
     volumes:
       - $OPDIR/kirkwall:/data
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.kirkwall.entrypoints=websecure
-      - traefik.http.routers.kirkwall.rule=Host(`kirkwall.$DOMAIN`)
-      - flame.type=application
-      - flame.name=foundry/kirkwall
-      - flame.url=https://kirkwall.$DOMAIN
-      - flame.icon=anvil
+      traefik.enable: true
+      traefik.http.routers.kirkwall.entrypoints: websecure
+      traefik.http.routers.kirkwall.rule: Host(`kirkwall.$DOMAIN`)
+      flame.type: application
+      flame.name: foundry/kirkwall
+      flame.url: https://kirkwall.$DOMAIN
+      flame.icon: anvil
     environment:
-      - TIMEZONE=$TZ
-      - FOUNDRY_UID=$PUID
-      - FOUNDRY_GID=$PGID
-      - FOUNDRY_PASSWORD=$FOUNDRY_PASSWORD
-      - FOUNDRY_USERNAME=$FOUNDRY_USERNAME
-      - CONTAINER_PRESERVE_CONFIG=true
-      - FOUNDRY_HOSTNAME=kirkwall.$DOMAIN
-      - FOUNDRY_IP_DISCOVERY=false
-      - FOUNDRY_MINIFY_STATIC_FILES=true
-      - FOUNDRY_PROXY_SSL=true
+      TIMEZONE: $TZ
+      FOUNDRY_UID: $PUID
+      FOUNDRY_GID: $PGID
+      FOUNDRY_HOSTNAME: kirkwall.$DOMAIN
+    env_file: $OPDIR/kirkwall/config.env
 
   foundry-afterstory:
     image: felddy/foundryvtt:release
@@ -430,30 +425,25 @@ services:
     hostname: foundry-afterstory
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 30000
     volumes:
       - $OPDIR/afterstory:/data
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.afterstory.entrypoints=websecure
-      - traefik.http.routers.afterstory.rule=Host(`afterstory.$DOMAIN`)
-      - flame.type=application
-      - flame.name=foundry/afterstory
-      - flame.url=https://afterstory.$DOMAIN
-      - flame.icon=anvil
+      traefik.enable: true
+      traefik.http.routers.afterstory.entrypoints: websecure
+      traefik.http.routers.afterstory.rule: Host(`afterstory.$DOMAIN`)
+      flame.type: application
+      flame.name: foundry/afterstory
+      flame.url: https://afterstory.$DOMAIN
+      flame.icon: anvil
     environment:
-      - TIMEZONE=$TZ
-      - FOUNDRY_UID=$PUID
-      - FOUNDRY_GID=$PGID
-      - FOUNDRY_PASSWORD=$FOUNDRY_PASSWORD
-      - FOUNDRY_USERNAME=$FOUNDRY_USERNAME
-      - CONTAINER_PRESERVE_CONFIG=true
-      - FOUNDRY_HOSTNAME=afterstory.$DOMAIN
-      - FOUNDRY_IP_DISCOVERY=false
-      - FOUNDRY_MINIFY_STATIC_FILES=true
-      - FOUNDRY_PROXY_SSL=true
+      TIMEZONE: $TZ
+      FOUNDRY_UID: $PUID
+      FOUNDRY_GID: $PGID
+      FOUNDRY_HOSTNAME: afterstory.$DOMAIN
+    env_file: $OPDIR/afterstory/config.env
 
   # Media
   tautulli:
@@ -462,74 +452,72 @@ services:
     hostname: tautulli
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 8181
     volumes:
       - $OPDIR/tautulli:/config
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.tautulli.entrypoints=websecure
-      - traefik.http.routers.tautulli.rule=Host(`tautulli.$DOMAIN`)
-      - flame.type=application
-      - flame.name=tautulli
-      - flame.url=https://tautulli.$DOMAIN
-      - flame.icon=alphabet-greek
+      traefik.enable: true
+      traefik.http.routers.tautulli.entrypoints: websecure
+      traefik.http.routers.tautulli.rule: Host(`tautulli.$DOMAIN`)
+      flame.type: application
+      flame.name: tautulli
+      flame.url: https://tautulli.$DOMAIN
+      flame.icon: alphabet-greek
     environment:
-      - TZ=$TZ
-      - PUID=$PUID
-      - PGID=$PGID
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
 
   overseerr:
     image: sctx/overseerr:latest
     container_name: overseerr
-    hostname: overseerr
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 5055
     volumes:
       - $OPDIR/overseerr:/app/config
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.overseerr.entrypoints=websecure
-      - traefik.http.routers.overseerr.rule=Host(`requests.$DOMAIN`)
-      - flame.type=application
-      - flame.name=overseerr
-      - flame.url=https://requests.$DOMAIN
-      - flame.icon=eye
+      traefik.enable: true
+      traefik.http.routers.overseerr.entrypoints: websecure
+      traefik.http.routers.overseerr.rule: Host(`requests.$DOMAIN`)
+      flame.type: application
+      flame.name: overseerr
+      flame.url: https://requests.$DOMAIN
+      flame.icon: eye
     environment:
-      - TZ=$TZ
-      - PUID=$PUID
-      - PGID=$PGID
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
 
   owncast:
     image: gabekangas/owncast:latest
     container_name: owncast
-    hostname: owncast
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 8080
     ports:
-      - 1935:1935 # this is protected by tailscale, not traefik
+      - 1935:1935 # RSTP is protected by tailscale, not traefik
     volumes:
       - $OPDIR/owncast:/app/data
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.owncast.entrypoints=websecure
-      - traefik.http.routers.owncast.rule=Host(`stream.$DOMAIN`)
-      - traefik.http.services.owncast.loadbalancer.server.port=8080
-      - flame.type=application
-      - flame.name=owncast
-      - flame.url=https://stream.$DOMAIN
-      - flame.icon=twitch
+      traefik.enable: true
+      traefik.http.routers.owncast.entrypoints: websecure
+      traefik.http.routers.owncast.rule: Host(`stream.$DOMAIN`)
+      traefik.http.services.owncast.loadbalancer.server.port: 8080
+      flame.type: application
+      flame.name: owncast
+      flame.url: https://stream.$DOMAIN
+      flame.icon: twitch
     environment:
-      - TZ=$TZ
-      - PUID=$PUID
-      - PGID=$PGID
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
 
   nextcloud:
     image: lscr.io/linuxserver/nextcloud:latest
@@ -541,17 +529,17 @@ services:
       - $OPDIR/nextcloud/appdata:/config
       - $OPDIR/nextcloud/data:/data
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.nextcloud.entrypoints=websecure
-      - traefik.http.routers.nextcloud.rule=Host(`cloud.$DOMAIN`)
-      - flame.type=application
-      - flame.name=nextcloud
-      - flame.url=https://cloud.$DOMAIN
-      - flame.icon=cloud-outline
+      traefik.enable: true
+      traefik.http.routers.nextcloud.entrypoints: websecure
+      traefik.http.routers.nextcloud.rule: Host(`cloud.$DOMAIN`)
+      flame.type: application
+      flame.name: nextcloud
+      flame.url: https://cloud.$DOMAIN
+      flame.icon: cloud-outline
     environment:
-      - TZ=$TZ
-      - PUID=$PUID
-      - PGID=$PGID
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
 
   xbackbone:
     image: lscr.io/linuxserver/xbackbone:latest
@@ -562,44 +550,43 @@ services:
     volumes:
       - $OPDIR/xbackbone:/config
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.xbackbone.entrypoints=websecure
-      - traefik.http.routers.xbackbone.rule=Host(`x.$DOMAIN`)
-      - flame.type=application
-      - flame.name=xbackbone
-      - flame.url=https://x.$DOMAIN
-      - flame.icon=export-variant
+      traefik.enable: true
+      traefik.http.routers.xbackbone.entrypoints: websecure
+      traefik.http.routers.xbackbone.rule: Host(`x.$DOMAIN`)
+      flame.type: application
+      flame.name: xbackbone
+      flame.url: https://x.$DOMAIN
+      flame.icon: export-variant
     environment:
-      - TZ=$TZ
-      - PUID=$PUID
-      - PGID=$PGID
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
 
   # Other
   code-server:
     image: lscr.io/linuxserver/code-server:latest
     container_name: code-server
-    hostname: code-server
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 8443
     volumes:
       - $OPDIR/code:/config
       - $OPDIR:/opt
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.code-server.entrypoints=websecure
-      - traefik.http.routers.code-server.rule=Host(`cood.$DOMAIN`)
-      - traefik.http.routers.code-server.middlewares=authelia@file
-      - flame.type=application
-      - flame.name=code-server
-      - flame.url=https://cood.$DOMAIN
-      - flame.icon=code-braces
+      traefik.enable: true
+      traefik.http.routers.code-server.entrypoints: websecure
+      traefik.http.routers.code-server.rule: Host(`cood.$DOMAIN`)
+      traefik.http.routers.code-server.middlewares: authelia@file
+      flame.type: application
+      flame.name: code-server
+      flame.url: https://cood.$DOMAIN
+      flame.icon: code-braces
     environment:
-      - TZ=$TZ
-      - PUID=$PUID
-      - PGID=$PGID
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
 
   jupyter:
     image: jupyter/datascience-notebook:latest
@@ -607,26 +594,26 @@ services:
     hostname: jupyter
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 8888
     volumes:
       - $OPDIR/jupyter:/home/jovyan
       - $OPDIR/nginx/www/jupyter:/home/jovyan/www
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.jupyter.entrypoints=websecure
-      - traefik.http.routers.jupyter.rule=Host(`jupyter.$DOMAIN`)
-      - traefik.http.routers.jupyter.middlewares=authelia@file
-      - flame.type=application
-      - flame.name=jupyter
-      - flame.url=https://jupyter.$DOMAIN
-      - flame.icon=language-python
+      traefik.enable: true
+      traefik.http.routers.jupyter.entrypoints: websecure
+      traefik.http.routers.jupyter.rule: Host(`jupyter.$DOMAIN`)
+      traefik.http.routers.jupyter.middlewares: authelia@file
+      flame.type: application
+      flame.name: jupyter
+      flame.url: https://jupyter.$DOMAIN
+      flame.icon: language-python
     environment:
-      - TZ=$TZ
-      - PUID=$PUID
-      - PGID=$PGID
-      - JUPYTER_ENABLE_LAB=yes
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+      JUPYTER_ENABLE_LAB: yes
 
   flame:
     image: pawelmalak/flame:latest
@@ -634,27 +621,17 @@ services:
     hostname: flame
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     volumes:
       - $OPDIR/flame:/app/data
       - /var/run/docker.sock:/var/run/docker.sock
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.flame.entrypoints=websecure
-      - traefik.http.routers.flame.rule=Host(`flame.$DOMAIN`)
+      traefik.enable: true
+      traefik.http.routers.flame.entrypoints: websecure
+      traefik.http.routers.flame.rule: Host(`flame.$DOMAIN`)
     environment:
-      - TZ=$TZ
-      - PASSWORD=$FLAME_PASSWORD
-
-  guacd:
-    image: guacamole/guacd
-    container_name: guacd
-    hostname: guacd
-    restart: unless-stopped
-    networks:
-      - wasabi-overlay
-    expose:
-      - 4822
+      TZ: $TZ
+      PASSWORD: $FLAME_PASSWORD
 
   guacamole:
     image: guacamole/guacamole
@@ -662,28 +639,41 @@ services:
     hostname: guacamole
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 8080
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.guacamole.entrypoints=websecure
-      - traefik.http.routers.guacamole.rule=Host(`guacamole.$DOMAIN`)
-      - traefik.http.routers.guacamole.middlewares=authelia@file,guac-prefix@docker
-      - traefik.http.middlewares.guac-prefix.addprefix.prefix=/guacamole
-      - flame.type=application
-      - flame.name=guacamole
-      - flame.url=https://guacamole.$DOMAIN
-      - flame.icon=feather
+      traefik.enable: true
+      traefik.http.routers.guacamole.entrypoints: websecure
+      traefik.http.routers.guacamole.rule: Host(`guacamole.$DOMAIN`)
+      traefik.http.routers.guacamole.middlewares: authelia@file,guac-prefix@docker
+      traefik.http.middlewares.guac-prefix.addprefix.prefix: /guacamole
+      flame.type: application
+      flame.name: guacamole
+      flame.url: https://guacamole.$DOMAIN
+      flame.icon: feather
     environment:
-      - TZ=$TZ
-      - HEADER_ENABLED=true
-      - HTTP_AUTH_HEADER=Remote-User
-      - GUACD_HOSTNAME=guacd
-      - POSTGRES_HOSTNAME=postgres-guacamole
-      - POSTGRES_DATABASE=guacamole
-      - POSTGRES_USER=guacamole
-      - POSTGRES_PASSWORD=$GUACAMOLE_POSTGRES_PASSWORD
+      TZ: $TZ
+      HEADER_ENABLED: true
+      HTTP_AUTH_HEADER: Remote-User
+      GUACD_HOSTNAME: guacd
+      POSTGRES_HOSTNAME: postgres-guacamole
+      POSTGRES_DATABASE: guacamole
+      POSTGRES_USER: guacamole
+      POSTGRES_PASSWORD: $GUACAMOLE_POSTGRES_PASSWORD
+    depends_on:
+      - guacd
+      - postgres-guacamole
+
+  guacd:
+    image: guacamole/guacd
+    container_name: guacd
+    hostname: guacd
+    restart: unless-stopped
+    networks:
+      - $NETWORK
+    expose:
+      - 4822
 
   postgres-guacamole:
     image: postgres:11-alpine
@@ -691,48 +681,23 @@ services:
     hostname: postgres-guacamole
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 5432
     volumes:
       #- ./initdb.sql:/docker-entrypoint-initdb.d/initdb.sql:ro # for init only
       - $OPDIR/postgres-guacamole:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=guacamole
-      - POSTGRES_USER=guacamole
-      - POSTGRES_PASSWORD=$GUACAMOLE_POSTGRES_PASSWORD
-
-  redis-paperless:
-    image: redis:6.0
-    container_name: redis-paperless
-    restart: unless-stopped
-    networks:
-      - wasabi-overlay
-    volumes:
-      - $OPDIR/redis-paperless:/data
-
-  postgres-paperless:
-    image: postgres:13
-    container_name: postgres-paperless
-    restart: unless-stopped
-    networks:
-      - wasabi-overlay
-    volumes:
-      - $OPDIR/postgres-paperless:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: paperless
-      POSTGRES_USER: paperless
-      POSTGRES_PASSWORD: $PAPERLESS_POSTGRES_PASSWORD
+      POSTGRES_DB: guacamole
+      POSTGRES_USER: guacamole
+      POSTGRES_PASSWORD: $GUACAMOLE_POSTGRES_PASSWORD
 
   paperless:
     image: ghcr.io/paperless-ngx/paperless-ngx:latest
     container_name: paperless
     restart: unless-stopped
     networks:
-      - wasabi-overlay
-    depends_on:
-      - redis-paperless
-      - postgres-paperless
+      - $NETWORK
     expose:
       - 8000
     healthcheck:
@@ -746,16 +711,16 @@ services:
       - $OPDIR/paperless/export:/usr/src/paperless/export
       - $OPDIR/paperless/consume:/usr/src/paperless/consume
     labels:
-      - traefik.enable=true
-      - traefik.http.routers.paperless.entrypoints=websecure
-      - traefik.http.routers.paperless.rule=Host(`paperless.$DOMAIN`)
-      - traefik.http.routers.paperless.middlewares=authelia@file
-      - traefik.http.routers.paperless-api.entrypoints=websecure
-      - "traefik.http.routers.paperless-api.rule=Host(`paperless.$DOMAIN`) && PathPrefix(`/api`)"
-      - flame.type=application
-      - flame.name=paperless
-      - flame.url=https://paperless.$DOMAIN
-      - flame.icon=file-outline
+      traefik.enable: true
+      traefik.http.routers.paperless.entrypoints: websecure
+      traefik.http.routers.paperless.rule: Host(`paperless.$DOMAIN`)
+      traefik.http.routers.paperless.middlewares: authelia@file
+      traefik.http.routers.paperless-api.entrypoints: websecure
+      traefik.http.routers.paperless-api.rule: "Host(`paperless.$DOMAIN`) && PathPrefix(`/api`)"
+      flame.type: application
+      flame.name: paperless
+      flame.url: https://paperless.$DOMAIN
+      flame.icon: file-outline
     environment:
       PAPERLESS_TIME_ZONE: $TZ
       USERMAP_UID: $PUID
@@ -765,3 +730,28 @@ services:
       PAPERLESS_POSTGRES_PASSWORD: $PAPERLESS_POSTGRES_PASSWORD
       PAPERLESS_URL: https://paperless.$DOMAIN
     env_file: $OPDIR/paperless/config.env
+    depends_on:
+      - redis-paperless
+      - postgres-paperless
+
+  redis-paperless:
+    image: redis:6.0
+    container_name: redis-paperless
+    restart: unless-stopped
+    networks:
+      - $NETWORK
+    volumes:
+      - $OPDIR/redis-paperless:/data
+
+  postgres-paperless:
+    image: postgres:13
+    container_name: postgres-paperless
+    restart: unless-stopped
+    networks:
+      - $NETWORK
+    volumes:
+      - $OPDIR/postgres-paperless:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: paperless
+      POSTGRES_USER: paperless
+      POSTGRES_PASSWORD: $PAPERLESS_POSTGRES_PASSWORD

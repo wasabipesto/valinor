@@ -1,7 +1,7 @@
 version: "3"
 
 networks:
-  wasabi-overlay:
+  $NETWORK:
     external: true
 
 services:
@@ -13,7 +13,7 @@ services:
     hostname: node-celebrimbor
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 9100
     command:
@@ -25,7 +25,7 @@ services:
       - /sys:/host/sys:ro
       - /:/rootfs:ro
     environment:
-      - TZ=$TZ
+      TZ: $TZ
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
@@ -33,7 +33,7 @@ services:
     hostname: cadvistor-celebrimbor
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 8080
     volumes:
@@ -43,14 +43,14 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
       - /dev/disk/:/dev/disk:ro
     environment:
-      - TZ=$TZ
+      TZ: $TZ
 
   smartctl:
     image: matusnovak/prometheus-smartctl:latest
     container_name: smartctl
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 9902
     privileged: true
@@ -61,7 +61,7 @@ services:
     container_name: rtorrent
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 6881  # DHT
       - 8000  # XMLRPC
@@ -76,9 +76,9 @@ services:
       - $DATADIR/Seeds:/data/Seeds
     stop_grace_period: 15s
     environment:
-      - TZ=$TZ
-      - PUID=$PUID
-      - PGID=$PGID
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
 
   filebrowser:
     image: filebrowser/filebrowser:latest
@@ -87,7 +87,7 @@ services:
     user: $PUID:$PGID
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 80
     volumes:
@@ -102,15 +102,15 @@ services:
     hostname: prowlarr
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 9696
     volumes:
       - $OPDIR/prowlarr:/config
     environment:
-      - TZ=$TZ
-      - PUID=$PUID
-      - PGID=$PGID
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
 
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
@@ -118,16 +118,16 @@ services:
     hostname: sonarr
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 8989
     volumes:
       - $OPDIR/sonarr:/config
       - $DATADIR:/data
     environment:
-      - TZ=$TZ
-      - PUID=$PUID
-      - PGID=$PGID
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
 
   radarr:
     image: lscr.io/linuxserver/radarr:latest
@@ -135,16 +135,16 @@ services:
     hostname: radarr
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 7878
     volumes:
       - $OPDIR/radarr:/config
       - $DATADIR:/data
     environment:
-      - TZ=$TZ
-      - PUID=$PUID
-      - PGID=$PGID
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
 
   calibre-web:
     image: ghcr.io/linuxserver/calibre-web:version-0.6.12 
@@ -153,17 +153,17 @@ services:
     hostname: calibre-web
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 8083
     volumes:
       - $OPDIR/calibre-web:/config
       - $DATADIR/Books:/data/Books
     environment:
-      - TZ=$TZ
-      - PUID=$PUID
-      - PGID=$PGID
-      - DOCKER_MODS=linuxserver/calibre-web:calibre
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+      DOCKER_MODS: linuxserver/calibre-web:calibre
 
   # Backup
   syncthing:
@@ -172,15 +172,15 @@ services:
     hostname: syncthing
     restart: unless-stopped
     networks:
-      - wasabi-overlay
+      - $NETWORK
     expose:
       - 8384
     volumes:
       - $OPDIR/syncthing:/var/syncthing
     environment:
-      - TZ=$TZ
-      - PUID=$PUID
-      - PGID=$PGID
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
 
   # Other
   homeassistant:
@@ -188,24 +188,15 @@ services:
     container_name: homeassistant
     hostname: homeassistant
     restart: unless-stopped
-#    networks:
-#      - wasabi-overlay
-#    expose:
-#      - 8123
-    ports:
-      - 8123:8123
+    network_mode: host    # Note: You cannot use http://homeassistant:8123 to access this container
+    ports:                #       since it has network_mode: host. Instead you need to connect to
+      - 8123:8123         #       the host's port 8123. This is relevant for traefik and prometheus.
     volumes:
       - $OPDIR/homeassistant:/config
       - /etc/localtime:/etc/localtime:ro
-    restart: unless-stopped
-    privileged: true
-    network_mode: host
-#    pass through usb devices
-#    devices:
-#      - /dev/ttyUSB0:/dev/ttyUSB0
     environment:
-      - TZ=$TZ
-      - PUID=$PUID
-      - PGID=$PGID
-      - DOCKER_MODS=linuxserver/mods:universal-package-install
-      - INSTALL_PACKAGES=nmap
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+      DOCKER_MODS: linuxserver/mods:universal-package-install
+      INSTALL_PACKAGES: nmap # for nmap device tracker
