@@ -335,9 +335,7 @@ services:
       - synapse
 
   mx-puppet-discord:
-    # build: git@github.com:matrix-discord/mx-puppet-discord.git
-    # forked due to https://github.com/matrix-discord/mx-puppet-discord/issues/201
-    build: $BUILDDIR/mx-puppet-discord
+    image: registry.gitlab.com/mx-puppet/discord/mx-puppet-discord:latest
     container_name: mx-puppet-discord
     restart: unless-stopped
     networks:
@@ -346,6 +344,20 @@ services:
       - 8434
     volumes:
       - $OPDIR/synapse/mx-puppet-discord:/data
+    depends_on:
+      - synapse
+
+  matrix-hookshot:
+    image: halfshot/matrix-hookshot:latest
+    container_name: matrix-hookshot
+    restart: unless-stopped
+    networks:
+      - $NETWORK
+    expose:
+      - 9000 # webhooks
+      - 9993 # synapse
+    volumes:
+      - $OPDIR/synapse/matrix-hookshot:/data
     depends_on:
       - synapse
 

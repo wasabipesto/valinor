@@ -508,6 +508,10 @@ I have code-server set up with its own local storage for settings and config, an
 ### [Jupyter](https://docs.jupyter.org/en/latest/)
 Jupyter is quite nice for ingesting and visualizing lots of data. This container is a bit finnicky to get set up, I'd like to get it under control at some point.
 
+By [default](https://jupyter-notebook.readthedocs.io/en/stable/security.html) it generates a token when booted and you have to look at the logs to get it and log in. There's no easy way to do header auth so run this command to generate a password:
+
+	docker exec -it jupyter jupyter notebook password
+
 
 ### [Flame](https://github.com/pawelmalak/flame)
 A pretty dashboard for all of my stuff. More importantly, it adds items from docker labels. I'm still hoping for header auth (or just no auth) but what's there works great.
@@ -686,9 +690,7 @@ Being the core of my software stack, I'm probably going to end up leaving this o
 - Make databases (postgres, hassio) back up automatically (ofelia?)
 - Finish setting up Nextcloud & XBB (getting cloudflare errors)
 - Install NUT and components to monitor server UPS
-- Make it easy to log into Jupyter
-- Implement mx-puppet-discord and calibre latest versions once fixed
-- Add matrix-hookshot for RSS and other gibs
+- Implement calibre latest version once fixed
 - Look into a proper LDAP server
 - Make sure all services use proper labels
 - Add healthchecks
