@@ -688,7 +688,6 @@ Being the core of my software stack, I'm probably going to end up leaving this o
 # Next Steps
 - Finish setting up restic (new repo)
 - Make databases (postgres, hassio) back up automatically (ofelia?)
-- Finish setting up Nextcloud & XBB (getting cloudflare errors)
 - Install NUT and components to monitor server UPS
 - Implement calibre latest version once fixed
 - Look into a proper LDAP server

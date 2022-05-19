@@ -535,8 +535,10 @@ services:
     image: lscr.io/linuxserver/nextcloud:latest
     container_name: nextcloud
     restart: unless-stopped
-    ports:
-      - 44300:443
+    networks:
+      - $NETWORK
+    expose:
+      - 443
     volumes:
       - $OPDIR/nextcloud/appdata:/config
       - $OPDIR/nextcloud/data:/data
@@ -544,6 +546,7 @@ services:
       traefik.enable: true
       traefik.http.routers.nextcloud.entrypoints: websecure
       traefik.http.routers.nextcloud.rule: Host(`cloud.$DOMAIN`)
+      traefik.http.services.nextcloud.loadbalancer.server.port: 443
       flame.type: application
       flame.name: nextcloud
       flame.url: https://cloud.$DOMAIN
@@ -557,8 +560,10 @@ services:
     image: lscr.io/linuxserver/xbackbone:latest
     container_name: xbackbone
     restart: unless-stopped
-    ports:
-      - 8069:80
+    networks:
+      - $NETWORK
+    expose:
+      - 80
     volumes:
       - $OPDIR/xbackbone:/config
     labels:
@@ -575,6 +580,25 @@ services:
       PGID: $PGID
 
   # Other
+  bludit:
+    image: bludit/docker:latest
+    container_name: bludit
+    restart: unless-stopped
+    networks:
+      - $NETWORK
+    expose:
+      - 80
+    volumes:
+      - $OPDIR/bludit:/usr/share/nginx/html/bl-content
+    labels:
+      traefik.enable: true
+      traefik.http.routers.bludit.entrypoints: websecure
+      traefik.http.routers.bludit.rule: Host(`blog.$DOMAIN`)
+      flame.type: application
+      flame.name: bludit
+      flame.url: https://blog.$DOMAIN
+      flame.icon: newspaper
+
   code-server:
     image: lscr.io/linuxserver/code-server:latest
     container_name: code-server
