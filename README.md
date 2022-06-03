@@ -544,7 +544,7 @@ In order to transparently add the `/guacamole` prefix, we use traefik's addprefi
 There seems to be an issue with using newer keys to authenticate ssh. Not too worried about it since I have other ways of accessing ssh via web (cose-server) and mobile (juicessh).
 
 
-# [Paperless-ngx](https://github.com/paperless-ngx/paperless-ngx)
+### [Paperless-ngx](https://github.com/paperless-ngx/paperless-ngx)
 A game-changer for record-keeping. It's been super easy to ingest media, even scanned pages. Plus it has a nice little app.
 
 Configuration is done through a `config.env` file in the paperless directory with all of the relevant variables. I should do that with some other apps.
@@ -688,8 +688,9 @@ Being the core of my software stack, I'm probably going to end up leaving this o
 # Next Steps
 - Finish setting up restic (new repo)
 - Make databases (postgres, hassio) back up automatically (ofelia?)
+- Make jupyter notebooks run automatically (ofelia?)
 - Install NUT and components to monitor server UPS
 - Implement calibre latest version once fixed
-- Look into a proper LDAP server
+- Kill unused matrix bridges (moving to beeper)
 - Make sure all services use proper labels
 - Add healthchecks
