@@ -334,19 +334,6 @@ services:
     depends_on:
       - synapse
 
-  mx-puppet-discord:
-    image: registry.gitlab.com/mx-puppet/discord/mx-puppet-discord:latest
-    container_name: mx-puppet-discord
-    restart: unless-stopped
-    networks:
-      - $NETWORK
-    expose:
-      - 8434
-    volumes:
-      - $OPDIR/synapse/mx-puppet-discord:/data
-    depends_on:
-      - synapse
-
   matrix-hookshot:
     image: halfshot/matrix-hookshot:latest
     container_name: matrix-hookshot
