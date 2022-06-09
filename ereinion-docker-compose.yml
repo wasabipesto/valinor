@@ -84,6 +84,27 @@ services:
       PUID: $PUID
       PGID: $PGID
 
+  chickenphoto:
+    image: lscr.io/linuxserver/nginx:latest
+    container_name: chickenphoto
+    hostname: chickenphoto
+    restart: unless-stopped
+    networks:
+      - $NETWORK
+    expose:
+      - 443
+    volumes:
+      - $OPDIR/chickenphoto:/config
+    labels:
+      traefik.enable: true
+      traefik.http.routers.chickenphoto.entrypoints: websecure
+      traefik.http.routers.chickenphoto.rule: Host(`chickenphoto.com`)
+      traefik.http.routers.chickenphoto.middlewares: errorpage
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+
   error-pages:
     image: tarampampam/error-pages:latest
     container_name: error-pages
