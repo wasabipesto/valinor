@@ -654,6 +654,9 @@ services:
       flame.name: jupyter
       flame.url: https://jupyter.$DOMAIN
       flame.icon: language-python
+      ofelia.enabled: "true"
+      ofelia.job-exec.manifold-mirror.schedule: "@every 5m"
+      ofelia.job-exec.manifold-mirror.command: "jupyter nbconvert --to notebook --execute /home/jovyan/Manifold/Mastodon/Mastodon.ipynb"
     environment:
       TZ: $TZ
       PUID: $PUID
@@ -800,3 +803,13 @@ services:
       POSTGRES_DB: paperless
       POSTGRES_USER: paperless
       POSTGRES_PASSWORD: $PAPERLESS_POSTGRES_PASSWORD
+
+  ofelia:
+    image: mcuadros/ofelia:latest
+    container_name: ofelia
+    restart: unless-stopped
+    networks:
+      - $NETWORK
+    command: daemon --docker
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
