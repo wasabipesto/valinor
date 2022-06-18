@@ -608,9 +608,10 @@ services:
       flame.url: https://blog.$DOMAIN
       flame.icon: newspaper
 
-  code-server:
+  code-ereinion:
     image: lscr.io/linuxserver/code-server:latest
-    container_name: code-server
+    container_name: code-ereinion
+    hostname: code-ereinion
     restart: unless-stopped
     networks:
       - $NETWORK
@@ -622,7 +623,7 @@ services:
     labels:
       traefik.enable: true
       traefik.http.routers.code-server.entrypoints: websecure
-      traefik.http.routers.code-server.rule: Host(`cood.$DOMAIN`) || Host(`code-e.$DOMAIN`)
+      traefik.http.routers.code-server.rule: Host(`code-e.$DOMAIN`)
       traefik.http.routers.code-server.middlewares: authelia@file
       flame.type: application
       flame.name: code-server
