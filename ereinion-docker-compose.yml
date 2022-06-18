@@ -622,7 +622,7 @@ services:
     labels:
       traefik.enable: true
       traefik.http.routers.code-server.entrypoints: websecure
-      traefik.http.routers.code-server.rule: Host(`cood.$DOMAIN`)
+      traefik.http.routers.code-server.rule: Host(`cood.$DOMAIN`) || Host(`code-e.$DOMAIN`)
       traefik.http.routers.code-server.middlewares: authelia@file
       flame.type: application
       flame.name: code-server
@@ -655,6 +655,8 @@ services:
       flame.url: https://jupyter.$DOMAIN
       flame.icon: language-python
       ofelia.enabled: "true"
+      ofelia.job-exec.manifold-stats.schedule: "@every 12h"
+      ofelia.job-exec.manifold-stats.command: "/bin/bash /home/jovyan/Manifold/render.sh"
       ofelia.job-exec.manifold-mirror.schedule: "@every 5m"
       ofelia.job-exec.manifold-mirror.command: "jupyter nbconvert --to notebook --execute /home/jovyan/Manifold/Mastodon/Mastodon.ipynb"
     environment:
