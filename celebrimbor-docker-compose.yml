@@ -201,3 +201,20 @@ services:
       PGID: $PGID
       DOCKER_MODS: linuxserver/mods:universal-package-install
       INSTALL_PACKAGES: nmap # for nmap device tracker
+
+  code-celebrimbor:
+    image: lscr.io/linuxserver/code-server:latest
+    container_name: code-celebrimbor
+    hostname: code-celebrimbor
+    restart: unless-stopped
+    networks:
+      - $NETWORK
+    expose:
+      - 8443
+    volumes:
+      - $OPDIR/code:/config
+      - $OPDIR:/opt
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
