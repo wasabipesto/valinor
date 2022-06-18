@@ -84,6 +84,27 @@ services:
       PUID: $PUID
       PGID: $PGID
 
+  chickenphoto:
+    image: lscr.io/linuxserver/nginx:latest
+    container_name: chickenphoto
+    hostname: chickenphoto
+    restart: unless-stopped
+    networks:
+      - $NETWORK
+    expose:
+      - 443
+    volumes:
+      - $OPDIR/chickenphoto:/config
+    labels:
+      traefik.enable: true
+      traefik.http.routers.chickenphoto.entrypoints: websecure
+      traefik.http.routers.chickenphoto.rule: Host(`chickenphoto.com`)
+      traefik.http.routers.chickenphoto.middlewares: errorpage
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+
   error-pages:
     image: tarampampam/error-pages:latest
     container_name: error-pages
@@ -334,18 +355,17 @@ services:
     depends_on:
       - synapse
 
-  mx-puppet-discord:
-    # build: git@github.com:matrix-discord/mx-puppet-discord.git
-    # forked due to https://github.com/matrix-discord/mx-puppet-discord/issues/201
-    build: $BUILDDIR/mx-puppet-discord
-    container_name: mx-puppet-discord
+  matrix-hookshot:
+    image: halfshot/matrix-hookshot:latest
+    container_name: matrix-hookshot
     restart: unless-stopped
     networks:
       - $NETWORK
     expose:
-      - 8434
+      - 9000 # webhooks
+      - 9993 # synapse
     volumes:
-      - $OPDIR/synapse/mx-puppet-discord:/data
+      - $OPDIR/synapse/matrix-hookshot:/data
     depends_on:
       - synapse
 
@@ -523,8 +543,10 @@ services:
     image: lscr.io/linuxserver/nextcloud:latest
     container_name: nextcloud
     restart: unless-stopped
-    ports:
-      - 44300:443
+    networks:
+      - $NETWORK
+    expose:
+      - 443
     volumes:
       - $OPDIR/nextcloud/appdata:/config
       - $OPDIR/nextcloud/data:/data
@@ -545,8 +567,10 @@ services:
     image: lscr.io/linuxserver/xbackbone:latest
     container_name: xbackbone
     restart: unless-stopped
-    ports:
-      - 8069:80
+    networks:
+      - $NETWORK
+    expose:
+      - 80
     volumes:
       - $OPDIR/xbackbone:/config
     labels:
@@ -563,6 +587,27 @@ services:
       PGID: $PGID
 
   # Other
+  bludit:
+    image: bludit/docker:latest
+    container_name: bludit
+    restart: unless-stopped
+    networks:
+      - $NETWORK
+    expose:
+      - 80
+    volumes:
+      - $OPDIR/bludit/bl-content:/usr/share/nginx/html/bl-content
+      - $OPDIR/bludit/bl-themes:/usr/share/nginx/html/bl-themes
+    labels:
+      traefik.enable: true
+      traefik.http.routers.bludit.entrypoints: websecure
+      traefik.http.routers.bludit.rule: Host(`blog.$DOMAIN`)
+      traefik.http.routers.bludit.middlewares: authelia@file # hiding... for now
+      flame.type: application
+      flame.name: bludit
+      flame.url: https://blog.$DOMAIN
+      flame.icon: newspaper
+
   code-server:
     image: lscr.io/linuxserver/code-server:latest
     container_name: code-server
@@ -577,7 +622,7 @@ services:
     labels:
       traefik.enable: true
       traefik.http.routers.code-server.entrypoints: websecure
-      traefik.http.routers.code-server.rule: Host(`cood.$DOMAIN`)
+      traefik.http.routers.code-server.rule: Host(`cood.$DOMAIN`) || Host(`code-e.$DOMAIN`)
       traefik.http.routers.code-server.middlewares: authelia@file
       flame.type: application
       flame.name: code-server
@@ -609,6 +654,11 @@ services:
       flame.name: jupyter
       flame.url: https://jupyter.$DOMAIN
       flame.icon: language-python
+      ofelia.enabled: "true"
+      ofelia.job-exec.manifold-stats.schedule: "@every 12h"
+      ofelia.job-exec.manifold-stats.command: "/bin/bash /home/jovyan/Manifold/render.sh"
+      ofelia.job-exec.manifold-mirror.schedule: "@every 5m"
+      ofelia.job-exec.manifold-mirror.command: "jupyter nbconvert --to notebook --execute /home/jovyan/Manifold/Mastodon/Mastodon.ipynb"
     environment:
       TZ: $TZ
       PUID: $PUID
@@ -755,3 +805,13 @@ services:
       POSTGRES_DB: paperless
       POSTGRES_USER: paperless
       POSTGRES_PASSWORD: $PAPERLESS_POSTGRES_PASSWORD
+
+  ofelia:
+    image: mcuadros/ofelia:latest
+    container_name: ofelia
+    restart: unless-stopped
+    networks:
+      - $NETWORK
+    command: daemon --docker
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro

@@ -57,9 +57,16 @@ Now update our ssh config: Change sshd port from 22 to some other port, for secu
 
 Log back in, but this time with feeling.
 
-Disable the annoying MOTD (my preference):
+Disable the annoying MOTD:
 
 	touch ~/.hushlogin
+
+Or make them fortunes instead:
+
+	sudo apt install fortune
+	sudo chmod -x /etc/update-motd.d/*
+	echo fortune | sudo tee -a /etc/update-motd.d/20-fortune
+	sudo chmod +x /etc/update-motd.d/20-fortune
 
 The raison d'etre! Note: Check docker's official [installation instructions](https://docs.docker.com/engine/install/) as these may be out of date.
 
@@ -501,6 +508,10 @@ I have code-server set up with its own local storage for settings and config, an
 ### [Jupyter](https://docs.jupyter.org/en/latest/)
 Jupyter is quite nice for ingesting and visualizing lots of data. This container is a bit finnicky to get set up, I'd like to get it under control at some point.
 
+By [default](https://jupyter-notebook.readthedocs.io/en/stable/security.html) it generates a token when booted and you have to look at the logs to get it and log in. There's no easy way to do header auth so run this command to generate a password:
+
+	docker exec -it jupyter jupyter notebook password
+
 
 ### [Flame](https://github.com/pawelmalak/flame)
 A pretty dashboard for all of my stuff. More importantly, it adds items from docker labels. I'm still hoping for header auth (or just no auth) but what's there works great.
@@ -513,10 +524,6 @@ To add a service to flame, add the following labels:
       - flame.icon=twitch # mdi icon for the service
 
 You cannot set descriptions with labels at this time, but it's [in development](https://github.com/pawelmalak/flame/pull/315)? Same story with [multiple docker hosts](https://github.com/pawelmalak/flame/pull/321).
-
-
-### [Node-RED](https://nodered.org/docs/)
-Will it work? Will I use it? One way to find out!
 
 
 ### [Guacamole](https://guacamole.apache.org/doc/gug/guacamole-docker.html)
@@ -537,12 +544,23 @@ In order to transparently add the `/guacamole` prefix, we use traefik's addprefi
 There seems to be an issue with using newer keys to authenticate ssh. Not too worried about it since I have other ways of accessing ssh via web (cose-server) and mobile (juicessh).
 
 
-# [Paperless-ngx](https://github.com/paperless-ngx/paperless-ngx)
+### [Paperless-ngx](https://github.com/paperless-ngx/paperless-ngx)
 A game-changer for record-keeping. It's been super easy to ingest media, even scanned pages. Plus it has a nice little app.
 
 Configuration is done through a `config.env` file in the paperless directory with all of the relevant variables. I should do that with some other apps.
 
 The main web page lives behind authelia (like filebrowser does) and only `/api` paths are exposed (those live behind basicauth, which will [soon](https://github.com/bauerj/paperless_app/issues/81) be replaced by token auth).
+
+<details><summary>paperless/config.env (all options [here](https://paperless-ngx.readthedocs.io/en/latest/configuration.html))</summary>
+
+	PAPERLESS_ADMIN_USER=[username]
+	PAPERLESS_ADMIN_MAIL=[email]
+	PAPERLESS_ADMIN_PASSWORD=[password]
+	PAPERLESS_SECRET_KEY=[random string]
+	PAPERLESS_ENABLE_HTTP_REMOTE_USER=true
+	PAPERLESS_FILENAME_DATE_ORDER=MDY
+
+</details>
 
 
 # Services - Celebrimbor
@@ -670,11 +688,9 @@ Being the core of my software stack, I'm probably going to end up leaving this o
 # Next Steps
 - Finish setting up restic (new repo)
 - Make databases (postgres, hassio) back up automatically (ofelia?)
-- Finish setting up Nextcloud & XBB (getting cloudflare errors)
+- Make jupyter notebooks run automatically (ofelia?)
 - Install NUT and components to monitor server UPS
-- Make it easy to log into Jupyter
-- Implement mx-puppet-discord and calibre latest versions once fixed
-- Add matrix-hookshot for RSS and other gibs
-- Look into a proper LDAP server
+- Implement calibre latest version once fixed
+- Kill unused matrix bridges (moving to beeper)
 - Make sure all services use proper labels
 - Add healthchecks
