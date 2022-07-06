@@ -218,3 +218,5 @@ services:
       TZ: $TZ
       PUID: $PUID
       PGID: $PGID
+      SUDO_PASSWORD: $CODE_PASSWORD
+      DOCKER_MODS: linuxserver/mods:code-server-python3
