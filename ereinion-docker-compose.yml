@@ -627,7 +627,7 @@ services:
       traefik.http.routers.code-server.middlewares: authelia@file
       flame.type: application
       flame.name: code-server
-      flame.url: https://cood.$DOMAIN
+      flame.url: https://code-e.$DOMAIN
       flame.icon: code-braces
     environment:
       TZ: $TZ
@@ -656,9 +656,11 @@ services:
       flame.url: https://jupyter.$DOMAIN
       flame.icon: language-python
       ofelia.enabled: "true"
-      ofelia.job-exec.manifold-stats.schedule: "@every 12h"
+      ofelia.job-exec.manifold-stats.user: "jovyan"
+      ofelia.job-exec.manifold-stats.schedule: "@every 4h"
       ofelia.job-exec.manifold-stats.command: "/bin/bash /home/jovyan/Manifold/render.sh"
-      ofelia.job-exec.manifold-mirror.schedule: "@every 5m"
+      ofelia.job-exec.manifold-mirror.user: "jovyan"
+      ofelia.job-exec.manifold-mirror.schedule: "@every 15m"
       ofelia.job-exec.manifold-mirror.command: "jupyter nbconvert --to notebook --execute /home/jovyan/Manifold/Mastodon/Mastodon.ipynb"
     environment:
       TZ: $TZ
@@ -816,3 +818,8 @@ services:
     command: daemon --docker
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      ofelia.slack-webhook: $DISCORD_WEBHOOK
+      ofelia.slack-only-on-error: true
+    environment:
+      TZ: $TZ
