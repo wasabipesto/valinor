@@ -587,27 +587,6 @@ services:
       PGID: $PGID
 
   # Other
-  bludit:
-    image: bludit/docker:latest
-    container_name: bludit
-    restart: unless-stopped
-    networks:
-      - $NETWORK
-    expose:
-      - 80
-    volumes:
-      - $OPDIR/bludit/bl-content:/usr/share/nginx/html/bl-content
-      - $OPDIR/bludit/bl-themes:/usr/share/nginx/html/bl-themes
-    labels:
-      traefik.enable: true
-      traefik.http.routers.bludit.entrypoints: websecure
-      traefik.http.routers.bludit.rule: Host(`blog.$DOMAIN`)
-      traefik.http.routers.bludit.middlewares: authelia@file # hiding... for now
-      flame.type: application
-      flame.name: bludit
-      flame.url: https://blog.$DOMAIN
-      flame.icon: newspaper
-
   code-ereinion:
     image: lscr.io/linuxserver/code-server:latest
     container_name: code-ereinion
