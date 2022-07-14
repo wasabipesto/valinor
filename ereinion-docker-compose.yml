@@ -75,31 +75,22 @@ services:
       - $OPDIR/nginx:/config
     labels:
       traefik.enable: true
-      traefik.http.routers.nginx.entrypoints: websecure
-      traefik.http.routers.nginx.rule: Host(`$DOMAIN`)
-      traefik.http.routers.nginx.middlewares: errorpage
-      traefik.http.routers.nginx.priority: 2 # second-lowest priority
-    environment:
-      TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
-
-  chickenphoto:
-    image: lscr.io/linuxserver/nginx:latest
-    container_name: chickenphoto
-    hostname: chickenphoto
-    restart: unless-stopped
-    networks:
-      - $NETWORK
-    expose:
-      - 443
-    volumes:
-      - $OPDIR/chickenphoto:/config
-    labels:
-      traefik.enable: true
-      traefik.http.routers.chickenphoto.entrypoints: websecure
-      traefik.http.routers.chickenphoto.rule: Host(`chickenphoto.com`)
-      traefik.http.routers.chickenphoto.middlewares: errorpage
+      traefik.http.routers.nginx-0.entrypoints: websecure
+      traefik.http.routers.nginx-0.rule: Host(`$DOMAIN`)
+      traefik.http.routers.nginx-0.middlewares: errorpage
+      traefik.http.routers.nginx-0.priority: 2 # second-lowest priority
+      traefik.http.routers.nginx-1.entrypoints: websecure
+      traefik.http.routers.nginx-1.rule: Host(`$ALTDOMAIN1`)
+      traefik.http.routers.nginx-1.middlewares: nginx-1@docker
+      traefik.http.middlewares.nginx-1.addprefix.prefix: /$ALTDOMAIN1/
+      traefik.http.routers.nginx-2.entrypoints: websecure
+      traefik.http.routers.nginx-2.rule: Host(`$ALTDOMAIN2`)
+      traefik.http.routers.nginx-2.middlewares: nginx-2@docker
+      traefik.http.middlewares.nginx-2.addprefix.prefix: /$ALTDOMAIN2/
+      traefik.http.routers.nginx-3.entrypoints: websecure
+      traefik.http.routers.nginx-3.rule: Host(`$ALTDOMAIN3`)
+      traefik.http.routers.nginx-3.middlewares: nginx-3@docker
+      traefik.http.middlewares.nginx-3.addprefix.prefix: /$ALTDOMAIN3/
     environment:
       TZ: $TZ
       PUID: $PUID
