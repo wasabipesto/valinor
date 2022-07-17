@@ -220,3 +220,19 @@ services:
       PGID: $PGID
       SUDO_PASSWORD: $CODE_PASSWORD
       DOCKER_MODS: linuxserver/mods:code-server-python3
+
+  nut:
+    image: upshift/nut-upsd
+    container_name: nut
+    hostname: nut
+    restart: unless-stopped
+    networks:
+      - $NETWORK
+    environment:
+      #API_USER: upsmon
+      #API_PASSWORD: secret # can't change it?
+      UPS_DESC: CyberPower 1500VA UPS
+      SHUTDOWN_CMD: pwd
+    ports:
+      - 3493:3493
+    privileged: true
