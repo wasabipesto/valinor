@@ -612,6 +612,8 @@ services:
       PUID: $PUID
       PGID: $PGID
       SUDO_PASSWORD: $CODE_PASSWORD
+      DOCKER_MODS: linuxserver/mods:universal-package-install
+      INSTALL_PACKAGES: sqlite3
 
   jupyter:
     image: jupyter/datascience-notebook:latest
