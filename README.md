@@ -654,7 +654,7 @@ I didn't have to do anything fancy to set up these images. I may look into other
 ### [Calibre](https://calibre-ebook.com/) & [Calibre-Web](https://github.com/janeczku/calibre-web)
 LSIO bundles together calibre and calibre-web, which is auful nice of them. All I had to do was pull in my existing database and point it at the books.
 
-Unfortunately there's an [issue](https://github.com/janeczku/calibre-web/issues/2381) in calibre-web right now that invalidates sessions coming through cloudflare. The solution is to pin the image at 0.6.12 and add a script to `custom-cont-init.d` that modifies the program at launch (not a fan). Also apparently amazon's requiring that you verify all emails sent to your kindle, which kinda sucks.
+Unfortunately there's an [issue](https://github.com/janeczku/calibre-web/issues/2381) in calibre-web right now that invalidates sessions coming through cloudflare. The solution is to add a script to `custom-cont-init.d` that modifies the program at launch (not a fan). Also apparently amazon's requiring that you verify all emails sent to your kindle, which kinda sucks.
 
 
 ## Other

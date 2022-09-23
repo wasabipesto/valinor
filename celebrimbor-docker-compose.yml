@@ -147,8 +147,7 @@ services:
       PGID: $PGID
 
   calibre-web:
-    image: ghcr.io/linuxserver/calibre-web:version-0.6.12 
-    # pinned due to this bug https://github.com/janeczku/calibre-web/issues/1466
+    image: ghcr.io/linuxserver/calibre-web:latest
     container_name: calibre-web
     hostname: calibre-web
     restart: unless-stopped
@@ -163,7 +162,7 @@ services:
       TZ: $TZ
       PUID: $PUID
       PGID: $PGID
-      DOCKER_MODS: linuxserver/calibre-web:calibre
+      DOCKER_MODS: linuxserver/calibre-web:universal-calibre
 
   # Backup
   syncthing:
