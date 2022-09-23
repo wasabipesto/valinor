@@ -48,11 +48,6 @@ Now we set up a new user so we don't keep using the root account. We're also goi
 	chown -R $NEWUSER:$NEWUSER /home/$NEWUSER/.ssh
 	chown $NEWUSER:$NEWUSER /opt
 	usermod -aG sudo $NEWUSER
-
-Now update our ssh config: Change sshd port from 22 to some other port, for security. Disable root login and password authentication.
-
-	nano /etc/ssh/sshd_config
-	service ssh restart
 	logout
 
 Log back in, but this time with feeling.
@@ -541,7 +536,7 @@ If you're trying to connect to a windows machine using RDP, make sure you use th
 
 In order to transparently add the `/guacamole` prefix, we use traefik's addprefix middleware: `traefik.http.middlewares.guac-prefix.addprefix.prefix=/guacamole`
 
-There seems to be an issue with using newer keys to authenticate ssh. Not too worried about it since I have other ways of accessing ssh via web (cose-server) and mobile (juicessh).
+There seems to be an issue with using [newer keys](https://issues.apache.org/jira/browse/GUACAMOLE-745) to authenticate ssh. Not too worried about it since I have other ways of accessing ssh via web (code-server) and mobile (juicessh).
 
 
 ### [Paperless-ngx](https://github.com/paperless-ngx/paperless-ngx)
