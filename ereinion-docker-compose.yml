@@ -27,10 +27,6 @@ services:
       traefik.http.routers.dashboard.rule: Host(`traefik.$DOMAIN`)
       traefik.http.routers.dashboard.service: api@internal
       traefik.http.routers.dashboard.middlewares: authelia@file
-      flame.type: application
-      flame.name: traefik
-      flame.url: https://traefik.$DOMAIN
-      flame.icon: traffic-light
     environment:
       TZ: $TZ
       PUID: $PUID
@@ -53,10 +49,6 @@ services:
       traefik.http.routers.authelia.tls: true # why is this here?
       traefik.http.routers.authelia.entrypoints: websecure
       traefik.http.routers.authelia.rule: Host(`auth.$DOMAIN`)
-      flame.type: application
-      flame.name: authelia
-      flame.url: https://auth.$DOMAIN
-      flame.icon: shield-account
     environment:
       TZ: $TZ
       PUID: $PUID
@@ -147,10 +139,6 @@ services:
       traefik.http.routers.prometheus.entrypoints: websecure
       traefik.http.routers.prometheus.rule: Host(`prometheus.$DOMAIN`)
       traefik.http.routers.prometheus.middlewares: authelia@file
-      flame.type: application
-      flame.name: prometheus
-      flame.url: https://prometheus.$DOMAIN
-      flame.icon: database
     environment:
       TZ: $TZ
       PUID: $PUID # does this work?
@@ -238,10 +226,6 @@ services:
       traefik.http.routers.grafana.entrypoints: websecure
       traefik.http.routers.grafana.rule: Host(`grafana.$DOMAIN`)
       traefik.http.routers.grafana.middlewares: authelia@file
-      flame.type: application
-      flame.name: grafana
-      flame.url: https://grafana.$DOMAIN
-      flame.icon: chart-areaspline
     environment:
       TZ: $TZ
       GF_PATHS_CONFIG: /var/lib/grafana/grafana.ini
@@ -320,10 +304,6 @@ services:
       traefik.enable: true
       traefik.http.routers.element.entrypoints: websecure
       traefik.http.routers.element.rule: Host(`element.$DOMAIN`)
-      flame.type: application
-      flame.name: element
-      flame.url: https://element.$DOMAIN
-      flame.icon: matrix
     environment:
       TZ: $TZ
 
@@ -338,33 +318,6 @@ services:
     volumes:
       - $OPDIR/synapse/heisenbridge:/data
     command: -v -c /data/heisenbridge.yaml http://synapse:8008
-    depends_on:
-      - synapse
-
-  mx-puppet-groupme:
-    build: https://gitlab.com/robintown/mx-puppet-groupme.git#main
-    container_name: mx-puppet-groupme
-    restart: unless-stopped
-    networks:
-      - $NETWORK
-    expose:
-      - 8437
-    volumes:
-      - $OPDIR/synapse/mx-puppet-groupme:/data
-    depends_on:
-      - synapse
-
-  matrix-hookshot:
-    image: halfshot/matrix-hookshot:latest
-    container_name: matrix-hookshot
-    restart: unless-stopped
-    networks:
-      - $NETWORK
-    expose:
-      - 9000 # webhooks
-      - 9993 # synapse
-    volumes:
-      - $OPDIR/synapse/matrix-hookshot:/data
     depends_on:
       - synapse
 
@@ -386,10 +339,6 @@ services:
       traefik.enable: true
       traefik.http.routers.wikijs.entrypoints: websecure
       traefik.http.routers.wikijs.rule: Host(`wiki.$DOMAIN`)
-      flame.type: application
-      flame.name: wikijs
-      flame.url: https://wiki.$DOMAIN
-      flame.icon: flower-tulip
     environment:
       TZ: $TZ
       CONFIG_FILE: /wiki/config.yml
@@ -427,42 +376,12 @@ services:
       traefik.enable: true
       traefik.http.routers.kirkwall.entrypoints: websecure
       traefik.http.routers.kirkwall.rule: Host(`kirkwall.$DOMAIN`)
-      flame.type: application
-      flame.name: foundry/kirkwall
-      flame.url: https://kirkwall.$DOMAIN
-      flame.icon: anvil
     environment:
       TIMEZONE: $TZ
       FOUNDRY_UID: $PUID
       FOUNDRY_GID: $PGID
       FOUNDRY_HOSTNAME: kirkwall.$DOMAIN
     env_file: $OPDIR/kirkwall/config.env
-
-  foundry-afterstory:
-    image: felddy/foundryvtt:release
-    container_name: foundry-afterstory
-    hostname: foundry-afterstory
-    restart: unless-stopped
-    networks:
-      - $NETWORK
-    expose:
-      - 30000
-    volumes:
-      - $OPDIR/afterstory:/data
-    labels:
-      traefik.enable: true
-      traefik.http.routers.afterstory.entrypoints: websecure
-      traefik.http.routers.afterstory.rule: Host(`afterstory.$DOMAIN`)
-      flame.type: application
-      flame.name: foundry/afterstory
-      flame.url: https://afterstory.$DOMAIN
-      flame.icon: anvil
-    environment:
-      TIMEZONE: $TZ
-      FOUNDRY_UID: $PUID
-      FOUNDRY_GID: $PGID
-      FOUNDRY_HOSTNAME: afterstory.$DOMAIN
-    env_file: $OPDIR/afterstory/config.env
 
   # Media
   tautulli:
@@ -480,10 +399,6 @@ services:
       traefik.enable: true
       traefik.http.routers.tautulli.entrypoints: websecure
       traefik.http.routers.tautulli.rule: Host(`tautulli.$DOMAIN`)
-      flame.type: application
-      flame.name: tautulli
-      flame.url: https://tautulli.$DOMAIN
-      flame.icon: alphabet-greek
     environment:
       TZ: $TZ
       PUID: $PUID
@@ -503,10 +418,6 @@ services:
       traefik.enable: true
       traefik.http.routers.overseerr.entrypoints: websecure
       traefik.http.routers.overseerr.rule: Host(`requests.$DOMAIN`)
-      flame.type: application
-      flame.name: overseerr
-      flame.url: https://requests.$DOMAIN
-      flame.icon: eye
     environment:
       TZ: $TZ
       PUID: $PUID
@@ -529,57 +440,6 @@ services:
       traefik.http.routers.owncast.entrypoints: websecure
       traefik.http.routers.owncast.rule: Host(`stream.$DOMAIN`)
       traefik.http.services.owncast.loadbalancer.server.port: 8080
-      flame.type: application
-      flame.name: owncast
-      flame.url: https://stream.$DOMAIN
-      flame.icon: twitch
-    environment:
-      TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
-
-  nextcloud:
-    image: lscr.io/linuxserver/nextcloud:latest
-    container_name: nextcloud
-    restart: unless-stopped
-    networks:
-      - $NETWORK
-    expose:
-      - 443
-    volumes:
-      - $OPDIR/nextcloud/appdata:/config
-      - $OPDIR/nextcloud/data:/data
-    labels:
-      traefik.enable: true
-      traefik.http.routers.nextcloud.entrypoints: websecure
-      traefik.http.routers.nextcloud.rule: Host(`cloud.$DOMAIN`)
-      flame.type: application
-      flame.name: nextcloud
-      flame.url: https://cloud.$DOMAIN
-      flame.icon: cloud-outline
-    environment:
-      TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
-
-  xbackbone:
-    image: lscr.io/linuxserver/xbackbone:latest
-    container_name: xbackbone
-    restart: unless-stopped
-    networks:
-      - $NETWORK
-    expose:
-      - 80
-    volumes:
-      - $OPDIR/xbackbone:/config
-    labels:
-      traefik.enable: true
-      traefik.http.routers.xbackbone.entrypoints: websecure
-      traefik.http.routers.xbackbone.rule: Host(`x.$DOMAIN`)
-      flame.type: application
-      flame.name: xbackbone
-      flame.url: https://x.$DOMAIN
-      flame.icon: export-variant
     environment:
       TZ: $TZ
       PUID: $PUID
@@ -603,10 +463,6 @@ services:
       traefik.http.routers.code-server.entrypoints: websecure
       traefik.http.routers.code-server.rule: Host(`code-e.$DOMAIN`)
       traefik.http.routers.code-server.middlewares: authelia@file
-      flame.type: application
-      flame.name: code-server
-      flame.url: https://code-e.$DOMAIN
-      flame.icon: code-braces
     environment:
       TZ: $TZ
       PUID: $PUID
@@ -632,40 +488,15 @@ services:
       traefik.http.routers.jupyter.entrypoints: websecure
       traefik.http.routers.jupyter.rule: Host(`jupyter.$DOMAIN`)
       traefik.http.routers.jupyter.middlewares: authelia@file
-      flame.type: application
-      flame.name: jupyter
-      flame.url: https://jupyter.$DOMAIN
-      flame.icon: language-python
       ofelia.enabled: "true"
       ofelia.job-exec.manifold-stats.user: "jovyan"
       ofelia.job-exec.manifold-stats.schedule: "@every 4h"
       ofelia.job-exec.manifold-stats.command: "/bin/bash /home/jovyan/Manifold/render.sh"
-      ofelia.job-exec.manifold-mirror.user: "jovyan"
-      ofelia.job-exec.manifold-mirror.schedule: "@every 15m"
-      ofelia.job-exec.manifold-mirror.command: "jupyter nbconvert --to notebook --execute /home/jovyan/Manifold/Mastodon/Mastodon.ipynb"
     environment:
       TZ: $TZ
       PUID: $PUID
       PGID: $PGID
       JUPYTER_ENABLE_LAB: yes
-
-  flame:
-    image: pawelmalak/flame:latest
-    container_name: flame
-    hostname: flame
-    restart: unless-stopped
-    networks:
-      - $NETWORK
-    volumes:
-      - $OPDIR/flame:/app/data
-      - /var/run/docker.sock:/var/run/docker.sock
-    labels:
-      traefik.enable: true
-      traefik.http.routers.flame.entrypoints: websecure
-      traefik.http.routers.flame.rule: Host(`flame.$DOMAIN`)
-    environment:
-      TZ: $TZ
-      PASSWORD: $FLAME_PASSWORD
 
   guacamole:
     image: guacamole/guacamole
@@ -682,10 +513,6 @@ services:
       traefik.http.routers.guacamole.rule: Host(`guacamole.$DOMAIN`)
       traefik.http.routers.guacamole.middlewares: authelia@file,guac-prefix@docker
       traefik.http.middlewares.guac-prefix.addprefix.prefix: /guacamole
-      flame.type: application
-      flame.name: guacamole
-      flame.url: https://guacamole.$DOMAIN
-      flame.icon: feather
     environment:
       TZ: $TZ
       HEADER_ENABLED: true
@@ -751,10 +578,6 @@ services:
       traefik.http.routers.paperless.middlewares: authelia@file
       traefik.http.routers.paperless-api.entrypoints: websecure
       traefik.http.routers.paperless-api.rule: "Host(`paperless.$DOMAIN`) && PathPrefix(`/api`)"
-      flame.type: application
-      flame.name: paperless
-      flame.url: https://paperless.$DOMAIN
-      flame.icon: file-outline
     environment:
       PAPERLESS_TIME_ZONE: $TZ
       USERMAP_UID: $PUID
