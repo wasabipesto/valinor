@@ -1,9 +1,5 @@
 version: "3"
 
-networks:
-  wasabi-overlay: # find a way to make this variable
-    external: true
-
 services:
 
   # Networking
@@ -12,8 +8,6 @@ services:
     container_name: traefik
     hostname: traefik
     restart: unless-stopped
-    networks:
-      - $NETWORK
     ports:
       - 80:80
       - 443:443
@@ -38,8 +32,6 @@ services:
     container_name: authelia
     hostname: authelia
     restart: unless-stopped
-    networks:
-      - $NETWORK
     expose:
       - 9091
     volumes:
@@ -59,10 +51,8 @@ services:
     container_name: nginx
     hostname: nginx
     restart: unless-stopped
-    networks:
-      - $NETWORK
-    expose:
-      - 443
+    ports:
+      - 4443:443
     volumes:
       - $OPDIR/nginx:/config
     labels:
@@ -91,6 +81,10 @@ services:
       traefik.http.routers.nginx-5.rule: Host(`$ALTDOMAIN5`)
       traefik.http.routers.nginx-5.middlewares: nginx-5@docker
       traefik.http.middlewares.nginx-5.addprefix.prefix: /$ALTDOMAIN5/
+      traefik.http.routers.nginx-6.entrypoints: websecure
+      traefik.http.routers.nginx-6.rule: Host(`$ALTDOMAIN6`)
+      traefik.http.routers.nginx-6.middlewares: nginx-6@docker
+      traefik.http.middlewares.nginx-6.addprefix.prefix: /$ALTDOMAIN6/
     environment:
       TZ: $TZ
       PUID: $PUID
@@ -101,8 +95,6 @@ services:
     container_name: error-pages
     hostname: error-pages
     restart: unless-stopped
-    networks:
-      - $NETWORK
     expose:
       - 8080
     environment:
@@ -124,10 +116,8 @@ services:
     image: prom/prometheus:latest
     container_name: prometheus
     restart: unless-stopped
-    networks:
-      - $NETWORK
-    expose:
-      - 9090
+    ports:
+      - 9090:9090
     volumes:
       - $OPDIR/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
       - $OPDIR/prometheus/data:/prometheus
@@ -149,8 +139,6 @@ services:
     container_name: node-ereinion
     hostname: node-ereinion
     restart: unless-stopped
-    networks:
-      - $NETWORK
     expose:
       - 9100
     command:
@@ -170,8 +158,6 @@ services:
     container_name: cadvisor-ereinion
     hostname: cadvistor-ereinion
     restart: unless-stopped
-    networks:
-      - $NETWORK
     expose:
       - 8080
     volumes:
@@ -188,8 +174,6 @@ services:
     container_name: loki
     hostname: loki
     restart: unless-stopped
-    networks:
-      - $NETWORK
     ports:
       - 3100:3100 # expose for docker plugin to connect (dumb)
     environment:
@@ -201,8 +185,6 @@ services:
     container_name: promtail
     hostname: promtail
     restart: unless-stopped
-    networks:
-      - $NETWORK
     volumes:
       - /var/log:/var/log:ro
     environment:
@@ -215,10 +197,8 @@ services:
     hostname: grafana
     restart: unless-stopped
     user: $PUID:$PGID
-    networks:
-      - $NETWORK
-    expose:
-      - 3000
+    ports:
+      - 3000:3000
     volumes:
       - $OPDIR/grafana:/var/lib/grafana
     labels:
@@ -236,11 +216,9 @@ services:
     container_name: protonmail
     hostname: protonmail
     restart: unless-stopped
-    networks:
-      - $NETWORK
-    expose:
-      - 25
-      - 143
+    ports:
+      - "25:25" # yaml interprets xx:xx as time when xx < 60
+      - 143:143
     volumes:
       - $OPDIR/protonmail:/root
     environment:
@@ -253,8 +231,6 @@ services:
     container_name: synapse
     hostname: synapse
     restart: unless-stopped
-    networks:
-      - $NETWORK
     expose:
       - 8008
     volumes:
@@ -278,8 +254,6 @@ services:
     container_name: postgres-synapse
     restart: unless-stopped
     user: $PUID:$PGID # postgres will not init database as 1000:1000
-    networks:
-      - $NETWORK
     expose:
       - 5432
     volumes:
@@ -294,10 +268,8 @@ services:
     image: vectorim/element-web:latest
     container_name: element
     restart: unless-stopped
-    networks:
-      - $NETWORK
-    expose:
-      - 80
+    ports:
+      - 8183:80
     volumes:
       - $OPDIR/element/config.json:/app/config.json:ro
     labels:
@@ -311,8 +283,6 @@ services:
     image: hif1/heisenbridge:latest
     container_name: heisenbridge
     restart: unless-stopped
-    networks:
-      - $NETWORK
     expose:
       - 9898
     volumes:
@@ -328,10 +298,8 @@ services:
     hostname: wikijs
     restart: unless-stopped
     user: $PUID:$PGID
-    networks:
-      - $NETWORK
-    expose:
-      - 3000
+    ports:
+      - 3001:3000
     volumes:
       - $OPDIR/wikijs/config.yml:/wiki/config.yml
       - $OPDIR/wikijs/backup:/wiki/backup
@@ -350,8 +318,6 @@ services:
     container_name: postgres-wikijs
     restart: unless-stopped
     user: $PUID:$PGID # postgres will not init database as 1000:1000
-    networks:
-      - $NETWORK
     expose:
       - 5432
     volumes:
@@ -366,10 +332,8 @@ services:
     container_name: foundry-kirkwall
     hostname: foundry-kirkwall
     restart: unless-stopped
-    networks:
-      - $NETWORK
-    expose:
-      - 30000
+    ports:
+      - 30000:30000
     volumes:
       - $OPDIR/kirkwall:/data
     labels:
@@ -389,10 +353,8 @@ services:
     container_name: tautulli
     hostname: tautulli
     restart: unless-stopped
-    networks:
-      - $NETWORK
-    expose:
-      - 8181
+    ports:
+      - 8181:8181
     volumes:
       - $OPDIR/tautulli:/config
     labels:
@@ -408,10 +370,8 @@ services:
     image: sctx/overseerr:latest
     container_name: overseerr
     restart: unless-stopped
-    networks:
-      - $NETWORK
-    expose:
-      - 5055
+    ports:
+      - 5055:5055
     volumes:
       - $OPDIR/overseerr:/app/config
     labels:
@@ -427,11 +387,8 @@ services:
     image: gabekangas/owncast:latest
     container_name: owncast
     restart: unless-stopped
-    networks:
-      - $NETWORK
-    expose:
-      - 8080
     ports:
+      - 8084:8080
       - 1935:1935 # RSTP is protected by tailscale, not traefik
     volumes:
       - $OPDIR/owncast:/app/data
@@ -451,10 +408,8 @@ services:
     container_name: code-ereinion
     hostname: code-ereinion
     restart: unless-stopped
-    networks:
-      - $NETWORK
-    expose:
-      - 8443
+    ports:
+      - 8443:8443
     volumes:
       - $OPDIR/code:/config
       - $OPDIR:/opt
@@ -476,10 +431,8 @@ services:
     container_name: jupyter
     hostname: jupyter
     restart: unless-stopped
-    networks:
-      - $NETWORK
-    expose:
-      - 8888
+    ports:
+      - 8888:8888
     volumes:
       - $OPDIR/jupyter:/home/jovyan
       - $OPDIR/nginx/www/jupyter:/home/jovyan/www
@@ -503,10 +456,8 @@ services:
     container_name: guacamole
     hostname: guacamole
     restart: unless-stopped
-    networks:
-      - $NETWORK
-    expose:
-      - 8080
+    ports:
+      - 8083:8083
     labels:
       traefik.enable: true
       traefik.http.routers.guacamole.entrypoints: websecure
@@ -531,8 +482,6 @@ services:
     container_name: guacd
     hostname: guacd
     restart: unless-stopped
-    networks:
-      - $NETWORK
     expose:
       - 4822
 
@@ -541,8 +490,6 @@ services:
     container_name: postgres-guacamole
     hostname: postgres-guacamole
     restart: unless-stopped
-    networks:
-      - $NETWORK
     expose:
       - 5432
     volumes:
@@ -557,10 +504,8 @@ services:
     image: ghcr.io/paperless-ngx/paperless-ngx:latest
     container_name: paperless
     restart: unless-stopped
-    networks:
-      - $NETWORK
-    expose:
-      - 8000
+    ports:
+      - 8000:8000
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000"]
       interval: 30s
@@ -595,8 +540,6 @@ services:
     image: redis:6.0
     container_name: redis-paperless
     restart: unless-stopped
-    networks:
-      - $NETWORK
     volumes:
       - $OPDIR/redis-paperless:/data
 
@@ -604,8 +547,6 @@ services:
     image: postgres:13
     container_name: postgres-paperless
     restart: unless-stopped
-    networks:
-      - $NETWORK
     volumes:
       - $OPDIR/postgres-paperless:/var/lib/postgresql/data
     environment:
@@ -617,8 +558,6 @@ services:
     image: mcuadros/ofelia:latest
     container_name: ofelia
     restart: unless-stopped
-    networks:
-      - $NETWORK
     command: daemon --docker
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
