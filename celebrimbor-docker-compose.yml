@@ -14,8 +14,8 @@ services:
     restart: unless-stopped
     networks:
       - $NETWORK
-    expose:
-      - 9100
+    ports:
+      - 9100:9100
     command:
       - '--path.procfs=/host/proc' 
       - '--path.sysfs=/host/sys'
@@ -34,8 +34,8 @@ services:
     restart: unless-stopped
     networks:
       - $NETWORK
-    expose:
-      - 8080
+    ports:
+      - 8080:8080
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:ro
@@ -51,8 +51,8 @@ services:
     restart: unless-stopped
     networks:
       - $NETWORK
-    expose:
-      - 9902
+    ports:
+      - 9902:9902
     privileged: true
 
   # Media
@@ -62,13 +62,13 @@ services:
     restart: unless-stopped
     networks:
       - $NETWORK
-    expose:
-      - 6881  # DHT
-      - 8000  # XMLRPC
-      - 8080  # RUTORRENT
-      - 9000  # WEBDAV
+    #expose:
+    #  - 6881  # DHT
+    #  - 9000  # WEBDAV
     ports:
-      - 50000 # INCOMING
+      - 8000:8000   # XMLRPC (*arr)
+      - 8085:8080   # RUTORRENT
+      - 50000:50000 # INCOMING
     volumes:
       - $OPDIR/rtorrent/data/geoip:/data/geoip
       - $OPDIR/rtorrent/data/rtorrent:/data/rtorrent
@@ -88,8 +88,8 @@ services:
     restart: unless-stopped
     networks:
       - $NETWORK
-    expose:
-      - 80
+    ports:
+      - 3761:80
     volumes:
       - $OPDIR/filebrowser/filebrowser.db:/database/filebrowser.db
       - $OPDIR/filebrowser/.filebrowser.json:/.filebrowser.json
@@ -103,8 +103,8 @@ services:
     restart: unless-stopped
     networks:
       - $NETWORK
-    expose:
-      - 9696
+    ports:
+      - 9696:9696
     volumes:
       - $OPDIR/prowlarr:/config
     environment:
@@ -119,8 +119,8 @@ services:
     restart: unless-stopped
     networks:
       - $NETWORK
-    expose:
-      - 8989
+    ports:
+      - 8989:8989
     volumes:
       - $OPDIR/sonarr:/config
       - $DATADIR:/data
@@ -136,8 +136,8 @@ services:
     restart: unless-stopped
     networks:
       - $NETWORK
-    expose:
-      - 7878
+    ports:
+      - 7878:7878
     volumes:
       - $OPDIR/radarr:/config
       - $DATADIR:/data
@@ -153,8 +153,8 @@ services:
     restart: unless-stopped
     networks:
       - $NETWORK
-    expose:
-      - 8083
+    ports:
+      - 8083:8083
     volumes:
       - $OPDIR/calibre-web:/config
       - $DATADIR/Books:/data/Books
@@ -172,8 +172,8 @@ services:
     restart: unless-stopped
     networks:
       - $NETWORK
-    expose:
-      - 8384
+    ports:
+      - 8384:8384
     volumes:
       - $OPDIR/syncthing:/var/syncthing
     environment:
@@ -188,9 +188,9 @@ services:
     hostname: homeassistant
     restart: unless-stopped
     privileged: true
-    network_mode: host    # Note: You cannot use http://homeassistant:8123 to access this container
-    ports:                #       since it has network_mode: host. Instead you need to connect to
-      - 8123:8123         #       the host's port 8123. This is relevant for traefik and prometheus.
+    network_mode: host
+    ports:
+      - 8123:8123
     volumes:
       - $OPDIR/homeassistant:/config
       - /etc/localtime:/etc/localtime:ro
@@ -208,8 +208,8 @@ services:
     restart: unless-stopped
     networks:
       - $NETWORK
-    expose:
-      - 8443
+    ports:
+      - 8443:8443
     volumes:
       - $OPDIR/code:/config
       - $OPDIR:/opt
