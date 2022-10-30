@@ -199,8 +199,6 @@ services:
     container_name: nut
     restart: unless-stopped
     environment:
-      #API_USER: upsmon
-      #API_PASSWORD: secret # can't change it?
       UPS_DESC: CyberPower 1500VA UPS
       SHUTDOWN_CMD: pwd
     ports:
