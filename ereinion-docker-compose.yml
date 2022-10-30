@@ -350,7 +350,7 @@ services:
       - 8888:8888
     volumes:
       - $OPDIR/jupyter:/home/jovyan
-      - $OPDIR/nginx/www/jupyter:/home/jovyan/www
+      - $OPDIR/nginx/www/wasabipesto.com/jupyter:/home/jovyan/www
     labels:
       ofelia.enabled: "true"
       ofelia.job-exec.manifold-stats.user: "jovyan"
