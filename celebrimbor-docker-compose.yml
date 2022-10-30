@@ -1,9 +1,5 @@
 version: "3"
 
-networks:
-  wasabi-overlay: # find a way to make this variable
-    external: true
-
 services:
 
   # Monitoring & Updates
@@ -12,8 +8,6 @@ services:
     container_name: node-celebrimbor
     hostname: node-celebrimbor
     restart: unless-stopped
-    networks:
-      - $NETWORK
     ports:
       - 9100:9100
     command:
@@ -32,8 +26,6 @@ services:
     container_name: cadvisor-celebrimbor
     hostname: cadvistor-celebrimbor
     restart: unless-stopped
-    networks:
-      - $NETWORK
     ports:
       - 8080:8080
     volumes:
@@ -49,8 +41,6 @@ services:
     image: matusnovak/prometheus-smartctl:latest
     container_name: smartctl
     restart: unless-stopped
-    networks:
-      - $NETWORK
     ports:
       - 9902:9902
     privileged: true
@@ -60,8 +50,6 @@ services:
     image: crazymax/rtorrent-rutorrent:latest
     container_name: rtorrent
     restart: unless-stopped
-    networks:
-      - $NETWORK
     #expose:
     #  - 6881  # DHT
     #  - 9000  # WEBDAV
@@ -86,8 +74,6 @@ services:
     hostname: filebrowser
     user: $PUID:$PGID
     restart: unless-stopped
-    networks:
-      - $NETWORK
     ports:
       - 3761:80
     volumes:
@@ -101,8 +87,6 @@ services:
     container_name: prowlarr
     hostname: prowlarr
     restart: unless-stopped
-    networks:
-      - $NETWORK
     ports:
       - 9696:9696
     volumes:
@@ -117,8 +101,6 @@ services:
     container_name: sonarr
     hostname: sonarr
     restart: unless-stopped
-    networks:
-      - $NETWORK
     ports:
       - 8989:8989
     volumes:
@@ -134,8 +116,6 @@ services:
     container_name: radarr
     hostname: radarr
     restart: unless-stopped
-    networks:
-      - $NETWORK
     ports:
       - 7878:7878
     volumes:
@@ -151,8 +131,6 @@ services:
     container_name: calibre-web
     hostname: calibre-web
     restart: unless-stopped
-    networks:
-      - $NETWORK
     ports:
       - 8083:8083
     volumes:
@@ -170,8 +148,6 @@ services:
     container_name: syncthing
     hostname: syncthing
     restart: unless-stopped
-    networks:
-      - $NETWORK
     ports:
       - 8384:8384
     volumes:
@@ -206,8 +182,6 @@ services:
     container_name: code-celebrimbor
     hostname: code-celebrimbor
     restart: unless-stopped
-    networks:
-      - $NETWORK
     ports:
       - 8443:8443
     volumes:
@@ -223,10 +197,7 @@ services:
   nut:
     image: upshift/nut-upsd
     container_name: nut
-    hostname: nut
     restart: unless-stopped
-    networks:
-      - $NETWORK
     environment:
       #API_USER: upsmon
       #API_PASSWORD: secret # can't change it?
