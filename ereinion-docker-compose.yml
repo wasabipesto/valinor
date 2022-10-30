@@ -52,64 +52,14 @@ services:
     hostname: nginx
     restart: unless-stopped
     ports:
+      - 4080:80
       - 4443:443
     volumes:
       - $OPDIR/nginx:/config
-    labels:
-      traefik.enable: true
-      traefik.http.routers.nginx-0.entrypoints: websecure
-      traefik.http.routers.nginx-0.rule: Host(`$DOMAIN`)
-      traefik.http.routers.nginx-0.middlewares: errorpage
-      traefik.http.routers.nginx-0.priority: 2 # second-lowest priority
-      traefik.http.routers.nginx-1.entrypoints: websecure
-      traefik.http.routers.nginx-1.rule: Host(`$ALTDOMAIN1`)
-      traefik.http.routers.nginx-1.middlewares: nginx-1@docker
-      traefik.http.middlewares.nginx-1.addprefix.prefix: /$ALTDOMAIN1/
-      traefik.http.routers.nginx-2.entrypoints: websecure
-      traefik.http.routers.nginx-2.rule: Host(`$ALTDOMAIN2`)
-      traefik.http.routers.nginx-2.middlewares: nginx-2@docker
-      traefik.http.middlewares.nginx-2.addprefix.prefix: /$ALTDOMAIN2/
-      traefik.http.routers.nginx-3.entrypoints: websecure
-      traefik.http.routers.nginx-3.rule: Host(`$ALTDOMAIN3`)
-      traefik.http.routers.nginx-3.middlewares: nginx-3@docker
-      traefik.http.middlewares.nginx-3.addprefix.prefix: /$ALTDOMAIN3/
-      traefik.http.routers.nginx-4.entrypoints: websecure
-      traefik.http.routers.nginx-4.rule: Host(`$ALTDOMAIN4`)
-      traefik.http.routers.nginx-4.middlewares: nginx-4@docker
-      traefik.http.middlewares.nginx-4.addprefix.prefix: /$ALTDOMAIN4/
-      traefik.http.routers.nginx-5.entrypoints: websecure
-      traefik.http.routers.nginx-5.rule: Host(`$ALTDOMAIN5`)
-      traefik.http.routers.nginx-5.middlewares: nginx-5@docker
-      traefik.http.middlewares.nginx-5.addprefix.prefix: /$ALTDOMAIN5/
-      traefik.http.routers.nginx-6.entrypoints: websecure
-      traefik.http.routers.nginx-6.rule: Host(`$ALTDOMAIN6`)
-      traefik.http.routers.nginx-6.middlewares: nginx-6@docker
-      traefik.http.middlewares.nginx-6.addprefix.prefix: /$ALTDOMAIN6/
     environment:
       TZ: $TZ
       PUID: $PUID
       PGID: $PGID
-
-  error-pages:
-    image: tarampampam/error-pages:latest
-    container_name: error-pages
-    hostname: error-pages
-    restart: unless-stopped
-    expose:
-      - 8080
-    environment:
-      TEMPLATE_NAME: l7-dark
-    labels:
-      traefik.enable: true
-      traefik.http.routers.errorpage.rule: HostRegexp(`{host:.+}`) # any host
-      traefik.http.routers.errorpage.priority: 1 # lowest priority, fallback only
-      traefik.http.routers.errorpage.entrypoints: websecure
-      traefik.http.routers.errorpage.middlewares: errorpage
-      traefik.http.middlewares.errorpage.errors.status: 400-599
-      traefik.http.middlewares.errorpage.errors.service: errorpage
-      traefik.http.middlewares.errorpage.errors.query: /{status}.html
-      traefik.http.services.errorpage.loadbalancer.server.port: 8080
-
 
   # Monitoring & Updates
   prometheus:
@@ -124,11 +74,6 @@ services:
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
-    labels:
-      traefik.enable: true
-      traefik.http.routers.prometheus.entrypoints: websecure
-      traefik.http.routers.prometheus.rule: Host(`prometheus.$DOMAIN`)
-      traefik.http.routers.prometheus.middlewares: authelia@file
     environment:
       TZ: $TZ
       PUID: $PUID # does this work?
@@ -231,8 +176,8 @@ services:
     container_name: synapse
     hostname: synapse
     restart: unless-stopped
-    expose:
-      - 8008
+    ports:
+      - 8008:8008
     volumes:
       - $OPDIR/synapse:/data
     labels:
@@ -272,10 +217,6 @@ services:
       - 8183:80
     volumes:
       - $OPDIR/element/config.json:/app/config.json:ro
-    labels:
-      traefik.enable: true
-      traefik.http.routers.element.entrypoints: websecure
-      traefik.http.routers.element.rule: Host(`element.$DOMAIN`)
     environment:
       TZ: $TZ
 
@@ -303,10 +244,6 @@ services:
     volumes:
       - $OPDIR/wikijs/config.yml:/wiki/config.yml
       - $OPDIR/wikijs/backup:/wiki/backup
-    labels:
-      traefik.enable: true
-      traefik.http.routers.wikijs.entrypoints: websecure
-      traefik.http.routers.wikijs.rule: Host(`wiki.$DOMAIN`)
     environment:
       TZ: $TZ
       CONFIG_FILE: /wiki/config.yml
@@ -336,10 +273,6 @@ services:
       - 30000:30000
     volumes:
       - $OPDIR/kirkwall:/data
-    labels:
-      traefik.enable: true
-      traefik.http.routers.kirkwall.entrypoints: websecure
-      traefik.http.routers.kirkwall.rule: Host(`kirkwall.$DOMAIN`)
     environment:
       TIMEZONE: $TZ
       FOUNDRY_UID: $PUID
@@ -357,10 +290,6 @@ services:
       - 8181:8181
     volumes:
       - $OPDIR/tautulli:/config
-    labels:
-      traefik.enable: true
-      traefik.http.routers.tautulli.entrypoints: websecure
-      traefik.http.routers.tautulli.rule: Host(`tautulli.$DOMAIN`)
     environment:
       TZ: $TZ
       PUID: $PUID
@@ -374,10 +303,6 @@ services:
       - 5055:5055
     volumes:
       - $OPDIR/overseerr:/app/config
-    labels:
-      traefik.enable: true
-      traefik.http.routers.overseerr.entrypoints: websecure
-      traefik.http.routers.overseerr.rule: Host(`requests.$DOMAIN`)
     environment:
       TZ: $TZ
       PUID: $PUID
@@ -389,14 +314,9 @@ services:
     restart: unless-stopped
     ports:
       - 8084:8080
-      - 1935:1935 # RSTP is protected by tailscale, not traefik
+      - 1935:1935 # RSTP is not exposed to internet, just tailscale
     volumes:
       - $OPDIR/owncast:/app/data
-    labels:
-      traefik.enable: true
-      traefik.http.routers.owncast.entrypoints: websecure
-      traefik.http.routers.owncast.rule: Host(`stream.$DOMAIN`)
-      traefik.http.services.owncast.loadbalancer.server.port: 8080
     environment:
       TZ: $TZ
       PUID: $PUID
@@ -413,11 +333,6 @@ services:
     volumes:
       - $OPDIR/code:/config
       - $OPDIR:/opt
-    labels:
-      traefik.enable: true
-      traefik.http.routers.code-server.entrypoints: websecure
-      traefik.http.routers.code-server.rule: Host(`code-e.$DOMAIN`)
-      traefik.http.routers.code-server.middlewares: authelia@file
     environment:
       TZ: $TZ
       PUID: $PUID
@@ -437,10 +352,6 @@ services:
       - $OPDIR/jupyter:/home/jovyan
       - $OPDIR/nginx/www/jupyter:/home/jovyan/www
     labels:
-      traefik.enable: true
-      traefik.http.routers.jupyter.entrypoints: websecure
-      traefik.http.routers.jupyter.rule: Host(`jupyter.$DOMAIN`)
-      traefik.http.routers.jupyter.middlewares: authelia@file
       ofelia.enabled: "true"
       ofelia.job-exec.manifold-stats.user: "jovyan"
       ofelia.job-exec.manifold-stats.schedule: "@every 4h"
@@ -450,55 +361,6 @@ services:
       PUID: $PUID
       PGID: $PGID
       JUPYTER_ENABLE_LAB: yes
-
-  guacamole:
-    image: guacamole/guacamole
-    container_name: guacamole
-    hostname: guacamole
-    restart: unless-stopped
-    ports:
-      - 8083:8083
-    labels:
-      traefik.enable: true
-      traefik.http.routers.guacamole.entrypoints: websecure
-      traefik.http.routers.guacamole.rule: Host(`guacamole.$DOMAIN`)
-      traefik.http.routers.guacamole.middlewares: authelia@file,guac-prefix@docker
-      traefik.http.middlewares.guac-prefix.addprefix.prefix: /guacamole
-    environment:
-      TZ: $TZ
-      HEADER_ENABLED: true
-      HTTP_AUTH_HEADER: Remote-User
-      GUACD_HOSTNAME: guacd
-      POSTGRES_HOSTNAME: postgres-guacamole
-      POSTGRES_DATABASE: guacamole
-      POSTGRES_USER: guacamole
-      POSTGRES_PASSWORD: $GUACAMOLE_POSTGRES_PASSWORD
-    depends_on:
-      - guacd
-      - postgres-guacamole
-
-  guacd:
-    image: guacamole/guacd
-    container_name: guacd
-    hostname: guacd
-    restart: unless-stopped
-    expose:
-      - 4822
-
-  postgres-guacamole:
-    image: postgres:11-alpine
-    container_name: postgres-guacamole
-    hostname: postgres-guacamole
-    restart: unless-stopped
-    expose:
-      - 5432
-    volumes:
-      #- ./initdb.sql:/docker-entrypoint-initdb.d/initdb.sql:ro # for init only
-      - $OPDIR/postgres-guacamole:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: guacamole
-      POSTGRES_USER: guacamole
-      POSTGRES_PASSWORD: $GUACAMOLE_POSTGRES_PASSWORD
 
   paperless:
     image: ghcr.io/paperless-ngx/paperless-ngx:latest
