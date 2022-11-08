@@ -146,11 +146,6 @@ services:
       - 3000:3000
     volumes:
       - $OPDIR/grafana:/var/lib/grafana
-    labels:
-      traefik.enable: true
-      traefik.http.routers.grafana.entrypoints: websecure
-      traefik.http.routers.grafana.rule: Host(`grafana.$DOMAIN`)
-      traefik.http.routers.grafana.middlewares: authelia@file
     environment:
       TZ: $TZ
       GF_PATHS_CONFIG: /var/lib/grafana/grafana.ini
@@ -363,13 +358,6 @@ services:
       - $OPDIR/paperless/media:/usr/src/paperless/media
       - $OPDIR/paperless/export:/usr/src/paperless/export
       - $OPDIR/paperless/consume:/usr/src/paperless/consume
-    labels:
-      traefik.enable: true
-      traefik.http.routers.paperless.entrypoints: websecure
-      traefik.http.routers.paperless.rule: Host(`paperless.$DOMAIN`)
-      traefik.http.routers.paperless.middlewares: authelia@file
-      traefik.http.routers.paperless-api.entrypoints: websecure
-      traefik.http.routers.paperless-api.rule: "Host(`paperless.$DOMAIN`) && PathPrefix(`/api`)"
     environment:
       PAPERLESS_TIME_ZONE: $TZ
       USERMAP_UID: $PUID
