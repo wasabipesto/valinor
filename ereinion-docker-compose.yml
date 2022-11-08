@@ -156,21 +156,6 @@ services:
       GF_PATHS_CONFIG: /var/lib/grafana/grafana.ini
 
   # Communication
-  protonmail:
-    image: shenxn/protonmail-bridge:latest
-    container_name: protonmail
-    hostname: protonmail
-    restart: unless-stopped
-    ports:
-      - "25:25" # yaml interprets xx:xx as time when xx < 60
-      - 143:143
-    volumes:
-      - $OPDIR/protonmail:/root
-    environment:
-      TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
-
   synapse:
     image: docker.io/matrixdotorg/synapse:latest
     container_name: synapse
