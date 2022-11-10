@@ -3,49 +3,6 @@ version: "3"
 services:
 
   # Networking
-  traefik:
-    image: traefik:v2.6
-    container_name: traefik
-    hostname: traefik
-    restart: unless-stopped
-    ports:
-      - 80:80
-      - 443:443
-      - 8448:8448
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - $OPDIR/traefik:/etc/traefik
-    labels:
-      traefik.enable: true
-      traefik.http.routers.dashboard.entrypoints: websecure
-      traefik.http.routers.dashboard.rule: Host(`traefik.$DOMAIN`)
-      traefik.http.routers.dashboard.service: api@internal
-      traefik.http.routers.dashboard.middlewares: authelia@file
-    environment:
-      TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
-      CF_DNS_API_TOKEN: $CF_DNS_API_TOKEN # for DNS challenge
-
-  authelia:
-    image: authelia/authelia:latest
-    container_name: authelia
-    hostname: authelia
-    restart: unless-stopped
-    expose:
-      - 9091
-    volumes:
-      - /opt/authelia:/config
-    labels:
-      traefik.enable: true
-      traefik.http.routers.authelia.tls: true # why is this here?
-      traefik.http.routers.authelia.entrypoints: websecure
-      traefik.http.routers.authelia.rule: Host(`auth.$DOMAIN`)
-    environment:
-      TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
-
   nginx:
     image: lscr.io/linuxserver/nginx:latest
     container_name: nginx
@@ -160,12 +117,6 @@ services:
       - 8008:8008
     volumes:
       - $OPDIR/synapse:/data
-    labels:
-      traefik.enable: true
-      traefik.http.routers.synapse.entrypoints: websecure
-      traefik.http.routers.synapse.rule: Host(`synapse.$DOMAIN`)
-      traefik.http.routers.synapse.service: synapse
-      traefik.http.services.synapse.loadbalancer.server.port: 8008
     environment:
       TZ: $TZ
       UID: $PUID
