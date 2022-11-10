@@ -45,18 +45,27 @@ services:
       - 9902:9902
     privileged: true
 
+  nut:
+    image: upshift/nut-upsd
+    container_name: nut
+    restart: unless-stopped
+    environment:
+      UPS_DESC: CyberPower 1500VA UPS
+      SHUTDOWN_CMD: pwd
+    ports:
+      - 3493:3493
+    privileged: true
+
+
   # Media
   rtorrent:
     image: crazymax/rtorrent-rutorrent:latest
     container_name: rtorrent
     restart: unless-stopped
-    #expose:
-    #  - 6881  # DHT
-    #  - 9000  # WEBDAV
     ports:
       - 8000:8000   # XMLRPC (*arr)
-      - 8085:8080   # RUTORRENT
-      - 50000:50000 # INCOMING
+      - 8085:8080   # RUTORRENT (web)
+      - 50000:50000 # PEERING
     volumes:
       - $OPDIR/rtorrent/data/geoip:/data/geoip
       - $OPDIR/rtorrent/data/rtorrent:/data/rtorrent
@@ -67,20 +76,6 @@ services:
       TZ: $TZ
       PUID: $PUID
       PGID: $PGID
-
-  filebrowser:
-    image: filebrowser/filebrowser:latest
-    container_name: filebrowser
-    hostname: filebrowser
-    user: $PUID:$PGID
-    restart: unless-stopped
-    ports:
-      - 3761:80
-    volumes:
-      - $OPDIR/filebrowser/filebrowser.db:/database/filebrowser.db
-      - $OPDIR/filebrowser/.filebrowser.json:/.filebrowser.json
-      - $DATADIR:/data
-#    entrypoint: /bin/sh # only used with docker-compose run to edit config
 
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:develop
@@ -142,6 +137,23 @@ services:
       PGID: $PGID
       DOCKER_MODS: linuxserver/calibre-web:universal-calibre
 
+  nextcloud:
+    image: lscr.io/linuxserver/nextcloud:latest
+    container_name: nextcloud
+    hostname: nextcloud
+    restart: unless-stopped
+    volumes:
+      - $OPDIR/nextcloud/config:/config
+      - $OPDIR/nextcloud/data:/data
+      - $DATADIR:/mnt/celebrimbor
+      - $OPDIR/syncthing/data:/mnt/syncthing
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+    ports:
+      - 4431:80
+
   # Backup
   syncthing:
     image: syncthing/syncthing:latest
@@ -193,31 +205,3 @@ services:
       PGID: $PGID
       SUDO_PASSWORD: $CODE_PASSWORD
       DOCKER_MODS: linuxserver/mods:code-server-python3
-
-  nut:
-    image: upshift/nut-upsd
-    container_name: nut
-    restart: unless-stopped
-    environment:
-      UPS_DESC: CyberPower 1500VA UPS
-      SHUTDOWN_CMD: pwd
-    ports:
-      - 3493:3493
-    privileged: true
-
-  nextcloud:
-    image: lscr.io/linuxserver/nextcloud:latest
-    container_name: nextcloud
-    hostname: nextcloud
-    restart: unless-stopped
-    volumes:
-      - $OPDIR/nextcloud/config:/config
-      - $OPDIR/nextcloud/data:/data
-      - $DATADIR:/mnt/celebrimbor
-      - $OPDIR/syncthing/data:/mnt/syncthing
-    environment:
-      TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
-    ports:
-      - 4431:80
