@@ -204,3 +204,20 @@ services:
     ports:
       - 3493:3493
     privileged: true
+
+  nextcloud:
+    image: lscr.io/linuxserver/nextcloud:latest
+    container_name: nextcloud
+    hostname: nextcloud
+    restart: unless-stopped
+    volumes:
+      - $OPDIR/nextcloud/config:/config
+      - $OPDIR/nextcloud/data:/data
+      - $DATADIR:/mnt/celebrimbor
+      - $OPDIR/syncthing/data:/mnt/syncthing
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+    ports:
+      - 4431:80
