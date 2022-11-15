@@ -1,0 +1,28 @@
+version: "3"
+
+networks:
+  wasabi-overlay:
+    external: true
+
+services:
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-meriadoc
+    hostname: node-meriadoc
+    restart: unless-stopped
+#    networks:
+#      - $NETWORK
+    ports:
+      - 9100:9100
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
