@@ -1,4 +1,13 @@
-version: "3"
+version: "2.4"
+
+networks:
+  valinor-v6:
+    name: valinor-v6
+    enable_ipv6: true
+    ipam:
+      config:
+        - subnet: 2001:db8:b::/64
+          gateway: 2001:db8:b::1
 
 services:
 
@@ -8,6 +17,8 @@ services:
     container_name: nginx
     hostname: nginx
     restart: unless-stopped
+    networks:
+      - valinor-v6
     ports:
       - 4080:80
       - 4443:443
@@ -41,8 +52,8 @@ services:
     container_name: node-exporter
     hostname: node-exporter
     restart: unless-stopped
-    expose:
-      - 9100
+    ports:
+      - 9100:9100
     command:
       - '--path.procfs=/host/proc' 
       - '--path.sysfs=/host/sys'
@@ -52,16 +63,14 @@ services:
       - /:/rootfs:ro
     environment:
       TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
     container_name: cadvisor
     hostname: cadvistor
     restart: unless-stopped
-    expose:
-      - 8080
+    ports:
+      - 8080:8080
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:ro
@@ -77,7 +86,7 @@ services:
     hostname: loki
     restart: unless-stopped
     ports:
-      - 3100:3100 # expose for docker plugin to connect (dumb)
+      - 3100:3100
     environment:
       TZ: $TZ
     command: -config.file=/etc/loki/local-config.yaml
@@ -112,7 +121,9 @@ services:
     image: felddy/foundryvtt:release
     container_name: foundry-kirkwall
     hostname: foundry-kirkwall
-    restart: unless-stopped
+    #restart: unless-stopped
+    networks:
+      - valinor-v6
     ports:
       - 30000:30000
     volumes:
@@ -124,54 +135,14 @@ services:
       FOUNDRY_HOSTNAME: kirkwall.$DOMAIN
     env_file: $OPDIR/kirkwall/config.env
 
-  # Media
-  tautulli:
-    image: lscr.io/linuxserver/tautulli:latest
-    container_name: tautulli
-    hostname: tautulli
-    restart: unless-stopped
-    ports:
-      - 8181:8181
-    volumes:
-      - $OPDIR/tautulli:/config
-    environment:
-      TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
-
-  overseerr:
-    image: sctx/overseerr:latest
-    container_name: overseerr
-    restart: unless-stopped
-    ports:
-      - 5055:5055
-    volumes:
-      - $OPDIR/overseerr:/app/config
-    environment:
-      TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
-
-  owncast:
-    image: gabekangas/owncast:latest
-    container_name: owncast
-    restart: unless-stopped
-    ports:
-      - 8084:8080
-      - 1935:1935 # RSTP is not exposed to internet, just tailscale
-    volumes:
-      - $OPDIR/owncast:/app/data
-    environment:
-      TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
-
   # Other
   code-server:
     image: lscr.io/linuxserver/code-server:latest
     container_name: code-server
     hostname: code-server
     restart: unless-stopped
+    networks:
+      - valinor-v6
     ports:
       - 8443:8443
     volumes:
@@ -183,51 +154,5 @@ services:
       PGID: $PGID
       SUDO_PASSWORD: $CODE_PASSWORD
       DOCKER_MODS: linuxserver/mods:universal-package-install
-      INSTALL_PACKAGES: sqlite3
+      INSTALL_PACKAGES: command-not-found|dnsutils|iputils-ping|sqlite3|python3
 
-  paperless:
-    image: ghcr.io/paperless-ngx/paperless-ngx:latest
-    container_name: paperless
-    restart: unless-stopped
-    ports:
-      - 8000:8000
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-    volumes:
-      - $OPDIR/paperless/data:/usr/src/paperless/data
-      - $OPDIR/paperless/media:/usr/src/paperless/media
-      - $OPDIR/paperless/export:/usr/src/paperless/export
-      - $OPDIR/paperless/consume:/usr/src/paperless/consume
-    environment:
-      PAPERLESS_TIME_ZONE: $TZ
-      USERMAP_UID: $PUID
-      USERMAP_GID: $PGID
-      PAPERLESS_REDIS: redis://redis-paperless:6379
-      PAPERLESS_DBHOST: postgres-paperless
-      PAPERLESS_POSTGRES_PASSWORD: $PAPERLESS_POSTGRES_PASSWORD
-      PAPERLESS_URL: https://paperless.$DOMAIN
-    env_file: $OPDIR/paperless/config.env
-    depends_on:
-      - redis-paperless
-      - postgres-paperless
-
-  redis-paperless:
-    image: redis:6.0
-    container_name: redis-paperless
-    restart: unless-stopped
-    volumes:
-      - $OPDIR/redis-paperless:/data
-
-  postgres-paperless:
-    image: postgres:13
-    container_name: postgres-paperless
-    restart: unless-stopped
-    volumes:
-      - $OPDIR/postgres-paperless:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: paperless
-      POSTGRES_USER: paperless
-      POSTGRES_PASSWORD: $PAPERLESS_POSTGRES_PASSWORD
