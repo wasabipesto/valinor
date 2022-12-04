@@ -17,8 +17,6 @@ services:
     container_name: nginx
     hostname: nginx
     restart: unless-stopped
-    networks:
-      - valinor-v6
     ports:
       - 4080:80
       - 4443:443
@@ -42,6 +40,7 @@ services:
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=1y'
     environment:
       TZ: $TZ
       PUID: $PUID # does this work?
@@ -116,14 +115,60 @@ services:
       TZ: $TZ
       GF_PATHS_CONFIG: /var/lib/grafana/grafana.ini
 
-  # Games
+  # Media
+  owncast:
+    image: gabekangas/owncast:latest
+    container_name: owncast
+    restart: unless-stopped
+    ports:
+      - 8084:8080
+      - 1935:1935 # RSTP is not exposed to internet, just tailscale
+    volumes:
+      - $OPDIR/owncast:/app/data
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+
+  tautulli:
+    image: lscr.io/linuxserver/tautulli:latest
+    container_name: tautulli
+    hostname: tautulli
+    restart: unless-stopped
+    networks:
+      - valinor-v6 # outgoing oauth connections
+    ports:
+      - 8181:8181
+    volumes:
+      - $OPDIR/tautulli:/config
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+
+  overseerr:
+    image: sctx/overseerr:latest
+    container_name: overseerr
+    restart: unless-stopped
+    networks:
+      - valinor-v6 # outgoing oauth connections, media lookups
+    ports:
+      - 5055:5055
+    volumes:
+      - $OPDIR/overseerr:/app/config
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+
+  # Other
   foundry-kirkwall:
     image: felddy/foundryvtt:release
     container_name: foundry-kirkwall
     hostname: foundry-kirkwall
     #restart: unless-stopped
     networks:
-      - valinor-v6
+      - valinor-v6 # TBD, probably needs an address to grab new relases
     ports:
       - 30000:30000
     volumes:
@@ -135,14 +180,13 @@ services:
       FOUNDRY_HOSTNAME: kirkwall.$DOMAIN
     env_file: $OPDIR/kirkwall/config.env
 
-  # Other
   code-server:
     image: lscr.io/linuxserver/code-server:latest
     container_name: code-server
     hostname: code-server
     restart: unless-stopped
     networks:
-      - valinor-v6
+      - valinor-v6 # needs an address for outbound shell stuff
     ports:
       - 8443:8443
     volumes:
