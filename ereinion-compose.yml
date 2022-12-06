@@ -2,40 +2,7 @@ version: "3"
 
 services:
 
-  # Networking
-  nginx:
-    image: lscr.io/linuxserver/nginx:latest
-    container_name: nginx
-    hostname: nginx
-    restart: unless-stopped
-    ports:
-      - 4080:80
-      - 4443:443
-    volumes:
-      - $OPDIR/nginx:/config
-    environment:
-      TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
-
   # Monitoring & Updates
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: prometheus
-    restart: unless-stopped
-    ports:
-      - 9090:9090
-    volumes:
-      - $OPDIR/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-      - $OPDIR/prometheus/data:/prometheus
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-    environment:
-      TZ: $TZ
-      PUID: $PUID # does this work?
-      PGID: $PGID
-
   node-exporter:
     image: prom/node-exporter:latest
     container_name: node-ereinion
@@ -70,42 +37,6 @@ services:
       - /dev/disk/:/dev/disk:ro
     environment:
       TZ: $TZ
-
-  loki:
-    image: grafana/loki
-    container_name: loki
-    hostname: loki
-    restart: unless-stopped
-    ports:
-      - 3100:3100
-    environment:
-      TZ: $TZ
-    command: -config.file=/etc/loki/local-config.yaml
-
-  promtail:
-    image: grafana/promtail
-    container_name: promtail
-    hostname: promtail
-    restart: unless-stopped
-    volumes:
-      - /var/log:/var/log:ro
-    environment:
-      TZ: $TZ
-    command: -config.file=/etc/promtail/config.yml
-
-  grafana:
-    image: grafana/grafana-oss:main
-    container_name: grafana
-    hostname: grafana
-    restart: unless-stopped
-    user: $PUID:$PGID
-    ports:
-      - 3000:3000
-    volumes:
-      - $OPDIR/grafana:/var/lib/grafana
-    environment:
-      TZ: $TZ
-      GF_PATHS_CONFIG: /var/lib/grafana/grafana.ini
 
   # Communication
   synapse:
@@ -165,37 +96,6 @@ services:
       - synapse
 
   # Games
-  wikijs:
-    image: ghcr.io/requarks/wiki:2
-    container_name: wikijs
-    hostname: wikijs
-    restart: unless-stopped
-    user: $PUID:$PGID
-    ports:
-      - 3001:3000
-    volumes:
-      - $OPDIR/wikijs/config.yml:/wiki/config.yml
-      - $OPDIR/wikijs/backup:/wiki/backup
-    environment:
-      TZ: $TZ
-      CONFIG_FILE: /wiki/config.yml
-    depends_on:
-      - postgres-wikijs
-
-  postgres-wikijs:
-    image: postgres:11-alpine
-    container_name: postgres-wikijs
-    restart: unless-stopped
-    user: $PUID:$PGID # postgres will not init database as 1000:1000
-    expose:
-      - 5432
-    volumes:
-      - $OPDIR/postgres-wikijs:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: wiki
-      POSTGRES_USER: wikijs
-      POSTGRES_PASSWORD: $WIKIJS_POSTGRES_PASSWORD
-
   foundry-kirkwall:
     image: felddy/foundryvtt:release
     container_name: foundry-kirkwall
@@ -213,20 +113,6 @@ services:
     env_file: $OPDIR/kirkwall/config.env
 
   # Media
-  tautulli:
-    image: lscr.io/linuxserver/tautulli:latest
-    container_name: tautulli
-    hostname: tautulli
-    restart: unless-stopped
-    ports:
-      - 8181:8181
-    volumes:
-      - $OPDIR/tautulli:/config
-    environment:
-      TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
-
   overseerr:
     image: sctx/overseerr:latest
     container_name: overseerr
@@ -235,20 +121,6 @@ services:
       - 5055:5055
     volumes:
       - $OPDIR/overseerr:/app/config
-    environment:
-      TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
-
-  owncast:
-    image: gabekangas/owncast:latest
-    container_name: owncast
-    restart: unless-stopped
-    ports:
-      - 8084:8080
-      - 1935:1935 # RSTP is not exposed to internet, just tailscale
-    volumes:
-      - $OPDIR/owncast:/app/data
     environment:
       TZ: $TZ
       PUID: $PUID
@@ -272,84 +144,3 @@ services:
       SUDO_PASSWORD: $CODE_PASSWORD
       DOCKER_MODS: linuxserver/mods:universal-package-install
       INSTALL_PACKAGES: sqlite3
-
-  jupyter:
-    image: jupyter/datascience-notebook:latest
-    container_name: jupyter
-    hostname: jupyter
-    restart: unless-stopped
-    ports:
-      - 8888:8888
-    volumes:
-      - $OPDIR/jupyter:/home/jovyan
-      - $OPDIR/nginx/www/wasabipesto.com/jupyter:/home/jovyan/www
-    labels:
-      ofelia.enabled: "true"
-      ofelia.job-exec.manifold-stats.user: "jovyan"
-      ofelia.job-exec.manifold-stats.schedule: "@every 4h"
-      ofelia.job-exec.manifold-stats.command: "/bin/bash /home/jovyan/Manifold/render.sh"
-    environment:
-      TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
-      JUPYTER_ENABLE_LAB: yes
-
-  paperless:
-    image: ghcr.io/paperless-ngx/paperless-ngx:latest
-    container_name: paperless
-    restart: unless-stopped
-    ports:
-      - 8000:8000
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-    volumes:
-      - $OPDIR/paperless/data:/usr/src/paperless/data
-      - $OPDIR/paperless/media:/usr/src/paperless/media
-      - $OPDIR/paperless/export:/usr/src/paperless/export
-      - $OPDIR/paperless/consume:/usr/src/paperless/consume
-    environment:
-      PAPERLESS_TIME_ZONE: $TZ
-      USERMAP_UID: $PUID
-      USERMAP_GID: $PGID
-      PAPERLESS_REDIS: redis://redis-paperless:6379
-      PAPERLESS_DBHOST: postgres-paperless
-      PAPERLESS_POSTGRES_PASSWORD: $PAPERLESS_POSTGRES_PASSWORD
-      PAPERLESS_URL: https://paperless.$DOMAIN
-    env_file: $OPDIR/paperless/config.env
-    depends_on:
-      - redis-paperless
-      - postgres-paperless
-
-  redis-paperless:
-    image: redis:6.0
-    container_name: redis-paperless
-    restart: unless-stopped
-    volumes:
-      - $OPDIR/redis-paperless:/data
-
-  postgres-paperless:
-    image: postgres:13
-    container_name: postgres-paperless
-    restart: unless-stopped
-    volumes:
-      - $OPDIR/postgres-paperless:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: paperless
-      POSTGRES_USER: paperless
-      POSTGRES_PASSWORD: $PAPERLESS_POSTGRES_PASSWORD
-
-  ofelia:
-    image: mcuadros/ofelia:latest
-    container_name: ofelia
-    restart: unless-stopped
-    command: daemon --docker
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    labels:
-      ofelia.slack-webhook: $DISCORD_WEBHOOK
-      ofelia.slack-only-on-error: true
-    environment:
-      TZ: $TZ
