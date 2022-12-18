@@ -17,6 +17,8 @@ services:
     container_name: nginx
     hostname: nginx
     restart: unless-stopped
+    networks:
+      - valinor-v6
     ports:
       - 4080:80
       - 4443:443
@@ -32,6 +34,8 @@ services:
     image: prom/prometheus:latest
     container_name: prometheus
     restart: unless-stopped
+    networks:
+      - valinor-v6
     ports:
       - 9090:9090
     volumes:
@@ -51,6 +55,8 @@ services:
     container_name: node-exporter
     hostname: node-exporter
     restart: unless-stopped
+    networks:
+      - valinor-v6
     ports:
       - 9100:9100
     command:
@@ -68,6 +74,8 @@ services:
     container_name: cadvisor
     hostname: cadvistor
     restart: unless-stopped
+    networks:
+      - valinor-v6
     ports:
       - 8080:8080
     volumes:
@@ -84,6 +92,8 @@ services:
     container_name: loki
     hostname: loki
     restart: unless-stopped
+    networks:
+      - valinor-v6
     ports:
       - 3100:3100
     environment:
@@ -95,6 +105,8 @@ services:
     container_name: promtail
     hostname: promtail
     restart: unless-stopped
+    networks:
+      - valinor-v6
     volumes:
       - /var/log:/var/log:ro
     environment:
@@ -106,6 +118,8 @@ services:
     container_name: grafana
     hostname: grafana
     restart: unless-stopped
+    networks:
+      - valinor-v6
     user: $PUID:$PGID
     ports:
       - 3000:3000
