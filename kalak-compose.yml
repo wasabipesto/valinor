@@ -27,7 +27,7 @@ services:
       PUID: $PUID
       PGID: $PGID
 
-  # Monitoring & Updates
+  # Monitoring
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
@@ -114,6 +114,69 @@ services:
     environment:
       TZ: $TZ
       GF_PATHS_CONFIG: /var/lib/grafana/grafana.ini
+
+  # Communication
+  synapse:
+    image: docker.io/matrixdotorg/synapse:latest
+    container_name: synapse
+    hostname: synapse
+    restart: unless-stopped
+    networks:
+      - valinor-v6
+    ports:
+      - 8008:8008
+      - 9000:9000
+    volumes:
+      - $OPDIR/synapse:/data
+    environment:
+      TZ: $TZ
+      UID: $PUID
+      GID: $PGID
+      SYNAPSE_CONFIG_PATH: /data/homeserver.yaml
+    depends_on:
+      - postgres-matrix
+
+  postgres-matrix:
+    image: docker.io/postgres:12-alpine
+    container_name: postgres-synapse
+    restart: unless-stopped
+    networks:
+      - valinor-v6
+    user: $PUID:$PGID # postgres will not init database as 1000:1000
+    expose:
+      - 5432
+    volumes:
+      - $OPDIR/synapse/postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: synapse
+      POSTGRES_PASSWORD: $MATRIX_POSTGRES_PASSWORD
+      # https://matrix-org.github.io/synapse/latest/postgres.html#set-up-database
+      POSTGRES_INITDB_ARGS: --encoding=UTF-8 --lc-collate=C --lc-ctype=C
+
+  element:
+    image: vectorim/element-web:latest
+    container_name: element
+    restart: unless-stopped
+    ports:
+      - 8183:80
+    volumes:
+      - $OPDIR/element/config.json:/app/config.json:ro
+    environment:
+      TZ: $TZ
+
+  heisenbridge:
+    image: hif1/heisenbridge:latest
+    container_name: heisenbridge
+    restart: unless-stopped
+    networks:
+      - valinor-v6
+    expose:
+      - 9898
+    volumes:
+      - $OPDIR/synapse/heisenbridge:/data
+    command: -v -c /data/heisenbridge.yaml http://synapse:8008
+    depends_on:
+      - synapse
 
   # Media
   owncast:

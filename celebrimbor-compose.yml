@@ -54,7 +54,6 @@ services:
       - 3493:3493
     privileged: true
 
-
   # Media
   rtorrent:
     image: crazymax/rtorrent-rutorrent:latest
@@ -152,7 +151,6 @@ services:
     ports:
       - 4431:80
 
-  # Backup
   syncthing:
     image: syncthing/syncthing:latest
     container_name: syncthing
@@ -166,6 +164,37 @@ services:
       TZ: $TZ
       PUID: $PUID
       PGID: $PGID
+
+  # Media
+  overseerr:
+    image: sctx/overseerr:latest
+    container_name: overseerr
+    restart: unless-stopped
+    ports:
+      - 5055:5055
+    volumes:
+      - $OPDIR/overseerr:/app/config
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+
+  # Games
+  foundry-kirkwall:
+    image: felddy/foundryvtt:release
+    container_name: foundry-kirkwall
+    hostname: foundry-kirkwall
+    restart: unless-stopped
+    ports:
+      - 30000:30000
+    volumes:
+      - $OPDIR/kirkwall:/data
+    environment:
+      TIMEZONE: $TZ
+      FOUNDRY_UID: $PUID
+      FOUNDRY_GID: $PGID
+      FOUNDRY_HOSTNAME: kirkwall.$DOMAIN
+    env_file: $OPDIR/kirkwall/config.env
 
   # Other
   homeassistant:
