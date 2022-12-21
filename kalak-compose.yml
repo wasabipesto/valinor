@@ -238,6 +238,21 @@ services:
       PUID: $PUID
       PGID: $PGID
 
+  syncthing:
+    image: syncthing/syncthing:latest
+    container_name: syncthing
+    hostname: syncthing
+    restart: unless-stopped
+    ports:
+      - 8384:8384
+      - 22000:22000/tcp # TCP file transfers
+      - 22000:22000/udp # QUIC file transfers
+      - 21027:21027/udp # Receive local discovery broadcasts
+    volumes:
+      - $OPDIR/syncthing:/var/syncthing
+    environment:
+      TZ: $TZ
+
   freshrss:
     image: freshrss/freshrss:latest
     container_name: freshrss
@@ -273,24 +288,6 @@ services:
       PGID: $PGID
 
   # Other
-  foundry-kirkwall:
-    image: felddy/foundryvtt:release
-    container_name: foundry-kirkwall
-    hostname: foundry-kirkwall
-    #restart: unless-stopped
-    networks:
-      - valinor-v6 # TBD, probably needs an address to grab new relases
-    ports:
-      - 30000:30000
-    volumes:
-      - $OPDIR/kirkwall:/data
-    environment:
-      TIMEZONE: $TZ
-      FOUNDRY_UID: $PUID
-      FOUNDRY_GID: $PGID
-      FOUNDRY_HOSTNAME: kirkwall.$DOMAIN
-    env_file: $OPDIR/kirkwall/config.env
-
   code-server:
     image: lscr.io/linuxserver/code-server:latest
     container_name: code-server
