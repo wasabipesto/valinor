@@ -118,6 +118,39 @@ services:
       PUID: $PUID
       PGID: $PGID
 
+  readarr:
+    image: lscr.io/linuxserver/readarr:develop
+    container_name: readarr
+    hostname: readarr
+    restart: unless-stopped
+    ports:
+      - 8787:8787
+    volumes:
+      - $OPDIR/readarr:/config
+      - $DATADIR:/data
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+
+  calibre-app:
+    image: lscr.io/linuxserver/calibre:6.7.1 # https://github.com/linuxserver/docker-calibre/issues/97
+    container_name: calibre-app
+    hostname: calibre-app
+    restart: unless-stopped
+    security_opt:
+      - seccomp:unconfined # https://github.com/linuxserver/docker-calibre/issues/97
+    ports:
+      - 8079:8080
+      - 8081:8081
+    volumes:
+      - $OPDIR/calibre-app:/config
+      - $DATADIR:/data
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+
   calibre-web:
     image: ghcr.io/linuxserver/calibre-web:latest
     container_name: calibre-web
@@ -184,7 +217,7 @@ services:
     image: felddy/foundryvtt:release
     container_name: foundry-kirkwall
     hostname: foundry-kirkwall
-    restart: unless-stopped
+    #restart: unless-stopped
     ports:
       - 30000:30000
     volumes:
@@ -232,3 +265,26 @@ services:
       PGID: $PGID
       SUDO_PASSWORD: $CODE_PASSWORD
       DOCKER_MODS: linuxserver/mods:code-server-python3
+
+  web-whisper-backend:
+    build:
+      dockerfile: ./backend.Dockerfile
+      context: https://codeberg.org/pluja/web-whisper.git
+      args:
+        # Valid model values: tiny, base, small, medium, large
+        - WHISPER_MODEL=base
+        - WHISPER_THREADS=8    # Number of threads to use during computation
+        - WHISPER_PROCESSORS=1 # Number of processors to use during computation
+        - CUT_MEDIA_SECONDS=0  # Max number of seconds to transcribe
+    container_name: web-whisper-backend
+  
+  web-whisper:
+    build:
+      dockerfile: ./frontend.Dockerfile
+      context: https://codeberg.org/pluja/web-whisper.git
+      args:
+        - DOMAIN_NAME=localhost:3000
+        - ALLOW_FILE_UPLOADS=true
+    container_name: web-whisper
+    ports:
+      - 3000:80
