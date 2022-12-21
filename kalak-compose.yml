@@ -11,7 +11,7 @@ networks:
 
 services:
 
-  # Networking
+  # Networking & Static Sites
   nginx:
     image: lscr.io/linuxserver/nginx:latest
     container_name: nginx
@@ -28,6 +28,21 @@ services:
       TZ: $TZ
       PUID: $PUID
       PGID: $PGID
+
+  hugo:
+    image: ghcr.io/jackyzha0/quartz:hugo
+    container_name: hugo
+    #restart: unless-stopped
+    volumes:
+      - $OPDIR/hugo:/quartz
+      - $OPDIR/syncthing/data/Obsidian/_index.md:/quartz/content/_index.md:ro
+      - $OPDIR/syncthing/data/Obsidian/Valinor:/quartz/content/Valinor:ro
+      - $OPDIR/nginx/www/kb.wasabipesto.com:/quartz/public
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+    entrypoint: ["make", "publish"] # TODO: entrypoint script
 
   # Monitoring
   prometheus:
