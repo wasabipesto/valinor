@@ -191,12 +191,13 @@ services:
     restart: unless-stopped
     ports:
       - 8384:8384
+      - 22000:22000/tcp # TCP file transfers
+      - 22000:22000/udp # QUIC file transfers
+      - 21027:21027/udp # Receive local discovery broadcasts
     volumes:
       - $OPDIR/syncthing:/var/syncthing
     environment:
       TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
 
   # Media
   overseerr:
@@ -217,7 +218,7 @@ services:
     image: felddy/foundryvtt:release
     container_name: foundry-kirkwall
     hostname: foundry-kirkwall
-    #restart: unless-stopped
+    restart: unless-stopped
     ports:
       - 30000:30000
     volumes:
