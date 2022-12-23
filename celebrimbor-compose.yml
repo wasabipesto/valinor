@@ -49,9 +49,9 @@ services:
     restart: unless-stopped
     environment:
       API_USER: upsmon
-      API_PASSWORD: secret # ssssh
+      API_PASSWORD: $NUT_PASSWORD
       DESCRIPTION: CyberPower 1500VA UPS
-      SERIAL: CXXKV2004060
+      SERIAL: $NUT_SERIAL
     ports:
       - 3493:3493
     privileged: true
