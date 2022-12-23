@@ -44,12 +44,14 @@ services:
     privileged: true
 
   nut:
-    image: upshift/nut-upsd
+    image: instantlinux/nut-upsd:latest
     container_name: nut
     restart: unless-stopped
     environment:
-      UPS_DESC: CyberPower 1500VA UPS
-      SHUTDOWN_CMD: pwd
+      API_USER: upsmon
+      API_PASSWORD: secret # ssssh
+      DESCRIPTION: CyberPower 1500VA UPS
+      SERIAL: CXXKV2004060
     ports:
       - 3493:3493
     privileged: true
@@ -218,7 +220,7 @@ services:
     image: felddy/foundryvtt:release
     container_name: foundry-kirkwall
     hostname: foundry-kirkwall
-    restart: unless-stopped
+    #restart: unless-stopped
     ports:
       - 30000:30000
     volumes:
@@ -274,7 +276,7 @@ services:
       args:
         # Valid model values: tiny, base, small, medium, large
         - WHISPER_MODEL=base
-        - WHISPER_THREADS=8    # Number of threads to use during computation
+        - WHISPER_THREADS=1    # Number of threads to use during computation
         - WHISPER_PROCESSORS=1 # Number of processors to use during computation
         - CUT_MEDIA_SECONDS=0  # Max number of seconds to transcribe
     container_name: web-whisper-backend
