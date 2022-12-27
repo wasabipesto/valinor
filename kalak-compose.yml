@@ -87,7 +87,7 @@ services:
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
     container_name: cadvisor
-    hostname: cadvistor
+    hostname: cadvisor
     restart: unless-stopped
     networks:
       - valinor-v6
@@ -101,6 +101,17 @@ services:
       - /dev/disk/:/dev/disk:ro
     environment:
       TZ: $TZ
+
+  ping_exporter:
+    image: czerwonk/ping_exporter:latest
+    container_name: ping_exporter
+    restart: unless-stopped
+    networks:
+      - valinor-v6
+    ports:
+      - 9427:9427
+    volumes:
+      - $OPDIR/ping_exporter:/config:ro
 
   loki:
     image: grafana/loki
