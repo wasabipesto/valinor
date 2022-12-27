@@ -135,6 +135,21 @@ services:
       PUID: $PUID
       PGID: $PGID
 
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    hostname: bazarr
+    restart: unless-stopped
+    ports:
+      - 6767:6767
+    volumes:
+      - $OPDIR/bazarr:/config
+      - $DATADIR:/data
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+
   calibre-app:
     image: lscr.io/linuxserver/calibre:6.7.1 # https://github.com/linuxserver/docker-calibre/issues/97
     container_name: calibre-app
@@ -198,6 +213,7 @@ services:
       - 21027:21027/udp # Receive local discovery broadcasts
     volumes:
       - $OPDIR/syncthing:/var/syncthing
+      - $DATADIR/Syncthing:/data/Syncthing
     environment:
       TZ: $TZ
 
