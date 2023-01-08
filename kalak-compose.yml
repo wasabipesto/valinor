@@ -113,6 +113,19 @@ services:
     volumes:
       - $OPDIR/ping_exporter:/config:ro
 
+  nginx-exporter:
+    image: quay.io/martinhelmich/prometheus-nginxlog-exporter:v1
+    container_name: nginx-exporter
+    restart: unless-stopped
+    networks:
+      - valinor-v6
+    ports:
+      - 4040:4040
+    volumes:
+      - $OPDIR/nginx/log/nginx:/mnt/nginxlogs:ro
+      - $OPDIR/prometheus/prometheus-nginxlog-exporter.yml:/mnt/prometheus-nginxlog-exporter.yml:ro
+    command: -config-file /mnt/prometheus-nginxlog-exporter.yml
+
   loki:
     image: grafana/loki
     container_name: loki
@@ -332,5 +345,6 @@ services:
       PGID: $PGID
       SUDO_PASSWORD: $CODE_PASSWORD
       DOCKER_MODS: linuxserver/mods:universal-package-install
-      INSTALL_PACKAGES: command-not-found|dnsutils|iputils-ping|sqlite3|python3
+      INSTALL_PACKAGES: command-not-found|dnsutils|iputils-ping|sqlite3|python3|python3-pip
 
+      
