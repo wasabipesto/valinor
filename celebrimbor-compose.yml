@@ -213,7 +213,7 @@ services:
       - 21027:21027/udp # Receive local discovery broadcasts
     volumes:
       - $OPDIR/syncthing:/var/syncthing
-      - $DATADIR/Syncthing:/data/Syncthing
+      #- $DATADIR/Syncthing:/data/Syncthing
     environment:
       TZ: $TZ
 
