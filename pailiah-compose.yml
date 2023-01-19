@@ -1,0 +1,255 @@
+version: "3"
+
+services:
+  # Networking & Static Sites
+  nginx:
+    image: lscr.io/linuxserver/nginx:latest
+    container_name: nginx
+    hostname: nginx
+    restart: unless-stopped
+    ports:
+      - 4080:80
+      - 4443:443
+    volumes:
+      - $OPDIR/nginx:/config
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+
+  hephaestus:
+    build: $OPDIR/hephaestus
+    container_name: hephaestus
+    restart: unless-stopped
+    volumes:
+      # obsidian -> quartz -> nginx
+      - $OPDIR/quartz:/mnt/quartz
+      - $OPDIR/syncthing/data/Obsidian/_index.md:/mnt/quartz/content/_index.md:ro
+      - $OPDIR/syncthing/data/Obsidian/Valinor:/mnt/quartz/content/Valinor:ro
+      - $OPDIR/nginx/www/kb.wasabipesto.com:/mnt/nginx/kb.wasabipesto.com
+      # jupyter notebook -> nginx
+      - $OPDIR/nice-backend:/mnt/nice-backend:ro
+      - $OPDIR/nginx/www/wasabipesto.com/nice:/mnt/nginx/wasabipesto.com/nice
+    user: $PUID:$PGID
+
+  # Monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    ports:
+      - 9090:9090
+    volumes:
+      - $OPDIR/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - $OPDIR/prometheus/data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=1y'
+    environment:
+      TZ: $TZ
+      PUID: $PUID # does this work?
+      PGID: $PGID
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    hostname: node-exporter
+    restart: unless-stopped
+    ports:
+      - 9100:9100
+    command:
+      - '--path.procfs=/host/proc' 
+      - '--path.sysfs=/host/sys'
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    environment:
+      TZ: $TZ
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    hostname: cadvisor
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    environment:
+      TZ: $TZ
+
+  ping_exporter:
+    image: czerwonk/ping_exporter:latest
+    container_name: ping_exporter
+    restart: unless-stopped
+    ports:
+      - 9427:9427
+    volumes:
+      - $OPDIR/ping_exporter:/config:ro
+
+  nginx-exporter:
+    image: quay.io/martinhelmich/prometheus-nginxlog-exporter:v1
+    container_name: nginx-exporter
+    restart: unless-stopped
+    ports:
+      - 4040:4040
+    volumes:
+      - $OPDIR/nginx/log/nginx:/mnt/nginxlogs:ro
+      - $OPDIR/prometheus/prometheus-nginxlog-exporter.yml:/mnt/prometheus-nginxlog-exporter.yml:ro
+    command: -config-file /mnt/prometheus-nginxlog-exporter.yml
+
+  loki:
+    image: grafana/loki
+    container_name: loki
+    hostname: loki
+    restart: unless-stopped
+    ports:
+      - 3100:3100
+    environment:
+      TZ: $TZ
+    command: -config.file=/etc/loki/local-config.yaml
+
+  grafana:
+    image: grafana/grafana-oss:main
+    container_name: grafana
+    hostname: grafana
+    restart: unless-stopped
+    user: $PUID:$PGID
+    ports:
+      - 3000:3000
+    volumes:
+      - $OPDIR/grafana:/var/lib/grafana
+    environment:
+      TZ: $TZ
+      GF_PATHS_CONFIG: /var/lib/grafana/grafana.ini
+
+  # Media
+  owncast:
+    image: gabekangas/owncast:latest
+    container_name: owncast
+    restart: unless-stopped
+    ports:
+      - 8084:8080
+      - 1935:1935 # RSTP is not exposed to internet, just tailscale
+    volumes:
+      - $OPDIR/owncast:/app/data
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+
+  tautulli:
+    image: lscr.io/linuxserver/tautulli:latest
+    container_name: tautulli
+    hostname: tautulli
+    restart: unless-stopped
+    ports:
+      - 8181:8181
+    volumes:
+      - $OPDIR/tautulli:/config
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+
+  overseerr:
+    image: sctx/overseerr:latest
+    container_name: overseerr
+    restart: unless-stopped
+    ports:
+      - 5055:5055
+    volumes:
+      - $OPDIR/overseerr:/app/config
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+
+  syncthing:
+    image: syncthing/syncthing:latest
+    container_name: syncthing
+    hostname: syncthing
+    restart: unless-stopped
+    ports:
+      - 8384:8384
+      - 22000:22000/tcp # TCP file transfers
+      - 22000:22000/udp # QUIC file transfers
+      - 21027:21027/udp # Receive local discovery broadcasts
+    volumes:
+      - $OPDIR/syncthing:/var/syncthing
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+
+  freshrss:
+    image: freshrss/freshrss:latest
+    container_name: freshrss
+    hostname: freshrss
+    restart: unless-stopped
+    ports:
+      - 8524:80
+    volumes:
+      - $OPDIR/freshrss/data:/var/www/FreshRSS/data
+      - $OPDIR/freshrss/extensions:/var/www/FreshRSS/extensions
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+      CRON_MIN: 13,43
+
+  rss-bridge:
+    image: rssbridge/rss-bridge:latest
+    container_name: rss-bridge
+    hostname: rss-bridge
+    restart: unless-stopped
+    ports:
+      - 3060:80
+    volumes:
+      - $OPDIR/freshrss/bridge:/config
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+
+  # Games
+  foundry-kirkwall:
+    image: felddy/foundryvtt:release
+    container_name: foundry-kirkwall
+    hostname: foundry-kirkwall
+    restart: unless-stopped
+    ports:
+      - 30000:30000
+    volumes:
+      - $OPDIR/kirkwall:/data
+    environment:
+      TIMEZONE: $TZ
+      FOUNDRY_UID: $PUID
+      FOUNDRY_GID: $PGID
+      FOUNDRY_HOSTNAME: kirkwall.$DOMAIN
+    env_file: $OPDIR/kirkwall/config.env
+
+  # Other
+  code-server:
+    image: lscr.io/linuxserver/code-server:latest
+    container_name: code-server
+    hostname: code-server
+    restart: unless-stopped
+    ports:
+      - 8443:8443
+    volumes:
+      - $OPDIR/code:/config
+      - $OPDIR:/opt
+    environment:
+      TZ: $TZ
+      PUID: $PUID
+      PGID: $PGID
+      SUDO_PASSWORD: $CODE_PASSWORD
+      DOCKER_MODS: linuxserver/mods:universal-package-install
+      INSTALL_PACKAGES: command-not-found|dnsutils|iputils-ping|sqlite3|python3|python3-pip
