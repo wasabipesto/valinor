@@ -253,3 +253,19 @@ services:
       SUDO_PASSWORD: $CODE_PASSWORD
       DOCKER_MODS: linuxserver/mods:universal-package-install
       INSTALL_PACKAGES: command-not-found|dnsutils|iputils-ping|sqlite3|python3|python3-pip|build-essential|libssl-dev
+
+  # Nice
+  nice-postgres:
+    image: postgres:15
+    container_name: nice-postgres
+    hostname: nice-postgres
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    volumes:
+      - $OPDIR/nice-postgres:/var/lib/postgresql
+    environment:
+      TZ: $TZ
+      POSTGRES_USER: nice
+      POSTGRES_PASSWORD: $NICE_POSTGRES_PASSWORD
+    
