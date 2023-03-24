@@ -256,6 +256,20 @@ services:
       INSTALL_PACKAGES: command-not-found|dnsutils|iputils-ping|sqlite3|python3|python3-pip|build-essential|libssl-dev|nodejs
 
   # Nice
+  nice-express-prod:
+    build: $OPDIR/nice-express
+    container_name: nice-express-prod
+    restart: unless-stopped
+    ports:
+      - 3069:3000
+
+  nice-express-dev:
+    build: $OPDIR/nice-express
+    container_name: nice-express-dev
+    restart: unless-stopped
+    ports:
+      - 3068:3000
+
   nice-postgres:
     image: postgres:15
     container_name: nice-postgres
