@@ -17,21 +17,6 @@ services:
       PUID: $PUID
       PGID: $PGID
 
-  hephaestus:
-    build: $OPDIR/hephaestus
-    container_name: hephaestus
-    restart: unless-stopped
-    volumes:
-      # obsidian -> quartz -> nginx
-      - $OPDIR/quartz:/mnt/quartz
-      - $OPDIR/syncthing/data/Obsidian/_index.md:/mnt/quartz/content/_index.md:ro
-      - $OPDIR/syncthing/data/Obsidian/Valinor:/mnt/quartz/content/Valinor:ro
-      - $OPDIR/nginx/www/kb.wasabipesto.com:/mnt/nginx/kb.wasabipesto.com
-      # jupyter notebook -> nginx
-      - $OPDIR/nice-backend:/mnt/nice-backend:ro
-      - $OPDIR/nginx/www/wasabipesto.com/nice:/mnt/nginx/wasabipesto.com/nice
-    user: $PUID:$PGID
-
   # Monitoring
   prometheus:
     image: prom/prometheus:latest
@@ -256,16 +241,16 @@ services:
       INSTALL_PACKAGES: command-not-found|dnsutils|iputils-ping|sqlite3|python3|python3-pip|build-essential|libssl-dev|nodejs
 
   # Nice
-  nice-express-prod:
-    build: $OPDIR/nice-express
-    container_name: nice-express-prod
+  nice-backend-prod:
+    build: $OPDIR/nice-backend-v
+    container_name: nice-backend-prod
     restart: unless-stopped
     ports:
       - 3069:3000
 
-  nice-express-dev:
-    build: $OPDIR/nice-express
-    container_name: nice-express-dev
+  nice-backend-dev:
+    build: $OPDIR/nice-backend-v
+    container_name: nice-backend-dev
     restart: unless-stopped
     ports:
       - 3068:3000
