@@ -268,4 +268,24 @@ services:
       TZ: $TZ
       POSTGRES_USER: nice
       POSTGRES_PASSWORD: $NICE_POSTGRES_PASSWORD
-    
+  
+  nice-pgbackups:
+    image: prodrigestivill/postgres-backup-local
+    container_name: nice-pgbackups
+    restart: always
+    user: $PUID:$PGID
+    volumes:
+      - $OPDIR/nice-postgres-backups:/backups
+    depends_on:
+      - nice-postgres
+    environment:
+      POSTGRES_HOST: nice-postgres
+      POSTGRES_DB: nice
+      POSTGRES_USER: nice
+      POSTGRES_PASSWORD: $NICE_POSTGRES_PASSWORD
+      POSTGRES_EXTRA_OPTS: -Z6
+      SCHEDULE: "@daily"
+      BACKUP_KEEP_DAYS: 10
+      BACKUP_KEEP_WEEKS: 10
+      BACKUP_KEEP_MONTHS: 10
+      HEALTHCHECK_PORT: 8080
