@@ -289,3 +289,14 @@ services:
       BACKUP_KEEP_WEEKS: 10
       BACKUP_KEEP_MONTHS: 10
       HEALTHCHECK_PORT: 8080
+  
+  nice-pgmonitor:
+    image: quay.io/prometheuscommunity/postgres-exporter
+    container_name: nice-pgmonitor
+    restart: always
+    depends_on:
+      - nice-postgres
+    ports:
+      - 9187:9187
+    environment:
+      DATA_SOURCE_NAME: postgresql://nice:${NICE_POSTGRES_PASSWORD}@nice-postgres:5432/nice?sslmode=disable
