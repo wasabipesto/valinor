@@ -247,6 +247,8 @@ services:
     restart: unless-stopped
     ports:
       - 3069:3000
+    environment:
+      NODE_ENV: production
 
   nice-backend-dev:
     build: $OPDIR/nice-backend-v
@@ -254,6 +256,8 @@ services:
     restart: unless-stopped
     ports:
       - 3068:3000
+    environment:
+      NODE_ENV: development
 
   nice-postgres:
     image: postgres:15
