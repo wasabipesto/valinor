@@ -232,13 +232,12 @@ services:
     volumes:
       - $OPDIR/code:/config
       - $OPDIR:/opt
+      - $OPDIR/code/custom-cont-init.d:/custom-cont-init.d:ro
     environment:
       TZ: $TZ
       PUID: $PUID
       PGID: $PGID
       SUDO_PASSWORD: $CODE_PASSWORD
-      DOCKER_MODS: linuxserver/mods:universal-package-install
-      INSTALL_PACKAGES: command-not-found|dnsutils|iputils-ping|sqlite3|python3|python3-pip|build-essential|libssl-dev|nodejs
 
   # Nice
   nice-backend-prod:
