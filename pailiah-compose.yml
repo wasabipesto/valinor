@@ -239,6 +239,21 @@ services:
       PGID: $PGID
       SUDO_PASSWORD: $CODE_PASSWORD
 
+  kasm:
+    image: lscr.io/linuxserver/kasm:latest
+    container_name: kasm
+    hostname: kasm
+    restart: unless-stopped
+    volumes:
+      - $OPDIR/kasm/opt:/opt
+      - $OPDIR/kasm/profiles:/profiles
+    ports:
+      - 3300:3000
+      - 9443:9443
+    environment:
+      - KASM_PORT=9443
+    privileged: true
+
   # Nice
   nice-backend-prod:
     build: $OPDIR/nice-backend-v
