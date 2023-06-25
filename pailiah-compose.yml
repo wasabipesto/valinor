@@ -156,23 +156,6 @@ services:
       PUID: $PUID
       PGID: $PGID
 
-  syncthing:
-    image: syncthing/syncthing:latest
-    container_name: syncthing
-    hostname: syncthing
-    restart: unless-stopped
-    ports:
-      - 8384:8384
-      - 22000:22000/tcp # TCP file transfers
-      - 22000:22000/udp # QUIC file transfers
-      - 21027:21027/udp # Receive local discovery broadcasts
-    volumes:
-      - $OPDIR/syncthing:/var/syncthing
-    environment:
-      TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
-
   freshrss:
     image: freshrss/freshrss:latest
     container_name: freshrss
