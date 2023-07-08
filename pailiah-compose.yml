@@ -301,3 +301,50 @@ services:
       - 9187:9187
     environment:
       DATA_SOURCE_NAME: postgresql://nice:${NICE_POSTGRES_PASSWORD}@nice-postgres:5432/nice?sslmode=disable
+
+  # Calibration
+  #calibration-site:
+  #  build: $OPDIR/calibration-site
+  #  container_name: calibration-site
+  #  restart: unless-stopped
+  #  ports:
+  #    - 9632:80
+  #  volumes:
+  #    - $OPDIR/calibration-site/data:/usr/src/data
+  #  user: $PUID:$PGID
+
+  # Sandiego
+  sandiego-postgres:
+    image: postgres:15
+    container_name: sandiego-postgres
+    hostname: sandiego-postgres
+    restart: unless-stopped
+    #ports:
+      #- 5437:5432
+    volumes:
+      - $OPDIR/sandiego-postgres:/var/lib/postgresql
+    environment:
+      TZ: $TZ
+      POSTGRES_USER: sandiego
+      POSTGRES_PASSWORD: $SANDIEGO_POSTGRES_PASSWORD
+  
+  sandiego-pgbackups:
+    image: prodrigestivill/postgres-backup-local
+    container_name: sandiego-pgbackups
+    restart: always
+    user: $PUID:$PGID
+    volumes:
+      - $OPDIR/sandiego-postgres-backups:/backups
+    depends_on:
+      - sandiego-postgres
+    environment:
+      POSTGRES_HOST: sandiego-postgres
+      POSTGRES_DB: sandiego
+      POSTGRES_USER: sandiego
+      POSTGRES_PASSWORD: $SANDIEGO_POSTGRES_PASSWORD
+      POSTGRES_EXTRA_OPTS: -Z6
+      SCHEDULE: "@daily"
+      BACKUP_KEEP_DAYS: 10
+      BACKUP_KEEP_WEEKS: 2
+      BACKUP_KEEP_MONTHS: 2
+      HEALTHCHECK_PORT: 8080
