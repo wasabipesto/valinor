@@ -3,7 +3,7 @@ version: "3"
 services:
   # Networking & Static Sites
   nginx:
-    image: lscr.io/linuxserver/nginx:latest
+    image: lscr.io/linuxserver/nginx:1.24.0
     container_name: nginx
     hostname: nginx
     restart: unless-stopped
@@ -19,7 +19,7 @@ services:
 
   # Monitoring
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v2.45.0
     container_name: prometheus
     restart: unless-stopped
     ports:
@@ -37,7 +37,7 @@ services:
       PGID: $PGID
 
   node-exporter:
-    image: prom/node-exporter:latest
+    image: prom/node-exporter:v1.6.1
     container_name: node-exporter
     hostname: node-exporter
     restart: unless-stopped
@@ -54,7 +54,7 @@ services:
       TZ: $TZ
 
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor:latest
+    image: gcr.io/cadvisor/cadvisor:v0.47.2
     container_name: cadvisor
     hostname: cadvisor
     restart: unless-stopped
@@ -70,7 +70,7 @@ services:
       TZ: $TZ
 
   ping_exporter:
-    image: czerwonk/ping_exporter:latest
+    image: czerwonk/ping_exporter:v1.1.0
     container_name: ping_exporter
     restart: unless-stopped
     ports:
@@ -79,7 +79,7 @@ services:
       - $OPDIR/ping_exporter:/config:ro
 
   nginx-exporter:
-    image: quay.io/martinhelmich/prometheus-nginxlog-exporter:v1
+    image: quay.io/martinhelmich/prometheus-nginxlog-exporter:v1.11.0
     container_name: nginx-exporter
     restart: unless-stopped
     ports:
@@ -90,7 +90,7 @@ services:
     command: -config-file /mnt/prometheus-nginxlog-exporter.yml
 
   loki:
-    image: grafana/loki
+    image: grafana/loki:2.8.3
     container_name: loki
     hostname: loki
     restart: unless-stopped
@@ -101,7 +101,7 @@ services:
     command: -config.file=/etc/loki/local-config.yaml
 
   grafana:
-    image: grafana/grafana-oss:main
+    image: grafana/grafana-oss:9.5.6
     container_name: grafana
     hostname: grafana
     restart: unless-stopped
@@ -116,7 +116,7 @@ services:
 
   # Media
   owncast:
-    image: gabekangas/owncast:latest
+    image: owncast/owncast:0.1.0
     container_name: owncast
     restart: unless-stopped
     ports:
@@ -130,7 +130,7 @@ services:
       PGID: $PGID
 
   tautulli:
-    image: lscr.io/linuxserver/tautulli:latest
+    image: lscr.io/linuxserver/tautulli:2.12.5
     container_name: tautulli
     hostname: tautulli
     restart: unless-stopped
@@ -144,7 +144,7 @@ services:
       PGID: $PGID
 
   overseerr:
-    image: sctx/overseerr:latest
+    image: sctx/overseerr:1.33.0
     container_name: overseerr
     restart: unless-stopped
     ports:
@@ -157,7 +157,7 @@ services:
       PGID: $PGID
 
   freshrss:
-    image: freshrss/freshrss:latest
+    image: freshrss/freshrss:1.21.0
     container_name: freshrss
     hostname: freshrss
     restart: unless-stopped
@@ -173,7 +173,7 @@ services:
       CRON_MIN: 13,43
 
   rss-bridge:
-    image: rssbridge/rss-bridge:latest
+    image: rssbridge/rss-bridge:2023-07-13
     container_name: rss-bridge
     hostname: rss-bridge
     restart: unless-stopped
@@ -188,7 +188,7 @@ services:
 
   # Games
   foundry-kirkwall:
-    image: felddy/foundryvtt:release
+    image: felddy/foundryvtt:11.306
     container_name: foundry-kirkwall
     hostname: foundry-kirkwall
     restart: unless-stopped
@@ -205,7 +205,7 @@ services:
 
   # Other
   code-server:
-    image: lscr.io/linuxserver/code-server:latest
+    image: lscr.io/linuxserver/code-server:4.14.1
     container_name: code-server
     hostname: code-server
     restart: unless-stopped
@@ -223,7 +223,7 @@ services:
       SUDO_PASSWORD: $CODE_PASSWORD
 
   kasm:
-    image: lscr.io/linuxserver/kasm:latest
+    image: lscr.io/linuxserver/kasm:1.13.0
     container_name: kasm
     hostname: kasm
     restart: unless-stopped
@@ -271,7 +271,7 @@ services:
       POSTGRES_PASSWORD: $NICE_POSTGRES_PASSWORD
   
   nice-pgbackups:
-    image: prodrigestivill/postgres-backup-local
+    image: prodrigestivill/postgres-backup-local:15
     container_name: nice-pgbackups
     restart: always
     user: $PUID:$PGID
@@ -329,7 +329,7 @@ services:
       POSTGRES_PASSWORD: $SANDIEGO_POSTGRES_PASSWORD
   
   sandiego-pgbackups:
-    image: prodrigestivill/postgres-backup-local
+    image: prodrigestivill/postgres-backup-local:15
     container_name: sandiego-pgbackups
     restart: always
     user: $PUID:$PGID
