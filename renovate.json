@@ -3,7 +3,9 @@
   "extends": [
     "config:base"
   ],
-  "fileMatch": [
-    ".*compose.ya?ml$"
-  ]
+  "docker-compose": {
+    "fileMatch": [
+      ".*compose.ya?ml$"
+    ]
+  }
 }
