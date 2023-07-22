@@ -32,7 +32,7 @@
     },
     {
       "packagePatterns": ["sonarr"],
-      "allowedVersions": "!/-v4$/"
+      "allowedVersions": "!/-v4$|-nightly$|-develop$/"
     },
     {
       "packagePatterns": ["tautulli"],
