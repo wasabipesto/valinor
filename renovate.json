@@ -1,0 +1,42 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base"
+  ],
+  "timezone": "America/New_York",
+  "schedule": ["before 6am"],
+  "prHourlyLimit": 0,
+  "prConcurrentLimit": 0,
+  "docker-compose": {
+    "fileMatch": [
+      ".*compose.ya?ml$"
+    ]
+  },
+  "packageRules": [
+    {
+      "packagePatterns": ["\\/linuxserver\\/"],
+      "versionScheme": "regex:^(?<compatibility>[\\w\\-]*?)\\-?(?<major>v?\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)[\\-\\.]?(?<build>\\w+)?$",
+      "allowedVersions": "!/nightly$|develop$|development$/"
+    },
+    {
+      "packagePatterns": ["calibre-web"],
+      "allowedVersions": "<=1"
+    },
+    {
+      "packagePatterns": ["kasm"],
+      "allowedVersions": "!/^1\\.120|develop$/"
+    },
+    {
+      "packagePatterns": ["readarr"],
+      "allowedVersions": "/-develop$/"
+    },
+    {
+      "packagePatterns": ["sonarr"],
+      "allowedVersions": "!/-v4$|-nightly$|-develop$/"
+    },
+    {
+      "packagePatterns": ["tautulli"],
+      "allowedVersions": "<2000"
+    }
+  ]
+}
