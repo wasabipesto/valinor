@@ -5,6 +5,8 @@
   ],
   "timezone": "America/New_York",
   "schedule": ["before 6am"],
+  "prHourlyLimit": 0,
+  "prConcurrentLimit": 0,
   "docker-compose": {
     "fileMatch": [
       ".*compose.ya?ml$"
