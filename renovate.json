@@ -20,6 +20,6 @@
     {
       "packagePatterns": ["calibre-web"],
       "allowedVersions": "/^(?!2021).*$/"
-    },
+    }
   ]
 }
