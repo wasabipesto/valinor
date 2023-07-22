@@ -15,7 +15,7 @@
   "packageRules": [
     {
       "packagePatterns": ["^..cr.io\\/linuxserver\\/"],
-      "versionScheme": "regex:^(?<compatibility>.*?)-(?<major>v?\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)[\\.-]*(?<build>r?\\d+)*$"
+      "versionScheme": "regex:^(?<compatibility>[\\w\\-]*?)\\-?(?<major>v?\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)[\\-\\.]?(?<build>\\w+)?$"
     }
   ]
 }
