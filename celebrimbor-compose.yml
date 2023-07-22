@@ -77,7 +77,7 @@ services:
       PGID: $PGID
 
   prowlarr:
-    image: lscr.io/linuxserver/prowlarr:1.6.3
+    image: lscr.io/linuxserver/prowlarr:1.8.1259
     container_name: prowlarr
     hostname: prowlarr
     restart: unless-stopped
