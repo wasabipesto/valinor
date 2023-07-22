@@ -19,7 +19,7 @@
     },
     {
       "packagePatterns": ["calibre-web"],
-      "allowedVersions": "/^(?!2021).*$/"
+      "allowedVersions": "!/^2021/"
     }
   ]
 }
