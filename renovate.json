@@ -23,6 +23,10 @@
       "allowedVersions": "<=1"
     },
     {
+      "packagePatterns": ["kasm"],
+      "allowedVersions": "!/1\\.120/"
+    },
+    {
       "packagePatterns": ["tautulli"],
       "allowedVersions": "<2000"
     }
