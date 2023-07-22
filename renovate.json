@@ -16,11 +16,15 @@
     {
       "packagePatterns": ["\\/linuxserver\\/"],
       "versionScheme": "regex:^(?<compatibility>[\\w\\-]*?)\\-?(?<major>v?\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)[\\-\\.]?(?<build>\\w+)?$",
-      "allowedVersions": "!/nightly$|develop$/"
+      "allowedVersions": "!/nightly$|develop$|development$/"
     },
     {
       "packagePatterns": ["calibre-web"],
       "allowedVersions": "<=1"
+    },
+    {
+      "packagePatterns": ["tautulli"],
+      "allowedVersions": "<2000"
     }
   ]
 }
