@@ -27,6 +27,10 @@
       "allowedVersions": "!/^1\\.120|develop$/"
     },
     {
+      "packagePatterns": ["readarr"],
+      "allowedVersions": "/-develop$/"
+    },
+    {
       "packagePatterns": ["sonarr"],
       "allowedVersions": "!/-v4$/"
     },
