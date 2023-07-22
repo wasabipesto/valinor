@@ -136,7 +136,7 @@ services:
       PGID: $PGID
 
   bazarr:
-    image: lscr.io/linuxserver/bazarr:1.2.3
+    image: lscr.io/linuxserver/bazarr:1.2.4
     container_name: bazarr
     hostname: bazarr
     restart: unless-stopped
