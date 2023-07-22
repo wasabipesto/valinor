@@ -4,7 +4,7 @@ services:
 
   # Monitoring & Updates
   node-exporter:
-    image: prom/node-exporter:latest
+    image: prom/node-exporter:v1.6.1
     container_name: node-exporter
     restart: unless-stopped
     ports:
@@ -21,7 +21,7 @@ services:
       TZ: $TZ
 
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor:latest
+    image: gcr.io/cadvisor/cadvisor:v0.47.2
     container_name: cadvisor
     restart: unless-stopped
     ports:
@@ -36,7 +36,7 @@ services:
       TZ: $TZ
 
   smartctl:
-    image: matusnovak/prometheus-smartctl:latest
+    image: matusnovak/prometheus-smartctl:v2.2.0
     container_name: smartctl
     restart: unless-stopped
     ports:
@@ -44,7 +44,7 @@ services:
     privileged: true
 
   nut:
-    image: instantlinux/nut-upsd:latest
+    image: instantlinux/nut-upsd:2.8.0-r4
     container_name: nut
     restart: unless-stopped
     environment:
@@ -58,7 +58,7 @@ services:
 
   # Media
   rtorrent:
-    image: crazymax/rtorrent-rutorrent:latest
+    image: crazymax/rtorrent-rutorrent:4.1.5-0.9.8-0.13.8
     container_name: rtorrent
     restart: unless-stopped
     ports:
@@ -77,7 +77,7 @@ services:
       PGID: $PGID
 
   prowlarr:
-    image: lscr.io/linuxserver/prowlarr:develop
+    image: lscr.io/linuxserver/prowlarr:1.6.3
     container_name: prowlarr
     hostname: prowlarr
     restart: unless-stopped
@@ -91,7 +91,7 @@ services:
       PGID: $PGID
 
   sonarr:
-    image: lscr.io/linuxserver/sonarr:latest
+    image: lscr.io/linuxserver/sonarr:3.0.10
     container_name: sonarr
     hostname: sonarr
     restart: unless-stopped
@@ -106,7 +106,7 @@ services:
       PGID: $PGID
 
   radarr:
-    image: lscr.io/linuxserver/radarr:latest
+    image: lscr.io/linuxserver/radarr:4.6.4
     container_name: radarr
     hostname: radarr
     restart: unless-stopped
@@ -121,7 +121,7 @@ services:
       PGID: $PGID
 
   readarr:
-    image: lscr.io/linuxserver/readarr:develop
+    image: lscr.io/linuxserver/readarr:0.2.3-develop
     container_name: readarr
     hostname: readarr
     restart: unless-stopped
@@ -136,7 +136,7 @@ services:
       PGID: $PGID
 
   bazarr:
-    image: lscr.io/linuxserver/bazarr:latest
+    image: lscr.io/linuxserver/bazarr:1.2.3
     container_name: bazarr
     hostname: bazarr
     restart: unless-stopped
@@ -169,7 +169,7 @@ services:
       PGID: $PGID
 
   calibre-web:
-    image: ghcr.io/linuxserver/calibre-web:latest
+    image: ghcr.io/linuxserver/calibre-web:0.6.20
     container_name: calibre-web
     hostname: calibre-web
     restart: unless-stopped
@@ -185,7 +185,7 @@ services:
       DOCKER_MODS: linuxserver/calibre-web:universal-calibre
 
   nextcloud:
-    image: lscr.io/linuxserver/nextcloud:latest
+    image: lscr.io/linuxserver/nextcloud:27.0.1
     container_name: nextcloud
     hostname: nextcloud
     restart: unless-stopped
@@ -202,7 +202,7 @@ services:
       - 4431:80
 
   syncthing:
-    image: syncthing/syncthing:latest
+    image: syncthing/syncthing:1.23
     container_name: syncthing
     hostname: syncthing
     restart: unless-stopped
@@ -219,7 +219,7 @@ services:
 
   # Other
   homeassistant:
-    image: lscr.io/linuxserver/homeassistant:latest
+    image: lscr.io/linuxserver/homeassistant:2023.7.3
     container_name: homeassistant
     hostname: homeassistant
     restart: unless-stopped
@@ -238,7 +238,7 @@ services:
       INSTALL_PACKAGES: nmap # for nmap device tracker
 
   code-server:
-    image: lscr.io/linuxserver/code-server:latest
+    image: lscr.io/linuxserver/code-server:4.14.1
     container_name: code-server
     hostname: code-server
     restart: unless-stopped
@@ -253,26 +253,3 @@ services:
       PGID: $PGID
       SUDO_PASSWORD: $CODE_PASSWORD
       DOCKER_MODS: linuxserver/mods:code-server-python3
-
-  web-whisper-backend:
-    build:
-      dockerfile: ./backend.Dockerfile
-      context: https://codeberg.org/pluja/web-whisper.git
-      args:
-        # Valid model values: tiny, base, small, medium, large
-        - WHISPER_MODEL=base
-        - WHISPER_THREADS=1    # Number of threads to use during computation
-        - WHISPER_PROCESSORS=1 # Number of processors to use during computation
-        - CUT_MEDIA_SECONDS=0  # Max number of seconds to transcribe
-    container_name: web-whisper-backend
-  
-  web-whisper:
-    build:
-      dockerfile: ./frontend.Dockerfile
-      context: https://codeberg.org/pluja/web-whisper.git
-      args:
-        - DOMAIN_NAME=localhost:3000
-        - ALLOW_FILE_UPLOADS=true
-    container_name: web-whisper
-    ports:
-      - 3000:80
