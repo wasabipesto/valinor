@@ -24,7 +24,7 @@
     },
     {
       "packagePatterns": ["kasm"],
-      "allowedVersions": "!/1\\.120/"
+      "allowedVersions": "!/^1\\.120|develop$/"
     },
     {
       "packagePatterns": ["tautulli"],
