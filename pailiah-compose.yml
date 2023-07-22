@@ -257,7 +257,7 @@ services:
       NODE_ENV: development
 
   nice-postgres:
-    image: postgres:15
+    image: postgres:15.3
     container_name: nice-postgres
     hostname: nice-postgres
     restart: unless-stopped
@@ -290,32 +290,21 @@ services:
       BACKUP_KEEP_WEEKS: 10
       BACKUP_KEEP_MONTHS: 10
       HEALTHCHECK_PORT: 8080
-  
-  nice-pgmonitor:
-    image: quay.io/prometheuscommunity/postgres-exporter
-    container_name: nice-pgmonitor
-    restart: always
-    depends_on:
-      - nice-postgres
-    ports:
-      - 9187:9187
-    environment:
-      DATA_SOURCE_NAME: postgresql://nice:${NICE_POSTGRES_PASSWORD}@nice-postgres:5432/nice?sslmode=disable
 
   # Calibration
-  #calibration-site:
-  #  build: $OPDIR/calibration-site
-  #  container_name: calibration-site
-  #  restart: unless-stopped
-  #  ports:
-  #    - 9632:80
-  #  volumes:
-  #    - $OPDIR/calibration-site/data:/usr/src/data
-  #  user: $PUID:$PGID
+  calibration-site:
+    build: $OPDIR/calibration-site
+    container_name: calibration-site
+    restart: unless-stopped
+    ports:
+      - 9632:80
+    volumes:
+      - $OPDIR/calibration-site/data:/usr/src/data
+    user: $PUID:$PGID
 
   # Sandiego
   sandiego-postgres:
-    image: postgres:15
+    image: postgres:15.3
     container_name: sandiego-postgres
     hostname: sandiego-postgres
     restart: unless-stopped
