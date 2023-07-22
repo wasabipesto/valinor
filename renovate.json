@@ -14,8 +14,12 @@
   },
   "packageRules": [
     {
-      "packagePatterns": ["^..cr.io\\/linuxserver\\/"],
+      "packagePatterns": ["\\/linuxserver\\/"],
       "versionScheme": "regex:^(?<compatibility>[\\w\\-]*?)\\-?(?<major>v?\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)[\\-\\.]?(?<build>\\w+)?$"
-    }
+    },
+    {
+      "packagePatterns": ["calibre-web"],
+      "allowedVersions": "/^(?!2021).*$/"
+    },
   ]
 }
