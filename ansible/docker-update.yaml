@@ -1,0 +1,15 @@
+- name: Docker Update
+  hosts: tailnet
+  tasks:
+
+  - name: Update compose configuration
+    git:
+      repo: git@github.com:wasabipesto/valinor.git
+      dest: /opt/valinor
+      update: yes
+
+  - name: Refresh docker images
+    command: docker compose -f "/opt/valinor/{{ ansible_hostname }}-compose.yml" pull
+
+  - name: Launch docker images
+    command: docker compose -f "/opt/valinor/{{ ansible_hostname }}-compose.yml" up -d

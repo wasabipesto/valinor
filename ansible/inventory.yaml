@@ -1,0 +1,11 @@
+tailnet:
+  hosts:
+    celebrimbor:
+      ansible_host: celebrimbor.neon-locrian.ts.net
+      ansible_python_interpreter: auto
+    pailiah:
+      ansible_host: pailiah.neon-locrian.ts.net
+      ansible_python_interpreter: auto
+    demoux:
+      ansible_host: demoux.neon-locrian.ts.net
+      ansible_python_interpreter: auto_silent

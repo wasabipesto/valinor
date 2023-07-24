@@ -1,0 +1,24 @@
+- name: System Update
+  hosts: tailnet
+  tasks:
+
+  - name: Aptitude Upgrades
+    become: true
+    apt:
+      upgrade: yes
+      update_cache: yes
+
+  - name: Update Repository - Valinor
+    git:
+      repo: git@github.com:wasabipesto/valinor.git
+      dest: /opt/valinor
+      update: yes
+
+  - name: Update Repository - Restic Scripts
+    git:
+      repo: git@github.com:wasabipesto/restic-scripts.git
+      dest: /opt/restic-scripts
+      update: yes
+
+  - name: Update Repository - Chezmoi
+    command: bin/chezmoi update
