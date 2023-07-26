@@ -14,6 +14,7 @@ jobs:
         with:
           oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:cicd-privileged
 
       - name: Run Ansible Playbook
         uses: dawidd6/action-ansible-playbook@v2
