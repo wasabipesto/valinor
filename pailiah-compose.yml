@@ -116,7 +116,7 @@ services:
 
   # Media
   owncast:
-    image: owncast/owncast:0.1.0
+    image: owncast/owncast:0.1.1
     container_name: owncast
     restart: unless-stopped
     ports:
