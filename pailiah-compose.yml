@@ -144,7 +144,7 @@ services:
       PGID: $PGID
 
   overseerr:
-    image: sctx/overseerr:1.33.1
+    image: sctx/overseerr:1.33.2
     container_name: overseerr
     restart: unless-stopped
     ports:
