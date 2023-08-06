@@ -7,12 +7,18 @@
     apt:
       upgrade: yes
       update_cache: yes
+    register: apt_result
+
+  - name: Aptitude Result
+    debug:
+      var: apt_result.stdout_lines
 
   - name: Update Repository - Valinor
     git:
       repo: git@github.com:wasabipesto/valinor.git
       dest: /opt/valinor
       update: yes
+    when: false # disabled
 
   - name: Update Repository - Restic Scripts
     git:
@@ -22,3 +28,5 @@
 
   - name: Update Repository - Chezmoi
     command: /home/justin/bin/chezmoi update --force
+    register: chezmoi_result
+    changed_when: "'up to date' not in chezmoi_result.stdout"
