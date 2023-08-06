@@ -21,4 +21,4 @@
       update: yes
 
   - name: Update Repository - Chezmoi
-    command: bin/chezmoi update
+    command: /home/justin/bin/chezmoi update --force
