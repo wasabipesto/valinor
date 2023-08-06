@@ -58,7 +58,7 @@ services:
 
   # Media
   rtorrent:
-    image: crazymax/rtorrent-rutorrent:4.1.5-0.9.8-0.13.8
+    image: crazymax/rtorrent-rutorrent:4.1.7-0.9.8-0.13.8
     container_name: rtorrent
     restart: unless-stopped
     ports:
