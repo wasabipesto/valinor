@@ -106,7 +106,7 @@ services:
       PGID: $PGID
 
   radarr:
-    image: lscr.io/linuxserver/radarr:4.6.4
+    image: lscr.io/linuxserver/radarr:4.7.5
     container_name: radarr
     hostname: radarr
     restart: unless-stopped
