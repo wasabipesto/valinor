@@ -177,12 +177,13 @@ services:
       - 8083:8083
     volumes:
       - $OPDIR/calibre-web:/config
+      - $OPDIR/calibre-web/custom-cont-init.d:/custom-cont-init.d:ro
       - $DATADIR/Books:/data/Books
     environment:
       TZ: $TZ
       PUID: $PUID
       PGID: $PGID
-      DOCKER_MODS: linuxserver/calibre-web:universal-calibre
+      DOCKER_MODS: linuxserver/mods:universal-calibre
 
   nextcloud:
     image: lscr.io/linuxserver/nextcloud:27.0.1
