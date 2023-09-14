@@ -90,7 +90,7 @@ services:
     command: -config-file /mnt/prometheus-nginxlog-exporter.yml
 
   loki:
-    image: grafana/loki:2.8.4
+    image: grafana/loki:2.9.1
     container_name: loki
     hostname: loki
     restart: unless-stopped
