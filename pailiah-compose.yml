@@ -271,7 +271,7 @@ services:
       POSTGRES_PASSWORD: $NICE_POSTGRES_PASSWORD
   
   nice-pgbackups:
-    image: prodrigestivill/postgres-backup-local:15
+    image: prodrigestivill/postgres-backup-local:16
     container_name: nice-pgbackups
     restart: always
     user: $PUID:$PGID
@@ -318,7 +318,7 @@ services:
       POSTGRES_PASSWORD: $SANDIEGO_POSTGRES_PASSWORD
   
   sandiego-pgbackups:
-    image: prodrigestivill/postgres-backup-local:15
+    image: prodrigestivill/postgres-backup-local:16
     container_name: sandiego-pgbackups
     restart: always
     user: $PUID:$PGID
