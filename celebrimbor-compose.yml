@@ -203,7 +203,7 @@ services:
       - 4431:80
 
   syncthing:
-    image: syncthing/syncthing:1.24
+    image: syncthing/syncthing:1.25
     container_name: syncthing
     hostname: syncthing
     restart: unless-stopped
