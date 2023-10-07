@@ -220,7 +220,7 @@ services:
 
   # Other
   homeassistant:
-    image: lscr.io/linuxserver/homeassistant:2023.9.2
+    image: lscr.io/linuxserver/homeassistant:2023.10.1
     container_name: homeassistant
     hostname: homeassistant
     restart: unless-stopped
