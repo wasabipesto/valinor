@@ -205,7 +205,7 @@ services:
 
   # Other
   code-server:
-    image: lscr.io/linuxserver/code-server:4.16.1-ls171
+    image: lscr.io/linuxserver/code-server:4.17.1-ls177
     container_name: code-server
     hostname: code-server
     restart: unless-stopped
