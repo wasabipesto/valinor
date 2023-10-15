@@ -201,6 +201,7 @@ services:
       FOUNDRY_UID: $PUID
       FOUNDRY_GID: $PGID
       FOUNDRY_HOSTNAME: kirkwall.$DOMAIN
+      CONTAINER_PATCHES: /data/container_patches # https://github.com/felddy/foundryvtt-docker/issues/697
     env_file: $OPDIR/kirkwall/config.env
 
   # Other
