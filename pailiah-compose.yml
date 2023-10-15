@@ -19,7 +19,7 @@ services:
 
   # Monitoring
   prometheus:
-    image: prom/prometheus:v2.47.0
+    image: prom/prometheus:v2.47.1
     container_name: prometheus
     restart: unless-stopped
     ports:
@@ -101,7 +101,7 @@ services:
     command: -config.file=/etc/loki/local-config.yaml
 
   grafana:
-    image: grafana/grafana-oss:10.1.2
+    image: grafana/grafana-oss:10.1.4
     container_name: grafana
     hostname: grafana
     restart: unless-stopped
@@ -188,7 +188,7 @@ services:
 
   # Games
   foundry-kirkwall:
-    image: felddy/foundryvtt:11.308
+    image: felddy/foundryvtt:11.313
     container_name: foundry-kirkwall
     hostname: foundry-kirkwall
     restart: unless-stopped
@@ -206,7 +206,7 @@ services:
 
   # Other
   code-server:
-    image: lscr.io/linuxserver/code-server:4.16.1-ls171
+    image: lscr.io/linuxserver/code-server:4.17.1-ls177
     container_name: code-server
     hostname: code-server
     restart: unless-stopped

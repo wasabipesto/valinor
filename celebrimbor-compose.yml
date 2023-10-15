@@ -58,7 +58,7 @@ services:
 
   # Media
   rtorrent:
-    image: crazymax/rtorrent-rutorrent:4.2.5-0.9.8-0.13.8
+    image: crazymax/rtorrent-rutorrent:4.2.6-0.9.8-0.13.8
     container_name: rtorrent
     restart: unless-stopped
     ports:
@@ -121,7 +121,7 @@ services:
       PGID: $PGID
 
   readarr:
-    image: lscr.io/linuxserver/readarr:0.3.5-develop
+    image: lscr.io/linuxserver/readarr:0.3.6-develop
     container_name: readarr
     hostname: readarr
     restart: unless-stopped
@@ -136,7 +136,7 @@ services:
       PGID: $PGID
 
   bazarr:
-    image: lscr.io/linuxserver/bazarr:1.2.4
+    image: lscr.io/linuxserver/bazarr:1.3.0
     container_name: bazarr
     hostname: bazarr
     restart: unless-stopped
@@ -151,7 +151,7 @@ services:
       PGID: $PGID
 
   calibre-app:
-    image: lscr.io/linuxserver/calibre:6.26.0
+    image: lscr.io/linuxserver/calibre:6.28.1
     container_name: calibre-app
     hostname: calibre-app
     restart: unless-stopped
@@ -186,7 +186,7 @@ services:
       DOCKER_MODS: linuxserver/mods:universal-calibre
 
   nextcloud:
-    image: lscr.io/linuxserver/nextcloud:27.1.0-ls272
+    image: lscr.io/linuxserver/nextcloud:27.1.2
     container_name: nextcloud
     hostname: nextcloud
     restart: unless-stopped
@@ -203,7 +203,7 @@ services:
       - 4431:80
 
   syncthing:
-    image: syncthing/syncthing:1.24
+    image: syncthing/syncthing:1.25
     container_name: syncthing
     hostname: syncthing
     restart: unless-stopped
@@ -220,7 +220,7 @@ services:
 
   # Other
   homeassistant:
-    image: lscr.io/linuxserver/homeassistant:2023.9.2
+    image: lscr.io/linuxserver/homeassistant:2023.10.1
     container_name: homeassistant
     hostname: homeassistant
     restart: unless-stopped
@@ -239,7 +239,7 @@ services:
       INSTALL_PACKAGES: nmap # for nmap device tracker
 
   code-server:
-    image: lscr.io/linuxserver/code-server:4.16.1-ls171
+    image: lscr.io/linuxserver/code-server:4.17.1-ls177
     container_name: code-server
     hostname: code-server
     restart: unless-stopped
