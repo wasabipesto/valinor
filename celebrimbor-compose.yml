@@ -151,7 +151,7 @@ services:
       PGID: $PGID
 
   calibre-app:
-    image: lscr.io/linuxserver/calibre:6.28.1
+    image: lscr.io/linuxserver/calibre:6.29.0
     container_name: calibre-app
     hostname: calibre-app
     restart: unless-stopped
