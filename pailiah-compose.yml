@@ -223,20 +223,24 @@ services:
       PGID: $PGID
       SUDO_PASSWORD: $CODE_PASSWORD
 
-  kasm:
-    image: lscr.io/linuxserver/kasm:1.14.0-ls65
-    container_name: kasm
-    hostname: kasm
+  # Automeme
+  automeme-web:
+    build: $OPDIR/automeme
+    container_name: automeme-web
     restart: unless-stopped
-    volumes:
-      - $OPDIR/kasm/opt:/opt
-      - $OPDIR/kasm/profiles:/profiles
     ports:
-      - 3300:3000
-      - 9443:9443
-    environment:
-      - KASM_PORT=9443
-    privileged: true
+      - 8888:8888
+
+  # Calibration
+  calibration-site:
+    build: $OPDIR/calibration-site
+    container_name: calibration-site
+    restart: unless-stopped
+    ports:
+      - 9632:80
+    volumes:
+      - $OPDIR/calibration-site/data:/usr/src/data
+    user: $PUID:$PGID
 
   # Nice
   nice-backend-prod:
@@ -245,6 +249,8 @@ services:
     restart: unless-stopped
     ports:
       - 3069:3000
+    depends_on:
+      - nice-postgres
     environment:
       NODE_ENV: production
 
@@ -254,6 +260,8 @@ services:
     restart: unless-stopped
     ports:
       - 3068:3000
+    depends_on:
+      - nice-postgres
     environment:
       NODE_ENV: development
 
@@ -262,8 +270,6 @@ services:
     container_name: nice-postgres
     hostname: nice-postgres
     restart: unless-stopped
-    ports:
-      - 5432:5432
     volumes:
       - $OPDIR/nice-postgres:/var/lib/postgresql
     environment:
@@ -292,25 +298,24 @@ services:
       BACKUP_KEEP_MONTHS: 10
       HEALTHCHECK_PORT: 8080
 
-  # Calibration
-  calibration-site:
-    build: $OPDIR/calibration-site
-    container_name: calibration-site
-    restart: unless-stopped
-    ports:
-      - 9632:80
-    volumes:
-      - $OPDIR/calibration-site/data:/usr/src/data
-    user: $PUID:$PGID
-
   # Sandiego
+  sandiego-fetch:
+    build: $OPDIR/sandiego-fetch
+    container_name: sandiego-fetch
+    restart: unless-stopped
+    volumes:
+      - $OPDIR/sandiego-fetch/secrets:/usr/src/secrets
+      - $OPDIR/sandiego-fetch/configuration.yml:/usr/src/configuration.yml:ro
+    user: $PUID:$PGID
+    depends_on:
+      - sandiego-postgres
+    env_file: $OPDIR/sandiego-fetch/.env
+
   sandiego-postgres:
     image: postgres:15.4
     container_name: sandiego-postgres
     hostname: sandiego-postgres
     restart: unless-stopped
-    #ports:
-      #- 5437:5432
     volumes:
       - $OPDIR/sandiego-postgres:/var/lib/postgresql
     environment:
