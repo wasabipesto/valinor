@@ -56,6 +56,13 @@ services:
       - 3493:3493
     privileged: true
 
+  heartbeat:
+    build: $OPDIR/dockerfiles/heartbeat
+    container_name: heartbeat
+    restart: unless-stopped
+    environment:
+      ENDPOINT_URL: https://status.wasabipesto.com/api/push/vJkBGdRyIU
+
   # Media
   rtorrent:
     image: crazymax/rtorrent-rutorrent:4.2.6-0.9.8-0.13.8
