@@ -17,6 +17,22 @@ services:
       PUID: $PUID
       PGID: $PGID
 
+  endlessh:
+    image: shizunge/endlessh-go:20230625-3
+    container_name: endlessh
+    restart: unless-stopped
+    ports:
+      - 22:2222
+      - 2112:2112 # metrics
+    command:
+      - -interval_ms=1000
+      - -logtostderr
+      - -v=1
+      - -enable_prometheus
+      - -geoip_supplier=ip-api
+    cap_add:
+      - NET_BIND_SERVICE
+
   # Monitoring
   prometheus:
     image: prom/prometheus:v2.47.2
