@@ -61,7 +61,7 @@ services:
     container_name: heartbeat
     restart: unless-stopped
     environment:
-      ENDPOINT_URL: https://status.wasabipesto.com/api/push/vJkBGdRyIU
+      ENDPOINT_URL: https://status.wasabipesto.com/api/push/f774dtOPxN
 
   # Media
   rtorrent:
