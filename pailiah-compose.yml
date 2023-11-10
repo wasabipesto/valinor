@@ -89,6 +89,13 @@ services:
       - $OPDIR/prometheus/prometheus-nginxlog-exporter.yml:/mnt/prometheus-nginxlog-exporter.yml:ro
     command: -config-file /mnt/prometheus-nginxlog-exporter.yml
 
+  heartbeat:
+    build: $OPDIR/dockerfiles/heartbeat
+    container_name: heartbeat
+    restart: unless-stopped
+    environment:
+      ENDPOINT_URL: https://status.wasabipesto.com/api/push/vJkBGdRyIU
+
   loki:
     image: grafana/loki:2.9.2
     container_name: loki
