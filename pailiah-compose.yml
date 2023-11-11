@@ -41,7 +41,7 @@ services:
     ports:
       - 9090:9090
     volumes:
-      - $OPDIR/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - $OPDIR/prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml
       - $OPDIR/prometheus/data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
@@ -92,7 +92,7 @@ services:
     ports:
       - 9427:9427
     volumes:
-      - $OPDIR/ping_exporter:/config:ro
+      - $OPDIR/prometheus/config/ping_exporter:/config:ro
 
   nginx-exporter:
     image: quay.io/martinhelmich/prometheus-nginxlog-exporter:v1.11.0
@@ -102,8 +102,8 @@ services:
       - 4040:4040
     volumes:
       - $OPDIR/nginx/log/nginx:/mnt/nginxlogs:ro
-      - $OPDIR/prometheus/prometheus-nginxlog-exporter.yml:/mnt/prometheus-nginxlog-exporter.yml:ro
-    command: -config-file /mnt/prometheus-nginxlog-exporter.yml
+      - $OPDIR/prometheus/config/nginx-exporter/config.yml:/mnt/config.yml:ro
+    command: -config-file /mnt/config.yml
 
   heartbeat:
     build: $OPDIR/dockerfiles/heartbeat
