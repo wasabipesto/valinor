@@ -221,7 +221,7 @@ services:
       - 21027:21027/udp # Receive local discovery broadcasts
     volumes:
       - $OPDIR/syncthing:/var/syncthing
-      #- $DATADIR/Syncthing:/data/Syncthing
+      - $DATADIR/Photos:/mnt/photos
     environment:
       TZ: $TZ
 
