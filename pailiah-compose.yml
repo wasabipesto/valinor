@@ -133,7 +133,7 @@ services:
     command: -config.file=/etc/loki/local-config.yaml
 
   grafana:
-    image: grafana/grafana-oss:10.2.0
+    image: grafana/grafana-oss:10.2.2
     container_name: grafana
     hostname: grafana
     restart: unless-stopped
