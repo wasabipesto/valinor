@@ -4,7 +4,7 @@ services:
 
   # Monitoring & Updates
   node-exporter:
-    image: prom/node-exporter:v1.6.1
+    image: prom/node-exporter:v1.7.0
     container_name: node-exporter
     restart: unless-stopped
     ports:
