@@ -298,7 +298,7 @@ services:
       NODE_ENV: development
 
   nice-postgres:
-    image: postgres:15.4
+    image: postgres:15.5
     container_name: nice-postgres
     hostname: nice-postgres
     restart: unless-stopped
@@ -344,7 +344,7 @@ services:
     env_file: $OPDIR/sandiego-fetch/.env
 
   sandiego-postgres:
-    image: postgres:15.4
+    image: postgres:15.5
     container_name: sandiego-postgres
     hostname: sandiego-postgres
     restart: unless-stopped
