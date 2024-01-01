@@ -274,6 +274,39 @@ services:
       - $OPDIR/calibration-site/data:/usr/src/data
     user: $PUID:$PGID
 
+  themis-postgres:
+    image: postgres:15.5
+    container_name: themis-postgres
+    hostname: themis-postgres
+    restart: unless-stopped
+    volumes:
+      - $OPDIR/themis-postgres:/var/lib/postgresql
+    environment:
+      TZ: $TZ
+      POSTGRES_USER: themis
+      POSTGRES_PASSWORD: $THEMIS_POSTGRES_PASSWORD
+  
+  themis-pgbackups:
+    image: prodrigestivill/postgres-backup-local:15
+    container_name: themis-pgbackups
+    restart: always
+    user: $PUID:$PGID
+    volumes:
+      - $OPDIR/themis-postgres-backups:/backups
+    depends_on:
+      - themis-postgres
+    environment:
+      POSTGRES_HOST: themis-postgres
+      POSTGRES_DB: themis
+      POSTGRES_USER: themis
+      POSTGRES_PASSWORD: $THEMIS_POSTGRES_PASSWORD
+      POSTGRES_EXTRA_OPTS: -Z6
+      SCHEDULE: "@daily"
+      BACKUP_KEEP_DAYS: 10
+      BACKUP_KEEP_WEEKS: 10
+      BACKUP_KEEP_MONTHS: 10
+      HEALTHCHECK_PORT: 8080
+
   # Nice
   nice-backend-prod:
     build: $OPDIR/nice-backend-v
