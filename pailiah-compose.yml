@@ -35,7 +35,7 @@ services:
 
   # Monitoring
   prometheus:
-    image: prom/prometheus:v2.48.0
+    image: prom/prometheus:v2.48.1
     container_name: prometheus
     restart: unless-stopped
     ports:
@@ -113,7 +113,7 @@ services:
       ENDPOINT_URL: https://status.wasabipesto.com/api/push/vJkBGdRyIU
 
   promtail:
-    image: grafana/promtail:2.9.2
+    image: grafana/promtail:2.9.3
     container_name: promtail
     restart: unless-stopped
     volumes:
@@ -122,7 +122,7 @@ services:
     command: -config.file /mnt/config.yml
 
   loki:
-    image: grafana/loki:2.9.2
+    image: grafana/loki:2.9.3
     container_name: loki
     hostname: loki
     restart: unless-stopped
@@ -133,7 +133,7 @@ services:
     command: -config.file=/etc/loki/local-config.yaml
 
   grafana:
-    image: grafana/grafana-oss:10.2.2
+    image: grafana/grafana-oss:10.2.3
     container_name: grafana
     hostname: grafana
     restart: unless-stopped
@@ -162,7 +162,7 @@ services:
       PGID: $PGID
 
   tautulli:
-    image: lscr.io/linuxserver/tautulli:2.13.2
+    image: lscr.io/linuxserver/tautulli:2.13.4
     container_name: tautulli
     hostname: tautulli
     restart: unless-stopped
@@ -189,7 +189,7 @@ services:
       PGID: $PGID
 
   freshrss:
-    image: freshrss/freshrss:1.22.1
+    image: freshrss/freshrss:1.23.1
     container_name: freshrss
     hostname: freshrss
     restart: unless-stopped
@@ -238,7 +238,7 @@ services:
 
   # Other
   code-server:
-    image: lscr.io/linuxserver/code-server:4.19.0
+    image: lscr.io/linuxserver/code-server:4.20.0
     container_name: code-server
     hostname: code-server
     restart: unless-stopped
@@ -273,6 +273,39 @@ services:
     volumes:
       - $OPDIR/calibration-site/data:/usr/src/data
     user: $PUID:$PGID
+
+  themis-postgres:
+    image: postgres:15.5
+    container_name: themis-postgres
+    hostname: themis-postgres
+    restart: unless-stopped
+    volumes:
+      - $OPDIR/themis-postgres:/var/lib/postgresql
+    environment:
+      TZ: $TZ
+      POSTGRES_USER: themis
+      POSTGRES_PASSWORD: $THEMIS_POSTGRES_PASSWORD
+  
+  themis-pgbackups:
+    image: prodrigestivill/postgres-backup-local:15
+    container_name: themis-pgbackups
+    restart: always
+    user: $PUID:$PGID
+    volumes:
+      - $OPDIR/themis-postgres-backups:/backups
+    depends_on:
+      - themis-postgres
+    environment:
+      POSTGRES_HOST: themis-postgres
+      POSTGRES_DB: themis
+      POSTGRES_USER: themis
+      POSTGRES_PASSWORD: $THEMIS_POSTGRES_PASSWORD
+      POSTGRES_EXTRA_OPTS: -Z6
+      SCHEDULE: "@daily"
+      BACKUP_KEEP_DAYS: 10
+      BACKUP_KEEP_WEEKS: 10
+      BACKUP_KEEP_MONTHS: 10
+      HEALTHCHECK_PORT: 8080
 
   # Nice
   nice-backend-prod:
