@@ -205,7 +205,7 @@ services:
       CRON_MIN: 13,43
 
   rss-bridge:
-    image: rssbridge/rss-bridge:2023-07-13
+    image: rssbridge/rss-bridge:2023-09-24
     container_name: rss-bridge
     hostname: rss-bridge
     restart: unless-stopped
