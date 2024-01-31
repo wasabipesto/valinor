@@ -274,15 +274,15 @@ services:
       - $OPDIR/calibration-site/data:/usr/src/data
     user: $PUID:$PGID
   
-  themis-serve:
+  themis-serve-prod:
     build: $OPDIR/themis/serve
-    container_name: themis-serve
+    container_name: themis-serve-prod
     restart: unless-stopped
     ports:
       - 7041:7041
     environment:
       HTTP_BIND: 0.0.0.0:7041
-      DATABASE_URL: $THEMIS_DATABASE_URL
+      DATABASE_URL: $THEMIS_PROD_DATABASE_URL
 
   themis-postgres:
     image: postgres:15.5
