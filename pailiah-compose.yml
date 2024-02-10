@@ -264,15 +264,12 @@ services:
       - 8888:8888
 
   # Calibration
-  calibration-site:
-    build: $OPDIR/calibration-site
-    container_name: calibration-site
+  themis-client-prod:
+    build: $OPDIR/themis/client
+    container_name: themis-client-prod
     restart: unless-stopped
     ports:
-      - 9632:80
-    volumes:
-      - $OPDIR/calibration-site/data:/usr/src/data
-    user: $PUID:$PGID
+      - 7040:80
   
   themis-serve-prod:
     build: $OPDIR/themis/serve
