@@ -86,7 +86,7 @@ services:
       TZ: $TZ
 
   ping_exporter:
-    image: czerwonk/ping_exporter:v1.1.0
+    image: czerwonk/ping_exporter:v1.1.3
     container_name: ping_exporter
     restart: unless-stopped
     ports:
