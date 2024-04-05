@@ -1,5 +1,3 @@
-version: "3"
-
 services:
   # Networking & Static Sites
   nginx:
@@ -304,7 +302,7 @@ services:
       - themis-postgres
     environment:
       POSTGRES_HOST: themis-postgres
-      POSTGRES_DB: themis
+      POSTGRES_DB: themis_prod
       POSTGRES_USER: themis
       POSTGRES_PASSWORD: $THEMIS_POSTGRES_PASSWORD
       POSTGRES_EXTRA_OPTS: -Z6
