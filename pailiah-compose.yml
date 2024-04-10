@@ -120,7 +120,7 @@ services:
     command: -config.file /mnt/config.yml
 
   loki:
-    image: grafana/loki:2.9.5
+    image: grafana/loki:2.9.7
     container_name: loki
     hostname: loki
     restart: unless-stopped
