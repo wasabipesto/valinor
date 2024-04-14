@@ -126,7 +126,7 @@ services:
       PGID: $PGID
 
   readarr:
-    image: lscr.io/linuxserver/readarr:0.3.18-develop
+    image: lscr.io/linuxserver/readarr:0.3.22-develop
     container_name: readarr
     hostname: readarr
     restart: unless-stopped
