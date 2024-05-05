@@ -346,6 +346,32 @@ services:
       TZ: $TZ
       POSTGRES_USER: nice
       POSTGRES_PASSWORD: $NICE_POSTGRES_PASSWORD
+
+  nice-postgres-vi:
+    image: postgres:16.2
+    container_name: nice-postgres-vi
+    hostname: nice-postgres-vi
+    restart: unless-stopped
+    volumes:
+      - $OPDIR/nice-postgres-vi:/var/lib/postgresql
+    environment:
+      TZ: $TZ
+      POSTGRES_USER: nice
+      POSTGRES_PASSWORD: $NICE_POSTGRES_PASSWORD
+
+  nice-postgrest:
+    image: postgrest/postgrest:v12.0.2
+    container_name: nice-postgrest
+    hostname: nice-postgrest
+    restart: unless-stopped
+    ports:
+      - 3071:3000
+    depends_on:
+      - nice-postgres-vi
+    environment:
+      PGRST_DB_ANON_ROLE: web_anon
+      PGRST_DB_URI: $NICE_DATABASE_URL
+      PGRST_JWT_SECRET: $NICE_JWT_SECRET
   
   nice-pgbackups:
     image: prodrigestivill/postgres-backup-local:15
@@ -392,6 +418,19 @@ services:
       TZ: $TZ
       POSTGRES_USER: sandiego
       POSTGRES_PASSWORD: $SANDIEGO_POSTGRES_PASSWORD
+
+  sandiego-postgrest:
+    image: postgrest/postgrest:v12.0.2
+    container_name: sandiego-postgrest
+    hostname: sandiego-postgrest
+    restart: unless-stopped
+    ports:
+      - 8245:3000
+    depends_on:
+      - sandiego-postgres
+    environment:
+      PGRST_DB_URI: $SANDIEGO_DATABASE_URL
+      PGRST_JWT_SECRET: $SANDIEGO_JWT_SECRET
   
   sandiego-pgbackups:
     image: prodrigestivill/postgres-backup-local:15
