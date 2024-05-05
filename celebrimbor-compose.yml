@@ -231,9 +231,11 @@ services:
     command: ['start.sh', 'immich']
     volumes:
       - $DATADIR/immich:/usr/src/app/upload
+      - $DATADIR/Photos:/mnt/data/Photos
       - /etc/localtime:/etc/localtime:ro
     environment:
       TZ: $TZ
+      IMMICH_METRICS: true
       DB_HOSTNAME: immich-postgres
       DB_USERNAME: immich
       DB_PASSWORD: $IMMICH_PG_PASSWORD
@@ -252,9 +254,11 @@ services:
     command: ['start.sh', 'microservices']
     volumes:
       - $DATADIR/immich:/usr/src/app/upload
+      - $DATADIR/Photos:/mnt/data/Photos
       - /etc/localtime:/etc/localtime:ro
     environment:
       TZ: $TZ
+      IMMICH_METRICS: true
       DB_HOSTNAME: immich-postgres
       DB_USERNAME: immich
       DB_PASSWORD: $IMMICH_PG_PASSWORD
