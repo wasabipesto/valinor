@@ -278,7 +278,7 @@ services:
   immich-redis:
     container_name: immich-redis
     restart: unless-stopped
-    image: registry.hub.docker.com/library/redis:6.2
+    image: registry.hub.docker.com/library/redis:7.2
 
   immich-postgres:
     container_name: immich-postgres
