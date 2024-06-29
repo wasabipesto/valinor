@@ -82,7 +82,7 @@ services:
       PGID: $PGID
 
   prowlarr:
-    image: lscr.io/linuxserver/prowlarr:1.18.0
+    image: lscr.io/linuxserver/prowlarr:1.19.0
     container_name: prowlarr
     hostname: prowlarr
     restart: unless-stopped
@@ -111,7 +111,7 @@ services:
       PGID: $PGID
 
   radarr:
-    image: lscr.io/linuxserver/radarr:5.6.0
+    image: lscr.io/linuxserver/radarr:5.7.0
     container_name: radarr
     hostname: radarr
     restart: unless-stopped
@@ -161,7 +161,7 @@ services:
       DOCKER_MODS: linuxserver/mods:universal-calibre
 
   nextcloud:
-    image: lscr.io/linuxserver/nextcloud:29.0.2
+    image: lscr.io/linuxserver/nextcloud:29.0.3-ls327
     container_name: nextcloud
     hostname: nextcloud
     restart: unless-stopped
@@ -195,7 +195,7 @@ services:
 
   # Other
   homeassistant:
-    image: lscr.io/linuxserver/homeassistant:2024.6.1
+    image: lscr.io/linuxserver/homeassistant:2024.6.4-ls2
     container_name: homeassistant
     hostname: homeassistant
     restart: unless-stopped
@@ -214,7 +214,7 @@ services:
       INSTALL_PACKAGES: nmap # for nmap device tracker
 
   code-server:
-    image: lscr.io/linuxserver/code-server:4.89.1-ls215
+    image: lscr.io/linuxserver/code-server:4.90.3
     container_name: code-server
     hostname: code-server
     restart: unless-stopped
