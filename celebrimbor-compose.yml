@@ -2,7 +2,7 @@ services:
 
   # Monitoring & Updates
   node-exporter:
-    image: prom/node-exporter:v1.8.1
+    image: prom/node-exporter:v1.8.2
     container_name: node-exporter
     restart: unless-stopped
     ports:
