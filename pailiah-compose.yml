@@ -325,15 +325,18 @@ services:
       NODE_ENV: production
 
   nice-backend-dev:
-    build: $OPDIR/nice-backend-v
+    build:
+      context: $OPDIR/nice
+      dockerfile: api/Dockerfile
     container_name: nice-backend-dev
     restart: unless-stopped
     ports:
-      - 3068:3000
+      - 3070:8000
     depends_on:
-      - nice-postgres
+      - nice-postgres-vi
     environment:
-      NODE_ENV: development
+      ROCKET_ADDRESS: "0.0.0.0"
+      DATABASE_URL: $NICE_DATABASE_URL
 
   nice-postgres:
     image: postgres:15.5
