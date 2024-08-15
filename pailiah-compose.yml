@@ -1,7 +1,7 @@
 services:
   # Networking & Static Sites
   nginx:
-    image: lscr.io/linuxserver/nginx:1.26.1
+    image: lscr.io/linuxserver/nginx:1.26.2
     container_name: nginx
     hostname: nginx
     restart: unless-stopped
