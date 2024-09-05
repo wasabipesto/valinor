@@ -214,7 +214,7 @@ services:
       INSTALL_PACKAGES: nmap # for nmap device tracker
 
   code-server:
-    image: lscr.io/linuxserver/code-server:4.90.3
+    image: lscr.io/linuxserver/code-server:4.92.2-ls230
     container_name: code-server
     hostname: code-server
     restart: unless-stopped
