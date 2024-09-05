@@ -42,9 +42,9 @@ services:
       - $OPDIR/prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml
       - $OPDIR/prometheus/data:/prometheus
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--storage.tsdb.retention.time=1y'
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=1y"
     environment:
       TZ: $TZ
       PUID: $PUID # does this work?
@@ -58,8 +58,8 @@ services:
     ports:
       - 9100:9100
     command:
-      - '--path.procfs=/host/proc' 
-      - '--path.sysfs=/host/sys'
+      - "--path.procfs=/host/proc"
+      - "--path.sysfs=/host/sys"
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
@@ -145,19 +145,19 @@ services:
       GF_PATHS_CONFIG: /var/lib/grafana/grafana.ini
 
   # Media
-#  owncast:
-#    image: owncast/owncast:0.1.3
-#    container_name: owncast
-#    restart: unless-stopped
-#    ports:
-#      - 8084:8080
-#      - 1935:1935 # RSTP is not exposed to internet, just tailscale
-#    volumes:
-#      - $OPDIR/owncast:/app/data
-#    environment:
-#      TZ: $TZ
-#      PUID: $PUID
-#      PGID: $PGID
+  #  owncast:
+  #    image: owncast/owncast:0.1.3
+  #    container_name: owncast
+  #    restart: unless-stopped
+  #    ports:
+  #      - 8084:8080
+  #      - 1935:1935 # RSTP is not exposed to internet, just tailscale
+  #    volumes:
+  #      - $OPDIR/owncast:/app/data
+  #    environment:
+  #      TZ: $TZ
+  #      PUID: $PUID
+  #      PGID: $PGID
 
   tautulli:
     image: lscr.io/linuxserver/tautulli:2.14.3
@@ -187,7 +187,7 @@ services:
       PGID: $PGID
 
   freshrss:
-    image: freshrss/freshrss:edge
+    image: freshrss/freshrss:1.24.2
     container_name: freshrss
     hostname: freshrss
     restart: unless-stopped
@@ -268,7 +268,7 @@ services:
     restart: unless-stopped
     ports:
       - 7040:80
-  
+
   themis-serve-prod:
     build: $OPDIR/themis/serve
     container_name: themis-serve-prod
@@ -290,7 +290,7 @@ services:
       TZ: $TZ
       POSTGRES_USER: themis
       POSTGRES_PASSWORD: $THEMIS_POSTGRES_PASSWORD
-  
+
   themis-pgbackups:
     image: prodrigestivill/postgres-backup-local:15
     container_name: themis-pgbackups
@@ -352,6 +352,7 @@ services:
 
   nice-postgres-vi:
     image: postgres:16.2
+    shm_size: 1g # https://stackoverflow.com/questions/56751565
     container_name: nice-postgres-vi
     hostname: nice-postgres-vi
     restart: unless-stopped
@@ -375,7 +376,7 @@ services:
       PGRST_DB_ANON_ROLE: web_anon
       PGRST_DB_URI: $NICE_DATABASE_URL
       PGRST_JWT_SECRET: $NICE_JWT_SECRET
-  
+
   nice-pgbackups:
     image: prodrigestivill/postgres-backup-local:15
     container_name: nice-pgbackups
@@ -434,7 +435,7 @@ services:
     environment:
       PGRST_DB_URI: $SANDIEGO_DATABASE_URL
       PGRST_JWT_SECRET: $SANDIEGO_JWT_SECRET
-  
+
   sandiego-pgbackups:
     image: prodrigestivill/postgres-backup-local:15
     container_name: sandiego-pgbackups
