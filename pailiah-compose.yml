@@ -292,7 +292,7 @@ services:
       POSTGRES_PASSWORD: $THEMIS_POSTGRES_PASSWORD
 
   themis-pgbackups:
-    image: prodrigestivill/postgres-backup-local:15
+    image: prodrigestivill/postgres-backup-local:17
     container_name: themis-pgbackups
     restart: always
     user: $PUID:$PGID
@@ -378,7 +378,7 @@ services:
       PGRST_JWT_SECRET: $NICE_JWT_SECRET
 
   nice-pgbackups:
-    image: prodrigestivill/postgres-backup-local:15
+    image: prodrigestivill/postgres-backup-local:17
     container_name: nice-pgbackups
     restart: always
     user: $PUID:$PGID
@@ -437,7 +437,7 @@ services:
       PGRST_JWT_SECRET: $SANDIEGO_JWT_SECRET
 
   sandiego-pgbackups:
-    image: prodrigestivill/postgres-backup-local:15
+    image: prodrigestivill/postgres-backup-local:17
     container_name: sandiego-pgbackups
     restart: always
     user: $PUID:$PGID
