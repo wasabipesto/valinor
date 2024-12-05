@@ -34,7 +34,7 @@ services:
       TZ: $TZ
 
   smartctl:
-    image: matusnovak/prometheus-smartctl:v2.4.0
+    image: matusnovak/prometheus-smartctl:v2.5.0
     container_name: smartctl
     restart: unless-stopped
     ports:
