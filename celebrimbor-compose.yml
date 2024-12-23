@@ -161,7 +161,7 @@ services:
       DOCKER_MODS: linuxserver/mods:universal-calibre
 
   nextcloud:
-    image: lscr.io/linuxserver/nextcloud:29.0.10-previous
+    image: lscr.io/linuxserver/nextcloud:30.0.4-ls357
     container_name: nextcloud
     hostname: nextcloud
     restart: unless-stopped
