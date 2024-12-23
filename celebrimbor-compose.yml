@@ -49,7 +49,7 @@ services:
       API_USER: upsmon
       API_PASSWORD: $NUT_PASSWORD
       DESCRIPTION: CyberPower 1500VA UPS
-      SERIAL: $NUT_SERIAL
+      #SERIAL: $NUT_SERIAL
     ports:
       - 3493:3493
     privileged: true
