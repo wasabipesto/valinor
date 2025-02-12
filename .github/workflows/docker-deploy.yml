@@ -17,7 +17,7 @@ jobs:
           tags: tag:cicd,tag:privileged
 
       - name: Run Ansible Playbook
-        uses: dawidd6/action-ansible-playbook@v2
+        uses: dawidd6/action-ansible-playbook@v3
         with:
           directory: ansible/
           playbook: docker-update.yaml
