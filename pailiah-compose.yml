@@ -144,6 +144,19 @@ services:
       TZ: $TZ
       GF_PATHS_CONFIG: /var/lib/grafana/grafana.ini
 
+  changedetection:
+    image: ghcr.io/dgtlmoon/changedetection.io:0.49.3
+    container_name: changedetection
+    hostname: changedetection
+    restart: unless-stopped
+    user: $PUID:$PGID
+    ports:
+      - 5000:5000
+    volumes:
+      - $OPDIR/changedetection:/datastore
+    environment:
+      TZ: $TZ
+
   # Media
   #  owncast:
   #    image: owncast/owncast:0.1.3
