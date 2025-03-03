@@ -377,7 +377,7 @@ services:
       POSTGRES_PASSWORD: $NICE_POSTGRES_PASSWORD
 
   nice-postgrest:
-    image: postgrest/postgrest:v12.2.3
+    image: postgrest/postgrest:v12.2.8
     container_name: nice-postgrest
     hostname: nice-postgrest
     restart: unless-stopped
@@ -437,7 +437,7 @@ services:
       POSTGRES_PASSWORD: $SANDIEGO_POSTGRES_PASSWORD
 
   sandiego-postgrest:
-    image: postgrest/postgrest:v12.2.3
+    image: postgrest/postgrest:v12.2.8
     container_name: sandiego-postgrest
     hostname: sandiego-postgrest
     restart: unless-stopped
