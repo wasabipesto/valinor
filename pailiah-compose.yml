@@ -173,7 +173,7 @@ services:
   #      PGID: $PGID
 
   tautulli:
-    image: lscr.io/linuxserver/tautulli:2.15.0
+    image: lscr.io/linuxserver/tautulli:2.15.1
     container_name: tautulli
     hostname: tautulli
     restart: unless-stopped
