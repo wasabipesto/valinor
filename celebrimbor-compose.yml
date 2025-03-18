@@ -239,7 +239,7 @@ services:
       - /dev/dri/renderD128
     environment:
       FRIGATE_RTSP_PASSWORD: $FRIGATE_RTSP_PASSWORD
-      LIBVA_DRIVER_NAME=i965
+      LIBVA_DRIVER_NAME: radeonsi
 
   code-server:
     image: lscr.io/linuxserver/code-server:4.97.2-ls257
