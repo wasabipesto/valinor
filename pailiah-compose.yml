@@ -325,6 +325,40 @@ services:
       BACKUP_KEEP_MONTHS: 10
       HEALTHCHECK_PORT: 8080
 
+  themis-postgres-prod:
+    image: postgres:17.4
+    container_name: themis-postgres-prod
+    hostname: themis-postgres-prod
+    restart: unless-stopped
+    volumes:
+      - $OPDIR/themis-postgres-prod:/var/lib/postgresql
+    environment:
+      TZ: $TZ
+      POSTGRES_DB: themis-prod
+      POSTGRES_USER: themis
+      POSTGRES_PASSWORD: $THEMIS_POSTGRES_PASSWORD
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U themis -d themis-prod"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  themis-postgrest-prod:
+    image: postgrest/postgrest:v12.2.8
+    container_name: themis-postgrest-prod
+    restart: unless-stopped
+    environment:
+      PGRST_DB_URI: postgres://themis:${THEMIS_POSTGRES_PASSWORD}@themis-postgres-prod:5432/themis-prod
+      PGRST_DB_SCHEMA: public
+      PGRST_DB_ANON_ROLE: web_anon
+      PGRST_JWT_SECRET: ${THEMIS_PGRST_JWT_SECRET}
+      PGRST_DB_POOL: 10
+    ports:
+      - 7045:3000
+    depends_on:
+      themis-postgres-prod:
+        condition: service_healthy
+
   # Nice
   nice-backend-prod:
     build: $OPDIR/nice-backend-v
