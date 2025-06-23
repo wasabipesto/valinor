@@ -326,7 +326,7 @@ services:
       HEALTHCHECK_PORT: 8080
 
   themis-postgres-prod:
-    image: postgres:17.4
+    image: pgvector/pgvector:pg17
     container_name: themis-postgres-prod
     hostname: themis-postgres-prod
     restart: unless-stopped
@@ -334,7 +334,7 @@ services:
       - $OPDIR/themis-postgres-prod:/var/lib/postgresql
     environment:
       TZ: $TZ
-      POSTGRES_DB: themis-prod
+      POSTGRES_DB: themis
       POSTGRES_USER: themis
       POSTGRES_PASSWORD: $THEMIS_POSTGRES_PASSWORD
     healthcheck:
@@ -348,7 +348,7 @@ services:
     container_name: themis-postgrest-prod
     restart: unless-stopped
     environment:
-      PGRST_DB_URI: postgres://themis:${THEMIS_POSTGRES_PASSWORD}@themis-postgres-prod:5432/themis-prod
+      PGRST_DB_URI: postgres://themis:${THEMIS_POSTGRES_PASSWORD}@themis-postgres-prod:5432/themis
       PGRST_DB_SCHEMA: public
       PGRST_DB_ANON_ROLE: web_anon
       PGRST_JWT_SECRET: ${THEMIS_PGRST_JWT_SECRET}
