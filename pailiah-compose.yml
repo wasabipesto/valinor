@@ -231,7 +231,7 @@ services:
 
   # Games
   foundry-kirkwall:
-    image: felddy/foundryvtt:12.343
+    image: felddy/foundryvtt:13.345
     container_name: foundry-kirkwall
     hostname: foundry-kirkwall
     restart: unless-stopped
