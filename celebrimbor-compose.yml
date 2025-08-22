@@ -177,7 +177,7 @@ services:
             - 4431:80
 
     syncthing:
-        image: syncthing/syncthing:1.29
+        image: syncthing/syncthing:1.30
         container_name: syncthing
         hostname: syncthing
         restart: unless-stopped
@@ -194,7 +194,7 @@ services:
 
     # Other
     homeassistant:
-        image: lscr.io/linuxserver/homeassistant:2025.3.0
+        image: lscr.io/linuxserver/homeassistant:2025.8.0
         container_name: homeassistant
         hostname: homeassistant
         restart: unless-stopped
@@ -213,7 +213,7 @@ services:
             INSTALL_PACKAGES: nmap # for nmap device tracker
 
     frigate:
-        image: ghcr.io/blakeblackshear/frigate:0.15.1
+        image: ghcr.io/blakeblackshear/frigate:0.15.2
         container_name: frigate
         hostname: frigate
         restart: unless-stopped
