@@ -245,25 +245,6 @@ services:
             CONTAINER_PATCHES: /data/container_patches # https://github.com/felddy/foundryvtt-docker/issues/697
         env_file: $OPDIR/kirkwall/config.env
 
-    # Other
-    code-server:
-        image: lscr.io/linuxserver/code-server:4.101.1
-        container_name: code-server
-        hostname: code-server
-        restart: unless-stopped
-        ports:
-            - 8443:8443
-            - 8788:8788 # for node/wrangler previews
-        volumes:
-            - $OPDIR/code:/config
-            - $OPDIR:/opt
-            - $OPDIR/code/custom-cont-init.d:/custom-cont-init.d:ro
-        environment:
-            TZ: $TZ
-            PUID: $PUID
-            PGID: $PGID
-            SUDO_PASSWORD: $CODE_PASSWORD
-
     # Automeme
     automeme-web:
         build: $OPDIR/automeme
