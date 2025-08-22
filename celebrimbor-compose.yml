@@ -240,20 +240,3 @@ services:
     environment:
       FRIGATE_RTSP_PASSWORD: $FRIGATE_RTSP_PASSWORD
       LIBVA_DRIVER_NAME: radeonsi
-
-  code-server:
-    image: lscr.io/linuxserver/code-server:4.101.1
-    container_name: code-server
-    hostname: code-server
-    restart: unless-stopped
-    ports:
-      - 8443:8443
-    volumes:
-      - $OPDIR/code:/config
-      - $OPDIR:/opt
-    environment:
-      TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
-      SUDO_PASSWORD: $CODE_PASSWORD
-      DOCKER_MODS: linuxserver/mods:code-server-python3
