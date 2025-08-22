@@ -1,503 +1,503 @@
 services:
-  # Networking & Static Sites
-  nginx:
-    image: lscr.io/linuxserver/nginx:1.28.0
-    container_name: nginx
-    hostname: nginx
-    restart: unless-stopped
-    ports:
-      - 4080:80
-      - 4443:443
-    volumes:
-      - $OPDIR/nginx:/config
-    environment:
-      TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
+    # Networking & Static Sites
+    nginx:
+        image: lscr.io/linuxserver/nginx:1.28.0
+        container_name: nginx
+        hostname: nginx
+        restart: unless-stopped
+        ports:
+            - 4080:80
+            - 4443:443
+        volumes:
+            - $OPDIR/nginx:/config
+        environment:
+            TZ: $TZ
+            PUID: $PUID
+            PGID: $PGID
 
-  endlessh:
-    image: shizunge/endlessh-go:20230625-3
-    container_name: endlessh
-    restart: unless-stopped
-    ports:
-      - 22:2222
-      - 2112:2112 # metrics
-    command:
-      - -interval_ms=1000
-      - -logtostderr
-      - -v=1
-      - -enable_prometheus
-      - -geoip_supplier=ip-api
-    cap_add:
-      - NET_BIND_SERVICE
+    endlessh:
+        image: shizunge/endlessh-go:20230625-3
+        container_name: endlessh
+        restart: unless-stopped
+        ports:
+            - 22:2222
+            - 2112:2112 # metrics
+        command:
+            - -interval_ms=1000
+            - -logtostderr
+            - -v=1
+            - -enable_prometheus
+            - -geoip_supplier=ip-api
+        cap_add:
+            - NET_BIND_SERVICE
 
-  # Monitoring
-  prometheus:
-    image: prom/prometheus:v3.4.1
-    container_name: prometheus
-    restart: unless-stopped
-    ports:
-      - 9090:9090
-    volumes:
-      - $OPDIR/prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml
-      - $OPDIR/prometheus/data:/prometheus
-    command:
-      - "--config.file=/etc/prometheus/prometheus.yml"
-      - "--storage.tsdb.path=/prometheus"
-      - "--storage.tsdb.retention.time=1y"
-    environment:
-      TZ: $TZ
-      PUID: $PUID # does this work?
-      PGID: $PGID
+    # Monitoring
+    prometheus:
+        image: prom/prometheus:v3.4.1
+        container_name: prometheus
+        restart: unless-stopped
+        ports:
+            - 9090:9090
+        volumes:
+            - $OPDIR/prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml
+            - $OPDIR/prometheus/data:/prometheus
+        command:
+            - "--config.file=/etc/prometheus/prometheus.yml"
+            - "--storage.tsdb.path=/prometheus"
+            - "--storage.tsdb.retention.time=1y"
+        environment:
+            TZ: $TZ
+            PUID: $PUID # does this work?
+            PGID: $PGID
 
-  node-exporter:
-    image: prom/node-exporter:v1.9.1
-    container_name: node-exporter
-    hostname: node-exporter
-    restart: unless-stopped
-    ports:
-      - 9100:9100
-    command:
-      - "--path.procfs=/host/proc"
-      - "--path.sysfs=/host/sys"
-    volumes:
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /:/rootfs:ro
-    environment:
-      TZ: $TZ
+    node-exporter:
+        image: prom/node-exporter:v1.9.1
+        container_name: node-exporter
+        hostname: node-exporter
+        restart: unless-stopped
+        ports:
+            - 9100:9100
+        command:
+            - "--path.procfs=/host/proc"
+            - "--path.sysfs=/host/sys"
+        volumes:
+            - /proc:/host/proc:ro
+            - /sys:/host/sys:ro
+            - /:/rootfs:ro
+        environment:
+            TZ: $TZ
 
-  cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.52.1
-    container_name: cadvisor
-    hostname: cadvisor
-    restart: unless-stopped
-    ports:
-      - 8080:8080
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      - /dev/disk/:/dev/disk:ro
-    environment:
-      TZ: $TZ
+    cadvisor:
+        image: gcr.io/cadvisor/cadvisor:v0.52.1
+        container_name: cadvisor
+        hostname: cadvisor
+        restart: unless-stopped
+        ports:
+            - 8080:8080
+        volumes:
+            - /:/rootfs:ro
+            - /var/run:/var/run:ro
+            - /sys:/sys:ro
+            - /var/lib/docker/:/var/lib/docker:ro
+            - /dev/disk/:/dev/disk:ro
+        environment:
+            TZ: $TZ
 
-  ping_exporter:
-    image: czerwonk/ping_exporter:v1.1.3
-    container_name: ping_exporter
-    restart: unless-stopped
-    ports:
-      - 9427:9427
-    volumes:
-      - $OPDIR/prometheus/config/ping_exporter:/config:ro
+    ping_exporter:
+        image: czerwonk/ping_exporter:v1.1.3
+        container_name: ping_exporter
+        restart: unless-stopped
+        ports:
+            - 9427:9427
+        volumes:
+            - $OPDIR/prometheus/config/ping_exporter:/config:ro
 
-  nginx-exporter:
-    image: quay.io/martinhelmich/prometheus-nginxlog-exporter:v1.11.0
-    container_name: nginx-exporter
-    restart: unless-stopped
-    ports:
-      - 4040:4040
-    volumes:
-      - $OPDIR/nginx/log/nginx:/mnt/nginxlogs:ro
-      - $OPDIR/prometheus/config/nginx-exporter/config.yml:/mnt/config.yml:ro
-    command: -config-file /mnt/config.yml
+    nginx-exporter:
+        image: quay.io/martinhelmich/prometheus-nginxlog-exporter:v1.11.0
+        container_name: nginx-exporter
+        restart: unless-stopped
+        ports:
+            - 4040:4040
+        volumes:
+            - $OPDIR/nginx/log/nginx:/mnt/nginxlogs:ro
+            - $OPDIR/prometheus/config/nginx-exporter/config.yml:/mnt/config.yml:ro
+        command: -config-file /mnt/config.yml
 
-  heartbeat:
-    build: $OPDIR/dockerfiles/heartbeat
-    container_name: heartbeat
-    restart: unless-stopped
-    environment:
-      ENDPOINT_URL: https://status.wasabipesto.com/api/push/vJkBGdRyIU
+    heartbeat:
+        build: $OPDIR/dockerfiles/heartbeat
+        container_name: heartbeat
+        restart: unless-stopped
+        environment:
+            ENDPOINT_URL: https://status.wasabipesto.com/api/push/vJkBGdRyIU
 
-  promtail:
-    image: grafana/promtail:3.5.1
-    container_name: promtail
-    restart: unless-stopped
-    volumes:
-      - $OPDIR/prometheus/config/promtail.yml:/mnt/config.yml:ro
-      - /var/log:/mnt/var/log:ro
-    command: -config.file /mnt/config.yml
+    promtail:
+        image: grafana/promtail:3.5.1
+        container_name: promtail
+        restart: unless-stopped
+        volumes:
+            - $OPDIR/prometheus/config/promtail.yml:/mnt/config.yml:ro
+            - /var/log:/mnt/var/log:ro
+        command: -config.file /mnt/config.yml
 
-  loki:
-    image: grafana/loki:3.5.1
-    container_name: loki
-    hostname: loki
-    restart: unless-stopped
-    ports:
-      - 3100:3100
-    environment:
-      TZ: $TZ
-    command: -config.file=/etc/loki/local-config.yaml
+    loki:
+        image: grafana/loki:3.5.1
+        container_name: loki
+        hostname: loki
+        restart: unless-stopped
+        ports:
+            - 3100:3100
+        environment:
+            TZ: $TZ
+        command: -config.file=/etc/loki/local-config.yaml
 
-  grafana:
-    image: grafana/grafana-oss:12.0.2
-    container_name: grafana
-    hostname: grafana
-    restart: unless-stopped
-    user: $PUID:$PGID
-    ports:
-      - 3000:3000
-    volumes:
-      - $OPDIR/grafana:/var/lib/grafana
-    environment:
-      TZ: $TZ
-      GF_PATHS_CONFIG: /var/lib/grafana/grafana.ini
+    grafana:
+        image: grafana/grafana-oss:12.0.2
+        container_name: grafana
+        hostname: grafana
+        restart: unless-stopped
+        user: $PUID:$PGID
+        ports:
+            - 3000:3000
+        volumes:
+            - $OPDIR/grafana:/var/lib/grafana
+        environment:
+            TZ: $TZ
+            GF_PATHS_CONFIG: /var/lib/grafana/grafana.ini
 
-  changedetection:
-    image: ghcr.io/dgtlmoon/changedetection.io:0.50.4
-    container_name: changedetection
-    hostname: changedetection
-    restart: unless-stopped
-    user: $PUID:$PGID
-    ports:
-      - 5000:5000
-    volumes:
-      - $OPDIR/changedetection:/datastore
-    environment:
-      TZ: $TZ
+    changedetection:
+        image: ghcr.io/dgtlmoon/changedetection.io:0.50.4
+        container_name: changedetection
+        hostname: changedetection
+        restart: unless-stopped
+        user: $PUID:$PGID
+        ports:
+            - 5000:5000
+        volumes:
+            - $OPDIR/changedetection:/datastore
+        environment:
+            TZ: $TZ
 
-  # Media
-  #  owncast:
-  #    image: owncast/owncast:0.1.3
-  #    container_name: owncast
-  #    restart: unless-stopped
-  #    ports:
-  #      - 8084:8080
-  #      - 1935:1935 # RSTP is not exposed to internet, just tailscale
-  #    volumes:
-  #      - $OPDIR/owncast:/app/data
-  #    environment:
-  #      TZ: $TZ
-  #      PUID: $PUID
-  #      PGID: $PGID
+    # Media
+    #  owncast:
+    #    image: owncast/owncast:0.1.3
+    #    container_name: owncast
+    #    restart: unless-stopped
+    #    ports:
+    #      - 8084:8080
+    #      - 1935:1935 # RSTP is not exposed to internet, just tailscale
+    #    volumes:
+    #      - $OPDIR/owncast:/app/data
+    #    environment:
+    #      TZ: $TZ
+    #      PUID: $PUID
+    #      PGID: $PGID
 
-  tautulli:
-    image: lscr.io/linuxserver/tautulli:2.15.2
-    container_name: tautulli
-    hostname: tautulli
-    restart: unless-stopped
-    ports:
-      - 8181:8181
-    volumes:
-      - $OPDIR/tautulli:/config
-    environment:
-      TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
+    tautulli:
+        image: lscr.io/linuxserver/tautulli:2.15.2
+        container_name: tautulli
+        hostname: tautulli
+        restart: unless-stopped
+        ports:
+            - 8181:8181
+        volumes:
+            - $OPDIR/tautulli:/config
+        environment:
+            TZ: $TZ
+            PUID: $PUID
+            PGID: $PGID
 
-  overseerr:
-    image: sctx/overseerr:1.34.0
-    container_name: overseerr
-    restart: unless-stopped
-    ports:
-      - 5055:5055
-    volumes:
-      - $OPDIR/overseerr:/app/config
-    environment:
-      TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
+    overseerr:
+        image: sctx/overseerr:1.34.0
+        container_name: overseerr
+        restart: unless-stopped
+        ports:
+            - 5055:5055
+        volumes:
+            - $OPDIR/overseerr:/app/config
+        environment:
+            TZ: $TZ
+            PUID: $PUID
+            PGID: $PGID
 
-  freshrss:
-    image: freshrss/freshrss:1.26.3
-    container_name: freshrss
-    hostname: freshrss
-    restart: unless-stopped
-    ports:
-      - 8524:80
-    volumes:
-      - $OPDIR/freshrss/data:/var/www/FreshRSS/data
-      - $OPDIR/freshrss/extensions:/var/www/FreshRSS/extensions
-    environment:
-      TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
-      CRON_MIN: 13,43
+    freshrss:
+        image: freshrss/freshrss:1.26.3
+        container_name: freshrss
+        hostname: freshrss
+        restart: unless-stopped
+        ports:
+            - 8524:80
+        volumes:
+            - $OPDIR/freshrss/data:/var/www/FreshRSS/data
+            - $OPDIR/freshrss/extensions:/var/www/FreshRSS/extensions
+        environment:
+            TZ: $TZ
+            PUID: $PUID
+            PGID: $PGID
+            CRON_MIN: 13,43
 
-  rss-bridge:
-    image: rssbridge/rss-bridge:2023-09-24
-    container_name: rss-bridge
-    hostname: rss-bridge
-    restart: unless-stopped
-    ports:
-      - 3060:80
-    volumes:
-      - $OPDIR/freshrss/bridge:/config
-    environment:
-      TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
+    rss-bridge:
+        image: rssbridge/rss-bridge:2023-09-24
+        container_name: rss-bridge
+        hostname: rss-bridge
+        restart: unless-stopped
+        ports:
+            - 3060:80
+        volumes:
+            - $OPDIR/freshrss/bridge:/config
+        environment:
+            TZ: $TZ
+            PUID: $PUID
+            PGID: $PGID
 
-  # Games
-  foundry-kirkwall:
-    image: felddy/foundryvtt:13.345
-    container_name: foundry-kirkwall
-    hostname: foundry-kirkwall
-    restart: unless-stopped
-    ports:
-      - 30000:30000
-    user: ${PUID}:${PGID}
-    volumes:
-      - $OPDIR/kirkwall:/data
-    environment:
-      FOUNDRY_HOSTNAME: kirkwall.$DOMAIN
-      CONTAINER_PATCHES: /data/container_patches # https://github.com/felddy/foundryvtt-docker/issues/697
-    env_file: $OPDIR/kirkwall/config.env
+    # Games
+    foundry-kirkwall:
+        image: felddy/foundryvtt:13.345
+        container_name: foundry-kirkwall
+        hostname: foundry-kirkwall
+        restart: unless-stopped
+        ports:
+            - 30000:30000
+        user: ${PUID}:${PGID}
+        volumes:
+            - $OPDIR/kirkwall:/data
+        environment:
+            FOUNDRY_HOSTNAME: kirkwall.$DOMAIN
+            CONTAINER_PATCHES: /data/container_patches # https://github.com/felddy/foundryvtt-docker/issues/697
+        env_file: $OPDIR/kirkwall/config.env
 
-  # Other
-  code-server:
-    image: lscr.io/linuxserver/code-server:4.101.1
-    container_name: code-server
-    hostname: code-server
-    restart: unless-stopped
-    ports:
-      - 8443:8443
-      - 8788:8788 # for node/wrangler previews
-    volumes:
-      - $OPDIR/code:/config
-      - $OPDIR:/opt
-      - $OPDIR/code/custom-cont-init.d:/custom-cont-init.d:ro
-    environment:
-      TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
-      SUDO_PASSWORD: $CODE_PASSWORD
+    # Other
+    code-server:
+        image: lscr.io/linuxserver/code-server:4.101.1
+        container_name: code-server
+        hostname: code-server
+        restart: unless-stopped
+        ports:
+            - 8443:8443
+            - 8788:8788 # for node/wrangler previews
+        volumes:
+            - $OPDIR/code:/config
+            - $OPDIR:/opt
+            - $OPDIR/code/custom-cont-init.d:/custom-cont-init.d:ro
+        environment:
+            TZ: $TZ
+            PUID: $PUID
+            PGID: $PGID
+            SUDO_PASSWORD: $CODE_PASSWORD
 
-  # Automeme
-  automeme-web:
-    build: $OPDIR/automeme
-    container_name: automeme-web
-    restart: unless-stopped
-    ports:
-      - 8888:8888
+    # Automeme
+    automeme-web:
+        build: $OPDIR/automeme
+        container_name: automeme-web
+        restart: unless-stopped
+        ports:
+            - 8888:8888
 
-  # Calibration
-  themis-client-prod:
-    build: $OPDIR/themis/client
-    container_name: themis-client-prod
-    restart: unless-stopped
-    ports:
-      - 7040:80
+    # Calibration
+    themis-client-prod:
+        build: $OPDIR/themis/client
+        container_name: themis-client-prod
+        restart: unless-stopped
+        ports:
+            - 7040:80
 
-  themis-serve-prod:
-    build: $OPDIR/themis/serve
-    container_name: themis-serve-prod
-    restart: unless-stopped
-    ports:
-      - 7041:7041
-    environment:
-      HTTP_BIND: 0.0.0.0:7041
-      DATABASE_URL: $THEMIS_PROD_DATABASE_URL
+    themis-serve-prod:
+        build: $OPDIR/themis/serve
+        container_name: themis-serve-prod
+        restart: unless-stopped
+        ports:
+            - 7041:7041
+        environment:
+            HTTP_BIND: 0.0.0.0:7041
+            DATABASE_URL: $THEMIS_PROD_DATABASE_URL
 
-  themis-postgres:
-    image: postgres:15.10
-    container_name: themis-postgres
-    hostname: themis-postgres
-    restart: unless-stopped
-    volumes:
-      - $OPDIR/themis-postgres:/var/lib/postgresql
-    environment:
-      TZ: $TZ
-      POSTGRES_USER: themis
-      POSTGRES_PASSWORD: $THEMIS_POSTGRES_PASSWORD
+    themis-postgres:
+        image: postgres:15.10
+        container_name: themis-postgres
+        hostname: themis-postgres
+        restart: unless-stopped
+        volumes:
+            - $OPDIR/themis-postgres:/var/lib/postgresql
+        environment:
+            TZ: $TZ
+            POSTGRES_USER: themis
+            POSTGRES_PASSWORD: $THEMIS_POSTGRES_PASSWORD
 
-  themis-pgbackups:
-    image: prodrigestivill/postgres-backup-local:15
-    container_name: themis-pgbackups
-    restart: always
-    user: $PUID:$PGID
-    volumes:
-      - $OPDIR/themis-postgres-backups:/backups
-    depends_on:
-      - themis-postgres
-    environment:
-      POSTGRES_HOST: themis-postgres
-      POSTGRES_DB: themis_prod
-      POSTGRES_USER: themis
-      POSTGRES_PASSWORD: $THEMIS_POSTGRES_PASSWORD
-      POSTGRES_EXTRA_OPTS: -Z6
-      SCHEDULE: "@daily"
-      BACKUP_KEEP_DAYS: 10
-      BACKUP_KEEP_WEEKS: 10
-      BACKUP_KEEP_MONTHS: 10
-      HEALTHCHECK_PORT: 8080
+    themis-pgbackups:
+        image: prodrigestivill/postgres-backup-local:15
+        container_name: themis-pgbackups
+        restart: always
+        user: $PUID:$PGID
+        volumes:
+            - $OPDIR/themis-postgres-backups:/backups
+        depends_on:
+            - themis-postgres
+        environment:
+            POSTGRES_HOST: themis-postgres
+            POSTGRES_DB: themis_prod
+            POSTGRES_USER: themis
+            POSTGRES_PASSWORD: $THEMIS_POSTGRES_PASSWORD
+            POSTGRES_EXTRA_OPTS: -Z6
+            SCHEDULE: "@daily"
+            BACKUP_KEEP_DAYS: 10
+            BACKUP_KEEP_WEEKS: 10
+            BACKUP_KEEP_MONTHS: 10
+            HEALTHCHECK_PORT: 8080
 
-  themis-postgres-prod:
-    image: pgvector/pgvector:pg17
-    container_name: themis-postgres-prod
-    hostname: themis-postgres-prod
-    restart: unless-stopped
-    volumes:
-      - $OPDIR/themis-postgres-prod:/var/lib/postgresql
-    environment:
-      TZ: $TZ
-      POSTGRES_DB: themis
-      POSTGRES_USER: themis
-      POSTGRES_PASSWORD: $THEMIS_POSTGRES_PASSWORD
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U themis -d themis-prod"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
+    themis-postgres-prod:
+        image: pgvector/pgvector:pg17
+        container_name: themis-postgres-prod
+        hostname: themis-postgres-prod
+        restart: unless-stopped
+        volumes:
+            - $OPDIR/themis-postgres-prod:/var/lib/postgresql
+        environment:
+            TZ: $TZ
+            POSTGRES_DB: themis
+            POSTGRES_USER: themis
+            POSTGRES_PASSWORD: $THEMIS_POSTGRES_PASSWORD
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U themis -d themis-prod"]
+            interval: 10s
+            timeout: 5s
+            retries: 3
 
-  themis-postgrest-prod:
-    image: postgrest/postgrest:v13.0.4
-    container_name: themis-postgrest-prod
-    restart: unless-stopped
-    environment:
-      PGRST_DB_URI: postgres://themis:${THEMIS_POSTGRES_PASSWORD}@themis-postgres-prod:5432/themis
-      PGRST_DB_SCHEMA: public
-      PGRST_DB_ANON_ROLE: web_anon
-      PGRST_JWT_SECRET: ${THEMIS_PGRST_JWT_SECRET}
-      PGRST_DB_POOL: 10
-    ports:
-      - 7045:3000
-    depends_on:
-      themis-postgres-prod:
-        condition: service_healthy
+    themis-postgrest-prod:
+        image: postgrest/postgrest:v13.0.4
+        container_name: themis-postgrest-prod
+        restart: unless-stopped
+        environment:
+            PGRST_DB_URI: postgres://themis:${THEMIS_POSTGRES_PASSWORD}@themis-postgres-prod:5432/themis
+            PGRST_DB_SCHEMA: public
+            PGRST_DB_ANON_ROLE: web_anon
+            PGRST_JWT_SECRET: ${THEMIS_PGRST_JWT_SECRET}
+            PGRST_DB_POOL: 10
+        ports:
+            - 7045:3000
+        depends_on:
+            themis-postgres-prod:
+                condition: service_healthy
 
-  # Nice
-  nice-backend-prod:
-    build: $OPDIR/nice-backend-v
-    container_name: nice-backend-prod
-    restart: unless-stopped
-    ports:
-      - 3069:3000
-    depends_on:
-      - nice-postgres
-    environment:
-      NODE_ENV: production
+    # Nice
+    nice-backend-prod:
+        build: $OPDIR/nice-backend-v
+        container_name: nice-backend-prod
+        restart: unless-stopped
+        ports:
+            - 3069:3000
+        depends_on:
+            - nice-postgres
+        environment:
+            NODE_ENV: production
 
-  nice-backend-dev:
-    build:
-      context: $OPDIR/nice
-      dockerfile: api/Dockerfile
-    container_name: nice-backend-dev
-    restart: unless-stopped
-    ports:
-      - 3070:8000
-    depends_on:
-      - nice-postgres-vi
-    environment:
-      ROCKET_ADDRESS: "0.0.0.0"
-      DATABASE_URL: $NICE_DATABASE_URL
+    nice-backend-dev:
+        build:
+            context: $OPDIR/nice
+            dockerfile: api/Dockerfile
+        container_name: nice-backend-dev
+        restart: unless-stopped
+        ports:
+            - 3070:8000
+        depends_on:
+            - nice-postgres-vi
+        environment:
+            ROCKET_ADDRESS: "0.0.0.0"
+            DATABASE_URL: $NICE_DATABASE_URL
 
-  nice-postgres:
-    image: postgres:15.10
-    container_name: nice-postgres
-    hostname: nice-postgres
-    restart: unless-stopped
-    volumes:
-      - $OPDIR/nice-postgres:/var/lib/postgresql
-    environment:
-      TZ: $TZ
-      POSTGRES_USER: nice
-      POSTGRES_PASSWORD: $NICE_POSTGRES_PASSWORD
+    nice-postgres:
+        image: postgres:15.10
+        container_name: nice-postgres
+        hostname: nice-postgres
+        restart: unless-stopped
+        volumes:
+            - $OPDIR/nice-postgres:/var/lib/postgresql
+        environment:
+            TZ: $TZ
+            POSTGRES_USER: nice
+            POSTGRES_PASSWORD: $NICE_POSTGRES_PASSWORD
 
-  nice-postgres-vi:
-    image: postgres:16.2
-    shm_size: 1g # https://stackoverflow.com/questions/56751565
-    container_name: nice-postgres-vi
-    hostname: nice-postgres-vi
-    restart: unless-stopped
-    volumes:
-      - $OPDIR/nice-postgres-vi:/var/lib/postgresql
-    environment:
-      TZ: $TZ
-      POSTGRES_USER: nice
-      POSTGRES_PASSWORD: $NICE_POSTGRES_PASSWORD
+    nice-postgres-vi:
+        image: postgres:16.2
+        shm_size: 1g # https://stackoverflow.com/questions/56751565
+        container_name: nice-postgres-vi
+        hostname: nice-postgres-vi
+        restart: unless-stopped
+        volumes:
+            - $OPDIR/nice-postgres-vi:/var/lib/postgresql
+        environment:
+            TZ: $TZ
+            POSTGRES_USER: nice
+            POSTGRES_PASSWORD: $NICE_POSTGRES_PASSWORD
 
-  nice-postgrest:
-    image: postgrest/postgrest:v13.0.4
-    container_name: nice-postgrest
-    hostname: nice-postgrest
-    restart: unless-stopped
-    ports:
-      - 3071:3000
-    depends_on:
-      - nice-postgres-vi
-    environment:
-      PGRST_DB_ANON_ROLE: web_anon
-      PGRST_DB_URI: $NICE_DATABASE_URL
-      PGRST_JWT_SECRET: $NICE_JWT_SECRET
+    nice-postgrest:
+        image: postgrest/postgrest:v13.0.4
+        container_name: nice-postgrest
+        hostname: nice-postgrest
+        restart: unless-stopped
+        ports:
+            - 3071:3000
+        depends_on:
+            - nice-postgres-vi
+        environment:
+            PGRST_DB_ANON_ROLE: web_anon
+            PGRST_DB_URI: $NICE_DATABASE_URL
+            PGRST_JWT_SECRET: $NICE_JWT_SECRET
 
-  nice-pgbackups:
-    image: prodrigestivill/postgres-backup-local:15
-    container_name: nice-pgbackups
-    restart: always
-    user: $PUID:$PGID
-    volumes:
-      - $OPDIR/nice-postgres-backups:/backups
-    depends_on:
-      - nice-postgres
-    environment:
-      POSTGRES_HOST: nice-postgres
-      POSTGRES_DB: nice
-      POSTGRES_USER: nice
-      POSTGRES_PASSWORD: $NICE_POSTGRES_PASSWORD
-      POSTGRES_EXTRA_OPTS: -Z6
-      SCHEDULE: "@daily"
-      BACKUP_KEEP_DAYS: 10
-      BACKUP_KEEP_WEEKS: 10
-      BACKUP_KEEP_MONTHS: 10
-      HEALTHCHECK_PORT: 8080
+    nice-pgbackups:
+        image: prodrigestivill/postgres-backup-local:15
+        container_name: nice-pgbackups
+        restart: always
+        user: $PUID:$PGID
+        volumes:
+            - $OPDIR/nice-postgres-backups:/backups
+        depends_on:
+            - nice-postgres
+        environment:
+            POSTGRES_HOST: nice-postgres
+            POSTGRES_DB: nice
+            POSTGRES_USER: nice
+            POSTGRES_PASSWORD: $NICE_POSTGRES_PASSWORD
+            POSTGRES_EXTRA_OPTS: -Z6
+            SCHEDULE: "@daily"
+            BACKUP_KEEP_DAYS: 10
+            BACKUP_KEEP_WEEKS: 10
+            BACKUP_KEEP_MONTHS: 10
+            HEALTHCHECK_PORT: 8080
 
-  # Sandiego
-  sandiego-fetch:
-    build: $OPDIR/sandiego-fetch
-    container_name: sandiego-fetch
-    restart: unless-stopped
-    volumes:
-      - $OPDIR/sandiego-fetch/secrets:/usr/src/secrets
-      - $OPDIR/sandiego-fetch/configuration.yml:/usr/src/configuration.yml:ro
-    user: $PUID:$PGID
-    depends_on:
-      - sandiego-postgres
-    env_file: $OPDIR/sandiego-fetch/.env
+    # Sandiego
+    sandiego-fetch:
+        build: $OPDIR/sandiego-fetch
+        container_name: sandiego-fetch
+        restart: unless-stopped
+        volumes:
+            - $OPDIR/sandiego-fetch/secrets:/usr/src/secrets
+            - $OPDIR/sandiego-fetch/configuration.yml:/usr/src/configuration.yml:ro
+        user: $PUID:$PGID
+        depends_on:
+            - sandiego-postgres
+        env_file: $OPDIR/sandiego-fetch/.env
 
-  sandiego-postgres:
-    image: postgres:15.10
-    container_name: sandiego-postgres
-    hostname: sandiego-postgres
-    restart: unless-stopped
-    volumes:
-      - $OPDIR/sandiego-postgres:/var/lib/postgresql
-    environment:
-      TZ: $TZ
-      POSTGRES_USER: sandiego
-      POSTGRES_PASSWORD: $SANDIEGO_POSTGRES_PASSWORD
+    sandiego-postgres:
+        image: postgres:15.10
+        container_name: sandiego-postgres
+        hostname: sandiego-postgres
+        restart: unless-stopped
+        volumes:
+            - $OPDIR/sandiego-postgres:/var/lib/postgresql
+        environment:
+            TZ: $TZ
+            POSTGRES_USER: sandiego
+            POSTGRES_PASSWORD: $SANDIEGO_POSTGRES_PASSWORD
 
-  sandiego-postgrest:
-    image: postgrest/postgrest:v13.0.4
-    container_name: sandiego-postgrest
-    hostname: sandiego-postgrest
-    restart: unless-stopped
-    ports:
-      - 8245:3000
-    depends_on:
-      - sandiego-postgres
-    environment:
-      PGRST_DB_URI: $SANDIEGO_DATABASE_URL
-      PGRST_JWT_SECRET: $SANDIEGO_JWT_SECRET
+    sandiego-postgrest:
+        image: postgrest/postgrest:v13.0.4
+        container_name: sandiego-postgrest
+        hostname: sandiego-postgrest
+        restart: unless-stopped
+        ports:
+            - 8245:3000
+        depends_on:
+            - sandiego-postgres
+        environment:
+            PGRST_DB_URI: $SANDIEGO_DATABASE_URL
+            PGRST_JWT_SECRET: $SANDIEGO_JWT_SECRET
 
-  sandiego-pgbackups:
-    image: prodrigestivill/postgres-backup-local:15
-    container_name: sandiego-pgbackups
-    restart: always
-    user: $PUID:$PGID
-    volumes:
-      - $OPDIR/sandiego-postgres-backups:/backups
-    depends_on:
-      - sandiego-postgres
-    environment:
-      POSTGRES_HOST: sandiego-postgres
-      POSTGRES_DB: sandiego
-      POSTGRES_USER: sandiego
-      POSTGRES_PASSWORD: $SANDIEGO_POSTGRES_PASSWORD
-      POSTGRES_EXTRA_OPTS: -Z6
-      SCHEDULE: "@daily"
-      BACKUP_KEEP_DAYS: 10
-      BACKUP_KEEP_WEEKS: 2
-      BACKUP_KEEP_MONTHS: 2
-      HEALTHCHECK_PORT: 8080
+    sandiego-pgbackups:
+        image: prodrigestivill/postgres-backup-local:15
+        container_name: sandiego-pgbackups
+        restart: always
+        user: $PUID:$PGID
+        volumes:
+            - $OPDIR/sandiego-postgres-backups:/backups
+        depends_on:
+            - sandiego-postgres
+        environment:
+            POSTGRES_HOST: sandiego-postgres
+            POSTGRES_DB: sandiego
+            POSTGRES_USER: sandiego
+            POSTGRES_PASSWORD: $SANDIEGO_POSTGRES_PASSWORD
+            POSTGRES_EXTRA_OPTS: -Z6
+            SCHEDULE: "@daily"
+            BACKUP_KEEP_DAYS: 10
+            BACKUP_KEEP_WEEKS: 2
+            BACKUP_KEEP_MONTHS: 2
+            HEALTHCHECK_PORT: 8080

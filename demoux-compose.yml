@@ -1,20 +1,19 @@
 services:
-
-  node-exporter:
-    image: prom/node-exporter:v1.9.1
-    container_name: node-exporter
-    hostname: node-exporter
-    restart: unless-stopped
-    ports:
-      - 9100:9100
-    command:
-      - '--path.procfs=/host/proc'
-      - '--path.sysfs=/host/sys'
-    volumes:
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /:/rootfs:ro
-    environment:
-      TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
+    node-exporter:
+        image: prom/node-exporter:v1.9.1
+        container_name: node-exporter
+        hostname: node-exporter
+        restart: unless-stopped
+        ports:
+            - 9100:9100
+        command:
+            - "--path.procfs=/host/proc"
+            - "--path.sysfs=/host/sys"
+        volumes:
+            - /proc:/host/proc:ro
+            - /sys:/host/sys:ro
+            - /:/rootfs:ro
+        environment:
+            TZ: $TZ
+            PUID: $PUID
+            PGID: $PGID

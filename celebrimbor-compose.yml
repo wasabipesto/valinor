@@ -1,242 +1,241 @@
 services:
+    # Monitoring & Updates
+    node-exporter:
+        image: prom/node-exporter:v1.9.1
+        container_name: node-exporter
+        restart: unless-stopped
+        ports:
+            - 9100:9100
+        command:
+            - "--path.procfs=/host/proc"
+            - "--path.sysfs=/host/sys"
+            - "--path.rootfs=/rootfs"
+        volumes:
+            - /proc:/host/proc:ro
+            - /sys:/host/sys:ro
+            - /:/rootfs:ro
+        environment:
+            TZ: $TZ
 
-  # Monitoring & Updates
-  node-exporter:
-    image: prom/node-exporter:v1.9.1
-    container_name: node-exporter
-    restart: unless-stopped
-    ports:
-      - 9100:9100
-    command:
-      - '--path.procfs=/host/proc'
-      - '--path.sysfs=/host/sys'
-      - '--path.rootfs=/rootfs'
-    volumes:
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /:/rootfs:ro
-    environment:
-      TZ: $TZ
+    cadvisor:
+        image: gcr.io/cadvisor/cadvisor:v0.52.1
+        container_name: cadvisor
+        restart: unless-stopped
+        ports:
+            - 8080:8080
+        volumes:
+            - /:/rootfs:ro
+            - /var/run:/var/run:ro
+            - /sys:/sys:ro
+            - /var/lib/docker/:/var/lib/docker:ro
+            - /dev/disk/:/dev/disk:ro
+        environment:
+            TZ: $TZ
 
-  cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.52.1
-    container_name: cadvisor
-    restart: unless-stopped
-    ports:
-      - 8080:8080
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      - /dev/disk/:/dev/disk:ro
-    environment:
-      TZ: $TZ
+    smartctl:
+        image: matusnovak/prometheus-smartctl:v2.5.0
+        container_name: smartctl
+        restart: unless-stopped
+        ports:
+            - 9902:9902
+        privileged: true
 
-  smartctl:
-    image: matusnovak/prometheus-smartctl:v2.5.0
-    container_name: smartctl
-    restart: unless-stopped
-    ports:
-      - 9902:9902
-    privileged: true
+    nut:
+        image: instantlinux/nut-upsd:2.8.2-r2
+        container_name: nut
+        restart: unless-stopped
+        environment:
+            API_USER: upsmon
+            API_PASSWORD: $NUT_PASSWORD
+            DESCRIPTION: CyberPower 1500VA UPS
+            #SERIAL: $NUT_SERIAL
+        ports:
+            - 3493:3493
+        privileged: true
 
-  nut:
-    image: instantlinux/nut-upsd:2.8.2-r2
-    container_name: nut
-    restart: unless-stopped
-    environment:
-      API_USER: upsmon
-      API_PASSWORD: $NUT_PASSWORD
-      DESCRIPTION: CyberPower 1500VA UPS
-      #SERIAL: $NUT_SERIAL
-    ports:
-      - 3493:3493
-    privileged: true
+    heartbeat:
+        build: $OPDIR/dockerfiles/heartbeat
+        container_name: heartbeat
+        restart: unless-stopped
+        environment:
+            ENDPOINT_URL: https://status.wasabipesto.com/api/push/f774dtOPxN
 
-  heartbeat:
-    build: $OPDIR/dockerfiles/heartbeat
-    container_name: heartbeat
-    restart: unless-stopped
-    environment:
-      ENDPOINT_URL: https://status.wasabipesto.com/api/push/f774dtOPxN
+    # Media
+    rtorrent:
+        image: crazymax/rtorrent-rutorrent:4.2.9-0.9.8-0.13.8
+        container_name: rtorrent
+        restart: unless-stopped
+        ports:
+            - 8000:8000 # XMLRPC (*arr)
+            - 8085:8080 # RUTORRENT (web)
+            - 50000:50000 # PEERING
+        volumes:
+            - $OPDIR/rtorrent/data/geoip:/data/geoip
+            - $OPDIR/rtorrent/data/rtorrent:/data/rtorrent
+            - $OPDIR/rtorrent/data/rutorrent:/data/rutorrent
+            - $DATADIR/Seeds:/data/Seeds
+        stop_grace_period: 15s
+        environment:
+            TZ: $TZ
+            PUID: $PUID
+            PGID: $PGID
 
-  # Media
-  rtorrent:
-    image: crazymax/rtorrent-rutorrent:4.2.9-0.9.8-0.13.8
-    container_name: rtorrent
-    restart: unless-stopped
-    ports:
-      - 8000:8000   # XMLRPC (*arr)
-      - 8085:8080   # RUTORRENT (web)
-      - 50000:50000 # PEERING
-    volumes:
-      - $OPDIR/rtorrent/data/geoip:/data/geoip
-      - $OPDIR/rtorrent/data/rtorrent:/data/rtorrent
-      - $OPDIR/rtorrent/data/rutorrent:/data/rutorrent
-      - $DATADIR/Seeds:/data/Seeds
-    stop_grace_period: 15s
-    environment:
-      TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
+    prowlarr:
+        image: lscr.io/linuxserver/prowlarr:1.37.0
+        container_name: prowlarr
+        hostname: prowlarr
+        restart: unless-stopped
+        ports:
+            - 9696:9696
+        volumes:
+            - $OPDIR/prowlarr:/config
+        environment:
+            TZ: $TZ
+            PUID: $PUID
+            PGID: $PGID
 
-  prowlarr:
-    image: lscr.io/linuxserver/prowlarr:1.37.0
-    container_name: prowlarr
-    hostname: prowlarr
-    restart: unless-stopped
-    ports:
-      - 9696:9696
-    volumes:
-      - $OPDIR/prowlarr:/config
-    environment:
-      TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
+    sonarr:
+        image: lscr.io/linuxserver/sonarr:4.0.15
+        container_name: sonarr
+        hostname: sonarr
+        restart: unless-stopped
+        ports:
+            - 8989:8989
+        volumes:
+            - $OPDIR/sonarr:/config
+            - $DATADIR:/data
+        environment:
+            TZ: $TZ
+            PUID: $PUID
+            PGID: $PGID
 
-  sonarr:
-    image: lscr.io/linuxserver/sonarr:4.0.15
-    container_name: sonarr
-    hostname: sonarr
-    restart: unless-stopped
-    ports:
-      - 8989:8989
-    volumes:
-      - $OPDIR/sonarr:/config
-      - $DATADIR:/data
-    environment:
-      TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
+    radarr:
+        image: lscr.io/linuxserver/radarr:5.26.2
+        container_name: radarr
+        hostname: radarr
+        restart: unless-stopped
+        ports:
+            - 7878:7878
+        volumes:
+            - $OPDIR/radarr:/config
+            - $DATADIR:/data
+        environment:
+            TZ: $TZ
+            PUID: $PUID
+            PGID: $PGID
 
-  radarr:
-    image: lscr.io/linuxserver/radarr:5.26.2
-    container_name: radarr
-    hostname: radarr
-    restart: unless-stopped
-    ports:
-      - 7878:7878
-    volumes:
-      - $OPDIR/radarr:/config
-      - $DATADIR:/data
-    environment:
-      TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
+    calibre-app:
+        image: lscr.io/linuxserver/calibre:7.23.0
+        container_name: calibre-app
+        hostname: calibre-app
+        restart: unless-stopped
+        security_opt:
+            - seccomp:unconfined # https://github.com/linuxserver/docker-calibre/issues/97
+        ports:
+            - 8079:8080
+            - 8081:8081
+        volumes:
+            - $OPDIR/calibre-app:/config
+            - $DATADIR:/data
+        environment:
+            TZ: $TZ
+            PUID: $PUID
+            PGID: $PGID
 
-  calibre-app:
-    image: lscr.io/linuxserver/calibre:7.23.0
-    container_name: calibre-app
-    hostname: calibre-app
-    restart: unless-stopped
-    security_opt:
-      - seccomp:unconfined # https://github.com/linuxserver/docker-calibre/issues/97
-    ports:
-      - 8079:8080
-      - 8081:8081
-    volumes:
-      - $OPDIR/calibre-app:/config
-      - $DATADIR:/data
-    environment:
-      TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
+    calibre-web:
+        image: ghcr.io/linuxserver/calibre-web:0.6.24
+        container_name: calibre-web
+        hostname: calibre-web
+        restart: unless-stopped
+        ports:
+            - 8083:8083
+        volumes:
+            - $OPDIR/calibre-web:/config
+            - $OPDIR/calibre-web/custom-cont-init.d:/custom-cont-init.d:ro
+            - $DATADIR/Books:/data/Books
+        environment:
+            TZ: $TZ
+            PUID: $PUID
+            PGID: $PGID
+            DOCKER_MODS: linuxserver/mods:universal-calibre
 
-  calibre-web:
-    image: ghcr.io/linuxserver/calibre-web:0.6.24
-    container_name: calibre-web
-    hostname: calibre-web
-    restart: unless-stopped
-    ports:
-      - 8083:8083
-    volumes:
-      - $OPDIR/calibre-web:/config
-      - $OPDIR/calibre-web/custom-cont-init.d:/custom-cont-init.d:ro
-      - $DATADIR/Books:/data/Books
-    environment:
-      TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
-      DOCKER_MODS: linuxserver/mods:universal-calibre
+    nextcloud:
+        image: lscr.io/linuxserver/nextcloud:31.0.6
+        container_name: nextcloud
+        hostname: nextcloud
+        restart: unless-stopped
+        volumes:
+            - $OPDIR/nextcloud/config:/config
+            - $OPDIR/nextcloud/data:/data
+            - $DATADIR:/mnt/celebrimbor
+            - $OPDIR/syncthing/data:/mnt/syncthing
+        environment:
+            TZ: $TZ
+            PUID: $PUID
+            PGID: $PGID
+        ports:
+            - 4431:80
 
-  nextcloud:
-    image: lscr.io/linuxserver/nextcloud:31.0.6
-    container_name: nextcloud
-    hostname: nextcloud
-    restart: unless-stopped
-    volumes:
-      - $OPDIR/nextcloud/config:/config
-      - $OPDIR/nextcloud/data:/data
-      - $DATADIR:/mnt/celebrimbor
-      - $OPDIR/syncthing/data:/mnt/syncthing
-    environment:
-      TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
-    ports:
-      - 4431:80
+    syncthing:
+        image: syncthing/syncthing:1.29
+        container_name: syncthing
+        hostname: syncthing
+        restart: unless-stopped
+        ports:
+            - 8384:8384
+            - 22000:22000/tcp # TCP file transfers
+            - 22000:22000/udp # QUIC file transfers
+            - 21027:21027/udp # Receive local discovery broadcasts
+        volumes:
+            - $OPDIR/syncthing:/var/syncthing
+            - $DATADIR/Photos:/mnt/photos
+        environment:
+            TZ: $TZ
 
-  syncthing:
-    image: syncthing/syncthing:1.29
-    container_name: syncthing
-    hostname: syncthing
-    restart: unless-stopped
-    ports:
-      - 8384:8384
-      - 22000:22000/tcp # TCP file transfers
-      - 22000:22000/udp # QUIC file transfers
-      - 21027:21027/udp # Receive local discovery broadcasts
-    volumes:
-      - $OPDIR/syncthing:/var/syncthing
-      - $DATADIR/Photos:/mnt/photos
-    environment:
-      TZ: $TZ
+    # Other
+    homeassistant:
+        image: lscr.io/linuxserver/homeassistant:2025.3.0
+        container_name: homeassistant
+        hostname: homeassistant
+        restart: unless-stopped
+        privileged: true
+        network_mode: host
+        ports:
+            - 8123:8123
+        volumes:
+            - $OPDIR/homeassistant:/config
+            - /etc/localtime:/etc/localtime:ro
+        environment:
+            TZ: $TZ
+            PUID: $PUID
+            PGID: $PGID
+            DOCKER_MODS: linuxserver/mods:universal-package-install
+            INSTALL_PACKAGES: nmap # for nmap device tracker
 
-  # Other
-  homeassistant:
-    image: lscr.io/linuxserver/homeassistant:2025.3.0
-    container_name: homeassistant
-    hostname: homeassistant
-    restart: unless-stopped
-    privileged: true
-    network_mode: host
-    ports:
-      - 8123:8123
-    volumes:
-      - $OPDIR/homeassistant:/config
-      - /etc/localtime:/etc/localtime:ro
-    environment:
-      TZ: $TZ
-      PUID: $PUID
-      PGID: $PGID
-      DOCKER_MODS: linuxserver/mods:universal-package-install
-      INSTALL_PACKAGES: nmap # for nmap device tracker
-
-  frigate:
-    image: ghcr.io/blakeblackshear/frigate:0.15.1
-    container_name: frigate
-    hostname: frigate
-    restart: unless-stopped
-    privileged: true
-    stop_grace_period: 30s
-    shm_size: "1gb"
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - $OPDIR/frigate:/config
-      - $DATADIR/Frigate:/media/frigate
-      - type: tmpfs
-        target: /tmp/cache
-        tmpfs:
-          size: 1000000000
-    ports:
-      - "8971:8971" # Standard web access
-      # - "5000:5000" # Internal unauthenticated access. Expose carefully.
-      - "8554:8554" # RTSP feeds
-      - "8555:8555/tcp" # WebRTC over tcp
-      - "8555:8555/udp" # WebRTC over udp
-    devices:
-      - /dev/dri/renderD128
-    environment:
-      FRIGATE_RTSP_PASSWORD: $FRIGATE_RTSP_PASSWORD
-      LIBVA_DRIVER_NAME: radeonsi
+    frigate:
+        image: ghcr.io/blakeblackshear/frigate:0.15.1
+        container_name: frigate
+        hostname: frigate
+        restart: unless-stopped
+        privileged: true
+        stop_grace_period: 30s
+        shm_size: "1gb"
+        volumes:
+            - /etc/localtime:/etc/localtime:ro
+            - $OPDIR/frigate:/config
+            - $DATADIR/Frigate:/media/frigate
+            - type: tmpfs
+              target: /tmp/cache
+              tmpfs:
+                  size: 1000000000
+        ports:
+            - "8971:8971" # Standard web access
+            # - "5000:5000" # Internal unauthenticated access. Expose carefully.
+            - "8554:8554" # RTSP feeds
+            - "8555:8555/tcp" # WebRTC over tcp
+            - "8555:8555/udp" # WebRTC over udp
+        devices:
+            - /dev/dri/renderD128
+        environment:
+            FRIGATE_RTSP_PASSWORD: $FRIGATE_RTSP_PASSWORD
+            LIBVA_DRIVER_NAME: radeonsi
