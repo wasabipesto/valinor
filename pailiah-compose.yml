@@ -157,21 +157,6 @@ services:
         environment:
             TZ: $TZ
 
-    # Media
-    #  owncast:
-    #    image: owncast/owncast:0.1.3
-    #    container_name: owncast
-    #    restart: unless-stopped
-    #    ports:
-    #      - 8084:8080
-    #      - 1935:1935 # RSTP is not exposed to internet, just tailscale
-    #    volumes:
-    #      - $OPDIR/owncast:/app/data
-    #    environment:
-    #      TZ: $TZ
-    #      PUID: $PUID
-    #      PGID: $PGID
-
     tautulli:
         image: lscr.io/linuxserver/tautulli:2.15.2
         container_name: tautulli
