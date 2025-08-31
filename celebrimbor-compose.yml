@@ -41,7 +41,7 @@ services:
         privileged: true
 
     nut:
-        image: instantlinux/nut-upsd:2.8.2-r2
+        image: instantlinux/nut-upsd:2.8.3-r2
         container_name: nut
         restart: unless-stopped
         environment:
