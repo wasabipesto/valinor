@@ -173,7 +173,7 @@ services:
             PGID: $PGID
 
     freshrss:
-        image: freshrss/freshrss:1.26.3
+        image: freshrss/freshrss:1.27.1
         container_name: freshrss
         hostname: freshrss
         restart: unless-stopped
