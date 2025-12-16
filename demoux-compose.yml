@@ -1,6 +1,6 @@
 services:
     node-exporter:
-        image: prom/node-exporter:v1.9.1
+        image: prom/node-exporter:v1.10.2
         container_name: node-exporter
         hostname: node-exporter
         restart: unless-stopped
