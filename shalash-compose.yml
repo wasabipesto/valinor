@@ -201,10 +201,72 @@ services:
             TZ: $TZ
             PUID: $PUID
             PGID: $PGID
+
+    # Nice
+    nice-postgres:
+        image: postgres:18.1
+        shm_size: 1g # https://stackoverflow.com/questions/56751565
+        container_name: nice-postgres
+        hostname: nice-postgres
+        restart: unless-stopped
+        volumes:
+            - $OPDIR/nice/postgres_data:/var/lib/postgresql
+        environment:
+            TZ: $TZ
+            POSTGRES_USER: nice
+            POSTGRES_PASSWORD: $NICE_POSTGRES_PASSWORD
+
+    nice-api:
+        build:
+            context: $OPDIR/nice
+            dockerfile: api/Dockerfile
+        container_name: nice-api
+        restart: unless-stopped
+        ports:
+            - 3070:8000
+        depends_on:
+            - nice-postgres
+        environment:
+            ROCKET_ADDRESS: "0.0.0.0"
+            DATABASE_URL: $NICE_DATABASE_URL
+
+    nice-postgrest:
+        image: postgrest/postgrest:v13.0.4
+        container_name: nice-postgrest
+        hostname: nice-postgrest
+        restart: unless-stopped
+        ports:
+            - 3071:3000
+        depends_on:
+            - nice-postgres
+        environment:
+            PGRST_DB_ANON_ROLE: web_anon
+            PGRST_DB_URI: $NICE_DATABASE_URL
+            PGRST_JWT_SECRET: $NICE_JWT_SECRET
+
+    nice-pgbackups:
+        image: prodrigestivill/postgres-backup-local:18
+        container_name: nice-pgbackups
+        restart: always
+        user: $PUID:$PGID
+        volumes:
+            - $OPDIR/nice/postgres_backups:/backups
+        depends_on:
+            - nice-postgres
+        environment:
+            POSTGRES_HOST: nice-postgres
+            POSTGRES_DB: nice
+            POSTGRES_USER: nice
+            POSTGRES_PASSWORD: $NICE_POSTGRES_PASSWORD
+            POSTGRES_EXTRA_OPTS: -Z6
+            SCHEDULE: "@daily"
+            BACKUP_KEEP_DAYS: 10
+            BACKUP_KEEP_WEEKS: 10
+            BACKUP_KEEP_MONTHS: 10
+            HEALTHCHECK_PORT: 8080
 #
 # To-Do:
 # - foundry
 # - automeme
 # - themis
-# - nice
 # - sandiego
