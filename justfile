@@ -50,7 +50,7 @@ build container:
 
 # Get logs for a container or all containers
 logs *args:
-    docker compose -f {{ config_file }} logs -f {{ args }}
+    docker compose -f {{ config_file }} logs -n 10000 -f {{ args }}
 
 # Get shell in a running container
 shell container:
