@@ -308,7 +308,7 @@ services:
             retries: 3
 
     themis-postgrest-prod:
-        image: postgrest/postgrest:v13.0.4
+        image: postgrest/postgrest:v13.0.8
         container_name: themis-postgrest-prod
         restart: unless-stopped
         environment:
@@ -375,7 +375,7 @@ services:
             POSTGRES_PASSWORD: $NICE_POSTGRES_PASSWORD
 
     nice-postgrest:
-        image: postgrest/postgrest:v13.0.4
+        image: postgrest/postgrest:v13.0.8
         container_name: nice-postgrest
         hostname: nice-postgrest
         restart: unless-stopped
@@ -435,7 +435,7 @@ services:
             POSTGRES_PASSWORD: $SANDIEGO_POSTGRES_PASSWORD
 
     sandiego-postgrest:
-        image: postgrest/postgrest:v13.0.4
+        image: postgrest/postgrest:v13.0.8
         container_name: sandiego-postgrest
         hostname: sandiego-postgrest
         restart: unless-stopped
