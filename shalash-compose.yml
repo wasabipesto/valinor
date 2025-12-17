@@ -95,7 +95,7 @@ services:
             ENDPOINT_URL: https://status.wasabipesto.com/api/push/BVkRChC75QmplJPcwrujvTze94695UlQ
 
     alloy:
-        image: grafana/alloy:v1.10.2
+        image: grafana/alloy:v1.12.1
         container_name: alloy
         restart: unless-stopped
         volumes:
