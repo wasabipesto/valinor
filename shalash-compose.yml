@@ -106,7 +106,7 @@ services:
             TZ: $TZ
 
     loki:
-        image: grafana/loki:3.5.1
+        image: grafana/loki:3.6.3
         container_name: loki
         hostname: loki
         restart: unless-stopped
