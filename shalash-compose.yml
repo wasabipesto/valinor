@@ -231,7 +231,7 @@ services:
             DATABASE_URL: $NICE_DATABASE_URL
 
     nice-postgrest:
-        image: postgrest/postgrest:v13.0.4
+        image: postgrest/postgrest:v13.0.8
         container_name: nice-postgrest
         hostname: nice-postgrest
         restart: unless-stopped
