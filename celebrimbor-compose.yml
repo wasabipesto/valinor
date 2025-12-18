@@ -177,7 +177,7 @@ services:
             - 4431:80
 
     syncthing:
-        image: syncthing/syncthing:1.30
+        image: syncthing/syncthing:2.0
         container_name: syncthing
         hostname: syncthing
         restart: unless-stopped
