@@ -18,7 +18,7 @@ services:
             TZ: $TZ
 
     cadvisor:
-        image: gcr.io/cadvisor/cadvisor:v0.52.1
+        image: gcr.io/cadvisor/cadvisor:v0.55.1
         container_name: cadvisor
         restart: unless-stopped
         ports:
