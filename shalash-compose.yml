@@ -202,6 +202,14 @@ services:
             PUID: $PUID
             PGID: $PGID
 
+    # Automeme
+    automeme:
+        build: $OPDIR/automeme
+        container_name: automeme
+        restart: unless-stopped
+        ports:
+            - 8888:8888
+
     # Nice
     nice-postgres:
         image: postgres:18.1
@@ -267,6 +275,5 @@ services:
 #
 # To-Do:
 # - foundry
-# - automeme
 # - themis
 # - sandiego
