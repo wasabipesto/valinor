@@ -272,8 +272,67 @@ services:
             BACKUP_KEEP_WEEKS: 10
             BACKUP_KEEP_MONTHS: 10
             HEALTHCHECK_PORT: 8080
+
+    # Sandiego
+    sandiego-fetch:
+        build: $OPDIR/sandiego
+        container_name: sandiego
+        restart: unless-stopped
+        volumes:
+            - $OPDIR/sandiego/secrets:/usr/src/secrets
+            - $OPDIR/sandiego/configuration.yml:/usr/src/configuration.yml:ro
+        user: $PUID:$PGID
+        depends_on:
+            - sandiego-postgres
+        env_file: $OPDIR/sandiego/.env
+
+    sandiego-postgres:
+        image: postgres:18.1
+        shm_size: 1g # https://stackoverflow.com/questions/56751565
+        container_name: sandiego-postgres
+        hostname: sandiego-postgres
+        restart: unless-stopped
+        volumes:
+            - $OPDIR/sandiego/postgres_data:/var/lib/postgresql
+        environment:
+            TZ: $TZ
+            POSTGRES_USER: sandiego
+            POSTGRES_PASSWORD: $SANDIEGO_POSTGRES_PASSWORD
+
+    sandiego-postgrest:
+        image: postgrest/postgrest:v13.0.8
+        container_name: sandiego-postgrest
+        hostname: sandiego-postgrest
+        restart: unless-stopped
+        ports:
+            - 8245:3000
+        depends_on:
+            - sandiego-postgres
+        environment:
+            PGRST_DB_URI: $SANDIEGO_DATABASE_URL
+            PGRST_JWT_SECRET: $SANDIEGO_JWT_SECRET
+
+    sandiego-pgbackups:
+        image: prodrigestivill/postgres-backup-local:18
+        container_name: sandiego-pgbackups
+        restart: always
+        user: $PUID:$PGID
+        volumes:
+            - $OPDIR/sandiego/postgres_backups:/backups
+        depends_on:
+            - sandiego-postgres
+        environment:
+            POSTGRES_HOST: sandiego-postgres
+            POSTGRES_DB: sandiego
+            POSTGRES_USER: sandiego
+            POSTGRES_PASSWORD: $SANDIEGO_POSTGRES_PASSWORD
+            POSTGRES_EXTRA_OPTS: -Z6
+            SCHEDULE: "@daily"
+            BACKUP_KEEP_DAYS: 10
+            BACKUP_KEEP_WEEKS: 10
+            BACKUP_KEEP_MONTHS: 10
+            HEALTHCHECK_PORT: 8080
 #
 # To-Do:
 # - foundry
 # - themis
-# - sandiego
