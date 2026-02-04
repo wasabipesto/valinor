@@ -217,6 +217,8 @@ services:
         container_name: nice-postgres
         hostname: nice-postgres
         restart: unless-stopped
+        ports:
+            - 5469:5432
         volumes:
             - $OPDIR/nice/postgres_data:/var/lib/postgresql
         environment:
