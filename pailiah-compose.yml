@@ -111,7 +111,7 @@ services:
             ENDPOINT_URL: https://status.wasabipesto.com/api/push/vJkBGdRyIU
 
     promtail:
-        image: grafana/promtail:3.6.3
+        image: grafana/promtail:3.6.5
         container_name: promtail
         restart: unless-stopped
         volumes:
