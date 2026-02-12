@@ -362,7 +362,7 @@ services:
             POSTGRES_PASSWORD: $NICE_POSTGRES_PASSWORD
 
     nice-postgres-vi:
-        image: postgres:16.2
+        image: postgres:16.12
         shm_size: 1g # https://stackoverflow.com/questions/56751565
         container_name: nice-postgres-vi
         hostname: nice-postgres-vi
