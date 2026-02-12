@@ -257,7 +257,7 @@ services:
             DATABASE_URL: $THEMIS_PROD_DATABASE_URL
 
     themis-postgres:
-        image: postgres:15.10
+        image: postgres:15.16
         container_name: themis-postgres
         hostname: themis-postgres
         restart: unless-stopped
@@ -350,7 +350,7 @@ services:
             DATABASE_URL: $NICE_DATABASE_URL
 
     nice-postgres:
-        image: postgres:15.10
+        image: postgres:15.16
         container_name: nice-postgres
         hostname: nice-postgres
         restart: unless-stopped
@@ -423,7 +423,7 @@ services:
         env_file: $OPDIR/sandiego-fetch/.env
 
     sandiego-postgres:
-        image: postgres:15.10
+        image: postgres:15.16
         container_name: sandiego-postgres
         hostname: sandiego-postgres
         restart: unless-stopped
