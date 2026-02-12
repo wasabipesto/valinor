@@ -212,7 +212,7 @@ services:
 
     # Nice
     nice-postgres:
-        image: postgres:18.1
+        image: postgres:18.2
         shm_size: 1g # https://stackoverflow.com/questions/56751565
         container_name: nice-postgres
         hostname: nice-postgres
@@ -289,7 +289,7 @@ services:
         env_file: $OPDIR/sandiego/.env
 
     sandiego-postgres:
-        image: postgres:18.1
+        image: postgres:18.2
         shm_size: 1g # https://stackoverflow.com/questions/56751565
         container_name: sandiego-postgres
         hostname: sandiego-postgres
