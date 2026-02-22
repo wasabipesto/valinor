@@ -202,6 +202,22 @@ services:
             PUID: $PUID
             PGID: $PGID
 
+    # IRC
+    soju:
+        image: codeberg.org/emersion/soju:v0.10.1
+        container_name: soju
+        restart: unless-stopped
+        ports:
+            # - 6697:6697 # TLS IRC
+            - 6667:6667 # Non-TLS IRC
+            - 8090:8080 # HTTP
+        volumes:
+            - $OPDIR/soju/config:/soju-config
+            - $OPDIR/soju/db:/db
+            - $OPDIR/soju/uploads:/uploads
+        environment:
+            TZ: $TZ
+
     # Automeme
     automeme:
         build: $OPDIR/automeme
