@@ -143,7 +143,7 @@ services:
             PGID: $PGID
 
     calibre-web:
-        image: ghcr.io/linuxserver/calibre-web:0.6.25
+        image: ghcr.io/linuxserver/calibre-web:0.6.26
         container_name: calibre-web
         hostname: calibre-web
         restart: unless-stopped
