@@ -32,6 +32,7 @@ uplog container:
     just logs -f {{ container }}
 
 # Stop a container
+[confirm]
 down container:
     docker compose -f {{ config_file }} down {{ container }}
 
