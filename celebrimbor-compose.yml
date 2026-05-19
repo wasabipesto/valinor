@@ -228,6 +228,30 @@ services:
             DOCKER_MODS: linuxserver/mods:universal-package-install
             INSTALL_PACKAGES: nmap # for nmap device tracker
 
+    mosquitto:
+        image: eclipse-mosquitto:2.0.22
+        container_name: mosquitto
+        restart: unless-stopped
+        ports:
+            - 1883:1883
+        volumes:
+            - $OPDIR/mosquitto/config:/mosquitto/config
+            - $OPDIR/mosquitto/data:/mosquitto/data
+            - $OPDIR/mosquitto/log:/mosquitto/log
+        environment:
+            TZ: $TZ
+
+    zigbee2mqtt:
+        image: koenkk/zigbee2mqtt:2.10.1
+        container_name: zigbee2mqtt
+        restart: unless-stopped
+        ports:
+            - 8099:8099
+        volumes:
+            - $OPDIR/zigbee2mqtt:/app/data
+        environment:
+            TZ: $TZ
+
     frigate:
         image: ghcr.io/blakeblackshear/frigate:0.17.1
         container_name: frigate
