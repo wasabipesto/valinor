@@ -169,12 +169,28 @@ services:
             - $OPDIR/nextcloud/data:/data
             - $DATADIR:/mnt/celebrimbor
             - $OPDIR/syncthing/data:/mnt/syncthing
+        depends_on:
+            - nextcloud-postgres
         environment:
             TZ: $TZ
             PUID: $PUID
             PGID: $PGID
         ports:
             - 4431:80
+
+    nextcloud-postgres:
+        image: postgres:18.3
+        shm_size: 1g # https://stackoverflow.com/questions/56751565
+        container_name: nextcloud-postgres
+        hostname: nextcloud-postgres
+        restart: unless-stopped
+        volumes:
+            - $OPDIR/nextcloud/postgres_data:/var/lib/postgresql
+        environment:
+            TZ: $TZ
+            POSTGRES_USER: nextcloud
+            POSTGRES_DB: nextcloud
+            POSTGRES_PASSWORD: $NEXTCLOUD_POSTGRES_PASSWORD
 
     syncthing:
         image: syncthing/syncthing:2.0
