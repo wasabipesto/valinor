@@ -202,6 +202,19 @@ services:
             PUID: $PUID
             PGID: $PGID
 
+    open-webui:
+        image: ghcr.io/open-webui/open-webui:v0.9.6
+        container_name: open-webui
+        hostname: open-webui
+        restart: unless-stopped
+        ports:
+            - 3158:8080
+        volumes:
+            - $OPDIR/open-webui:/app/backend/data
+        environment:
+            TZ: $TZ
+            OLLAMA_BASE_URL: http://shalash
+
     # IRC
     soju:
         image: codeberg.org/emersion/soju:v0.10.1
