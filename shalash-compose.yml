@@ -304,6 +304,65 @@ services:
             BACKUP_KEEP_MONTHS: 10
             HEALTHCHECK_PORT: 8080
 
+    # Themis
+    themis-postgres:
+        image: pgvector/pgvector:pg18
+        container_name: themis-postgres
+        restart: always
+        environment:
+            POSTGRES_DB: themis
+            POSTGRES_USER: themis
+            POSTGRES_PASSWORD: ${THEMIS_POSTGRES_PASSWORD}
+        volumes:
+            - $OPDIR/themis/postgres_data:/var/lib/postgresql
+        ports:
+            - "5432:5432"
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U themis -d themis"]
+            interval: 10s
+            timeout: 5s
+            retries: 3
+
+    themis-postgrest:
+        image: postgrest/postgrest:${PGRST_VERSION:-v12.2.0}
+        container_name: postgrest
+        restart: always
+        environment:
+            PGRST_DB_URI: postgres://themis:${THEMIS_POSTGRES_PASSWORD}@themis-postgres:5432/themis
+            PGRST_DB_SCHEMA: public
+            PGRST_DB_ANON_ROLE: web_anon
+            PGRST_JWT_SECRET: ${THEMIS_PGRST_JWT_SECRET}
+            PGRST_DB_POOL: 10
+            PGRST_ADMIN_SERVER_PORT: "3001"
+        ports:
+            - "3685:3000"
+            - "3001:3001"
+        depends_on:
+            themis-postgres:
+                condition: service_healthy
+
+    themis-pgbackups:
+        image: prodrigestivill/postgres-backup-local:18
+        container_name: pgbackups
+        restart: always
+        environment:
+            POSTGRES_HOST: themis-postgres
+            POSTGRES_DB: themis
+            POSTGRES_USER: themis
+            POSTGRES_PASSWORD: ${THEMIS_POSTGRES_PASSWORD}
+            POSTGRES_PORT: 5432
+            POSTGRES_EXTRA_OPTS: -Z6
+            SCHEDULE: "@daily"
+            BACKUP_KEEP_DAYS: 3
+            BACKUP_KEEP_WEEKS: 10
+            BACKUP_KEEP_MONTHS: 10
+            HEALTHCHECK_PORT: 8080
+        volumes:
+            - $OPDIR/themis/postgres_backups:/backups
+        depends_on:
+            themis-postgres:
+                condition: service_healthy
+
     # Sandiego
     sandiego-fetch:
         build: $OPDIR/sandiego
@@ -366,4 +425,3 @@ services:
 #
 # To-Do:
 # - foundry
-# - themis
