@@ -146,7 +146,7 @@ services:
             TZ: $TZ
 
     tautulli:
-        image: lscr.io/linuxserver/tautulli:2.17.0
+        image: lscr.io/linuxserver/tautulli:2.18.1
         container_name: tautulli
         hostname: tautulli
         restart: unless-stopped
