@@ -203,7 +203,7 @@ services:
             PGID: $PGID
 
     open-webui:
-        image: ghcr.io/open-webui/open-webui:v0.9.6
+        image: ghcr.io/open-webui/open-webui:v0.11.3
         container_name: open-webui
         hostname: open-webui
         restart: unless-stopped
