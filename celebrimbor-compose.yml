@@ -193,7 +193,7 @@ services:
             POSTGRES_PASSWORD: $NEXTCLOUD_POSTGRES_PASSWORD
 
     syncthing:
-        image: syncthing/syncthing:2.0
+        image: syncthing/syncthing:2.1
         container_name: syncthing
         hostname: syncthing
         restart: unless-stopped
