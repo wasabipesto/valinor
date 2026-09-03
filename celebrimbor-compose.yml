@@ -179,7 +179,7 @@ services:
             - 4431:80
 
     nextcloud-postgres:
-        image: postgres:18.3
+        image: postgres:18.6
         shm_size: 1g # https://stackoverflow.com/questions/56751565
         container_name: nextcloud-postgres
         hostname: nextcloud-postgres
