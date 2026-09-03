@@ -119,7 +119,7 @@ services:
             TZ: $TZ
 
     grafana:
-        image: grafana/grafana-oss:12.4.2
+        image: grafana/grafana-oss:12.4.3
         container_name: grafana
         hostname: grafana
         restart: unless-stopped
