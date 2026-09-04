@@ -242,7 +242,7 @@ services:
             TZ: $TZ
 
     zigbee2mqtt:
-        image: koenkk/zigbee2mqtt:2.10.1
+        image: koenkk/zigbee2mqtt:2.14.1
         container_name: zigbee2mqtt
         restart: unless-stopped
         ports:
