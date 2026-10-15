@@ -217,7 +217,7 @@ services:
 
     # IRC
     soju:
-        image: codeberg.org/emersion/soju:v0.10.1
+        image: codeberg.org/emersion/soju:v0.11.1
         container_name: soju
         restart: unless-stopped
         ports:
