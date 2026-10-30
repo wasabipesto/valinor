@@ -254,11 +254,14 @@ services:
             TZ: $TZ
             POSTGRES_USER: nice
             POSTGRES_PASSWORD: $NICE_POSTGRES_PASSWORD
+        command: ["-c", "shared_buffers=8GB", "-c", "max_wal_size=8GB"]
 
     nice-api:
         build:
             context: $OPDIR/nice
             dockerfile: api/Dockerfile
+            args:
+                NICE_BUILD_COMMIT: $(git rev-parse --short HEAD)
         container_name: nice-api
         restart: unless-stopped
         ports:
