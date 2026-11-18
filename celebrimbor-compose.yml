@@ -229,7 +229,7 @@ services:
             INSTALL_PACKAGES: nmap # for nmap device tracker
 
     mosquitto:
-        image: eclipse-mosquitto:2.0.22
+        image: eclipse-mosquitto:2.0.23
         container_name: mosquitto
         restart: unless-stopped
         ports:
