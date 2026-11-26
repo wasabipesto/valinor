@@ -264,12 +264,14 @@ services:
             - /etc/localtime:/etc/localtime:ro
             - $OPDIR/frigate:/config
             - $DATADIR/Frigate:/media/frigate
+            - $OPDIR/frigate/camkeeper/hosts:/etc/hosts:ro
+            - $OPDIR/frigate/proxy_trusted_headers.conf:/usr/local/nginx/conf/proxy_trusted_headers.conf:ro
             - type: tmpfs
               target: /tmp/cache
               tmpfs:
                   size: 1000000000
         ports:
-            - "8971:8971" # Standard web access
+            - "127.0.0.1:8971:8971" # Web UI; localhost only
             # - "5000:5000" # Internal unauthenticated access. Expose carefully.
             - "8554:8554" # RTSP feeds
             - "8555:8555/tcp" # WebRTC over tcp
